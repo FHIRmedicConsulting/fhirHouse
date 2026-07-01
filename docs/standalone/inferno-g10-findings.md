@@ -123,6 +123,30 @@ reference-search bug — Inferno searches `patient=<bare id>`, but our index sto
   "could not find <status/intent> values" for some groups — to re-verify on a stable single-group
   run (several batch entries also hit transient `localhost:3000` unavailability under load).
 
+## Run 5 — conditional references resolved (fixes the `fhir_client` errors)
+
+### Fix applied (committed)
+- **Transaction conditional-reference resolution.** `Type?identifier=sys|val` references (Synthea
+  emits these for `Practitioner`/`Organization`/`Location`) are now resolved to literal `Type/<id>`
+  during transaction processing — bundle-local matches first, else a server identifier lookup.
+  Unresolvable conditional refs reject the transaction (per spec). A persisted reference is now
+  always literal.
+- **`ifNoneExist` conditional create.** POST entries with `ifNoneExist=identifier=…` skip creation
+  when a match exists (idempotent) — makes the Synthea `hospitalInformation`/`practitionerInformation`
+  bundles reloadable and their resources findable.
+- Test `delta-conditional-reference` (resolve → literal, ifNoneExist dedup, unresolvable → 422).
+
+### Loading order + verification
+- Load `hospitalInformation` + `practitionerInformation` (as transactions) first, then the patient
+  bundles. Encounter references now come back **literal** (`Location/…`, `Organization/…`,
+  `Practitioner/…`) — zero unresolved conditional refs.
+- Re-run after the fix: **the `fhir_client` "wrong constant name sid/synthetichealth" errors are
+  gone.** Encounter 9 PASS, DiagnosticReport-lab 7 PASS, DocumentReference 9 PASS.
+- Remaining errors are environmental: `hl7_validator_service:3500` connection failures when several
+  groups run back-to-back (the shared validator saturates), and occasional transient
+  `localhost:3000` unavailability under concurrent load. One small real finding remains
+  (`document_reference` patient+status compound search).
+
 ## Known headless-Inferno friction
 
 - The SMART **discovery** sub-group is nested under a `run_as_group` Standalone-Launch parent, so it

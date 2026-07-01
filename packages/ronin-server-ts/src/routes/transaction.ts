@@ -16,6 +16,7 @@
  */
 import type { Hono } from "hono";
 import type { DeltaWarehouse } from "../lib/delta-warehouse.js";
+import { DeltaResourceRepository } from "../repository/delta-resource-repository.js";
 import { validateResource } from "../validation/validation-chain.js";
 import { uuidv7 } from "../lib/uuid-v7.js";
 import { badRequest, unprocessable } from "../lib/errors.js";
@@ -30,6 +31,44 @@ function rewriteReferences(node: unknown, idMap: Map<string, string>): void {
       obj.reference = idMap.get(obj.reference);
     }
     for (const k of Object.keys(obj)) rewriteReferences(obj[k], idMap);
+  }
+}
+
+/** Parse an `identifier=system|value` (or `identifier=value`) match query. */
+function parseIdentifierQuery(query: string): { system: string; value: string } | null {
+  const id = new URLSearchParams(query).get("identifier");
+  if (!id) return null;
+  const [a, b] = id.includes("|") ? id.split("|") : ["", id];
+  return { system: a ?? "", value: b ?? "" };
+}
+
+/** Resolve `Type?identifier=sys|val` to a literal `Type/<id>` — bundle-local first, then the
+ * server. Returns null if the type/query is unsupported or the match isn't unique. */
+async function resolveConditional(ref: string, wh: DeltaWarehouse, local: Map<string, string>): Promise<string | null> {
+  const q = ref.indexOf("?");
+  if (q < 0) return null;
+  const type = ref.slice(0, q);
+  if (!/^[A-Z][A-Za-z]+$/.test(type)) return null;
+  const parsed = parseIdentifierQuery(ref.slice(q + 1));
+  if (!parsed) return null;
+  const localHit = local.get(`${type}|${parsed.system}|${parsed.value}`);
+  if (localHit) return `${type}/${localHit}`;
+  const matches = await new DeltaResourceRepository(wh, type).searchByIdentifier(parsed.system, parsed.value);
+  return matches.length === 1 && matches[0]?.id ? `${type}/${matches[0].id}` : null;
+}
+
+/** Deep-resolve conditional references (`Type?query`) in a resource body; collect unresolved. */
+async function resolveConditionalRefs(node: unknown, wh: DeltaWarehouse, local: Map<string, string>, unresolved: string[]): Promise<void> {
+  if (Array.isArray(node)) {
+    for (const v of node) await resolveConditionalRefs(v, wh, local, unresolved);
+  } else if (node && typeof node === "object") {
+    const obj = node as Record<string, unknown>;
+    if (typeof obj.reference === "string" && /^[A-Z][A-Za-z]+\?/.test(obj.reference)) {
+      const resolved = await resolveConditional(obj.reference, wh, local);
+      if (resolved) obj.reference = resolved;
+      else unresolved.push(obj.reference);
+    }
+    for (const k of Object.keys(obj)) await resolveConditionalRefs(obj[k], wh, local, unresolved);
   }
 }
 
@@ -54,6 +93,25 @@ export function mountTransaction(app: Hono, wh: DeltaWarehouse, _baseUrl: string
       }
       if (idMap.size) rewriteReferences(entries, idMap);
 
+      // 1b. Resolve conditional references (`Type?identifier=…`) to literal `Type/<id>`.
+      // A persisted reference must be literal — bundle-local matches first, else resolve against
+      // the server (e.g. Synthea's `Practitioner?identifier=us-npi|…` pointing at an org/practitioner
+      // loaded from a prior bundle). Unresolvable conditional refs reject the transaction (per spec).
+      const local = new Map<string, string>();
+      for (const e of entries) {
+        const ids = (e.request?.method === "POST" || e.request?.method === "PUT") && Array.isArray(e.resource?.identifier) ? e.resource.identifier : [];
+        for (const id of ids) if (id?.value) local.set(`${e.resource.resourceType}|${id.system ?? ""}|${id.value}`, e.resource.id);
+      }
+      const unresolved: string[] = [];
+      for (const e of entries) {
+        if ((e.request?.method === "POST" || e.request?.method === "PUT") && e.resource) {
+          await resolveConditionalRefs(e.resource, wh, local, unresolved);
+        }
+      }
+      if (unresolved.length) {
+        throw unprocessable(`unresolved conditional reference(s): ${[...new Set(unresolved)].slice(0, 5).join(", ")}`);
+      }
+
       // 2. Pre-validate every written resource — reject the whole transaction if any fails.
       for (const e of entries) {
         const m = e.request?.method;
@@ -72,6 +130,20 @@ export function mountTransaction(app: Hono, wh: DeltaWarehouse, _baseUrl: string
       const r = e.request ?? {};
       const method = String(r.method ?? "GET").toUpperCase();
       const url = String(r.url ?? "").replace(/^\//, "");
+
+      // Conditional create (`ifNoneExist`): if a resource already matches, skip the create and
+      // return the existing one (200) — makes the Synthea org/practitioner bundles idempotent.
+      if (method === "POST" && r.ifNoneExist && e.resource?.resourceType) {
+        const parsed = parseIdentifierQuery(r.ifNoneExist);
+        if (parsed) {
+          const existing = await new DeltaResourceRepository(wh, e.resource.resourceType).searchByIdentifier(parsed.system, parsed.value);
+          if (existing[0]?.id) {
+            respEntries.push({ resource: existing[0], response: { status: "200", location: `${e.resource.resourceType}/${existing[0].id}` } });
+            continue;
+          }
+        }
+      }
+
       const headers: Record<string, string> = { "Content-Type": "application/fhir+json" };
       if (r.ifMatch) headers["If-Match"] = r.ifMatch;
       const init: RequestInit = { method, headers };
