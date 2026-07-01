@@ -16,6 +16,7 @@ import { Hono } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import type { DeltaWarehouse } from "./lib/delta-warehouse.js";
 import { deltaResourceRoutes } from "./routes/delta-resource.js";
+import { terminologyRoutes } from "./routes/terminology.js";
 import { mountTransaction } from "./routes/transaction.js";
 import { authEnabled, buildAuthMiddleware } from "./auth/configure.js";
 import { auditEnabled, buildAuditMiddleware } from "./audit/configure.js";
@@ -53,6 +54,9 @@ export function createDeltaApp(deps: DeltaAppDeps): Hono {
   if (authEnabled()) app.use("*", buildAuthMiddleware());
 
   mountTransaction(app, deps.warehouse, deps.baseUrl);
+  // Terminology operations ($validate-code/$expand/$lookup) — BEFORE the generic /:resourceType/:id
+  // routes so `/ValueSet/$validate-code` isn't captured as a resource read.
+  app.route("/", terminologyRoutes(deps.warehouse));
   app.route("/", deltaResourceRoutes(deps.warehouse, deps.baseUrl));
 
   app.onError((err, c) => {

@@ -30,6 +30,18 @@ export async function buildCapabilityStatement(wh: DeltaWarehouse, baseUrl: stri
   // CapabilityStatement (Inferno (g)(10) us_core_instantiate check).
   const instantiatesUsCore = [...profilesByType.values()].flat().some((u) => u.includes("/us/core/"));
 
+  // Terminology operations exposed per resource (RoninStandAlone is a local tx server).
+  const TERMINOLOGY_OPS: Record<string, Array<{ name: string; definition: string }>> = {
+    ValueSet: [
+      { name: "expand", definition: "http://hl7.org/fhir/OperationDefinition/ValueSet-expand" },
+      { name: "validate-code", definition: "http://hl7.org/fhir/OperationDefinition/ValueSet-validate-code" },
+    ],
+    CodeSystem: [
+      { name: "validate-code", definition: "http://hl7.org/fhir/OperationDefinition/CodeSystem-validate-code" },
+      { name: "lookup", definition: "http://hl7.org/fhir/OperationDefinition/CodeSystem-lookup" },
+    ],
+  };
+
   const resources = r4CoreResourceTypes.map((rt) => ({
     type: rt,
     interaction: [
@@ -49,6 +61,7 @@ export async function buildCapabilityStatement(wh: DeltaWarehouse, baseUrl: stri
     conditionalDelete: "not-supported",
     ...(profilesByType.has(rt) ? { supportedProfile: profilesByType.get(rt) } : {}),
     searchParam: [{ name: "identifier", type: "token", documentation: "token search: system|value" }],
+    ...(TERMINOLOGY_OPS[rt] ? { operation: TERMINOLOGY_OPS[rt] } : {}),
   }));
 
   return {
