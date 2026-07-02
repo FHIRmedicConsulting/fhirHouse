@@ -18,8 +18,10 @@ import { searchParam } from "../fhir-schema/r4-search-params.js";
 import { patientCompartment } from "../fhir-schema/patient-compartment.js";
 import { enforceReadConsent, filterReadConsent, consentEnabled } from "../auth/consent-enforce.js";
 import { applyObligations } from "../auth/redact.js";
+import { buildDataFilter, type DataFilter } from "../auth/data-filter.js";
+import type { RequestVerb } from "../auth/scope-enforcer.js";
 import { validateResource, type ValidationResult } from "../validation/validation-chain.js";
-import { badRequest, notFound, preconditionFailed, unprocessable } from "../lib/errors.js";
+import { badRequest, forbidden, notFound, preconditionFailed, unprocessable } from "../lib/errors.js";
 import type { OperationOutcome, Resource as FhirResource } from "@ronin/fhir-types";
 
 /** Reject anything that isn't one of the 146 R4 Core resource types. */
@@ -176,6 +178,45 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
   const app = new Hono();
   const repo = (rt: string) => new DeltaResourceRepository(wh, rt);
 
+  // --- Patient-compartment + query-restriction enforcement (auth chain points 3 + 4) ---
+  // When an authenticated request carries a `patient/*` scope + launch patient, reads are scoped
+  // to that patient's compartment and to any granular scope query restrictions. No auth context
+  // (auth disabled) or a user/system scope → no compartment filter (open, as before).
+  const cmap = patientCompartment as Record<string, string[]>;
+  const dataFilterFor = (c: any, rt: string, verb: RequestVerb): DataFilter | null => {
+    const auth = c.get("auth");
+    return auth ? buildDataFilter(auth, rt, verb) : null;
+  };
+  // Ids in patient P's compartment for resource type rt (Patient → [P]; non-member type → []).
+  const compartmentIds = async (rt: string, patientId: string): Promise<string[]> => {
+    if (rt === "Patient") return [patientId];
+    const params = cmap[rt];
+    if (!params?.length) return [];
+    return (await repo(rt).findReferencing(params, `Patient/${patientId}`)).map((m) => m.id!);
+  };
+  // Is a single fetched resource in patient P's compartment? (used to gate instance reads)
+  const inCompartment = (rt: string, resource: FhirResource, patientId: string): boolean => {
+    if (rt === "Patient") return resource.id === patientId;
+    const params = cmap[rt];
+    if (!params?.length) return false;
+    const target = `Patient/${patientId}`;
+    for (const code of params) {
+      const def = searchParam(rt, code);
+      if (!def) continue;
+      let refs: string[] = [];
+      try { refs = (fhirpath.evaluate(resource as any, def.expression, undefined, fhirpathR4Model) as any[]).map((x) => x?.reference).filter(Boolean); } catch { /* skip */ }
+      if (refs.some((r) => r === target || r === patientId || r.endsWith(`/${patientId}`))) return true;
+    }
+    return false;
+  };
+  // Gate an instance read/vread/history by the request's compartment (404 to avoid leaking existence).
+  const gateInstance = (c: any, rt: string, resource: FhirResource, verb: RequestVerb): void => {
+    const df = dataFilterFor(c, rt, verb);
+    if (df?.patientCompartmentId && !inCompartment(rt, resource, df.patientCompartmentId)) {
+      throw notFound(rt, resource.id ?? "");
+    }
+  };
+
   /** Resolve a conditional query (If-None-Exist / conditional PUT/DELETE) → count + first hit. */
   const resolveConditional = async (rt: string, queryStr: string): Promise<{ total: number; match?: FhirResource }> => {
     const params = new URLSearchParams(queryStr);
@@ -287,6 +328,9 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
   // GET|POST /Patient/:id/$everything  — the patient + its compartment members.
   const everything = async (c: any) => {
     const id = c.req.param("id");
+    // patient-compartment scope: a patient-restricted token may only run $everything for its own patient.
+    const edf = dataFilterFor(c, "Patient", "r");
+    if (edf?.patientCompartmentId && edf.patientCompartmentId !== id) throw notFound("Patient", id);
     const patient = await repo("Patient").read(id); // 404/410 guard
     const ref = `Patient/${id}`;
     const typeFilter = c.req.query("_type")?.split(",").map((s: string) => s.trim()).filter(Boolean);
@@ -357,6 +401,8 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
 
   // GET /_history  — system-level history across all resource types (merged, paged).
   app.get("/_history", async (c) => {
+    // System-level history spans all patients; not available under a patient-restricted scope.
+    if (dataFilterFor(c, "Resource", "s")?.patientCompartmentId) throw forbidden("system-level _history is not available under a patient-restricted scope");
     const count = clampInt(c.req.query("_count"), 50);
     const offset = clampInt(c.req.query("_getpagesoffset"), 0);
     const all: Array<{ rt: string; v: any }> = [];
@@ -392,6 +438,7 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
     const rt = c.req.param("resourceType");
     assertR4Core(rt);
     const resource = await repo(rt).readVersion(c.req.param("id"), Number(c.req.param("vid")));
+    gateInstance(c, rt, resource, "r"); // patient-compartment scope
     await enforceReadConsent(wh, resource, c.get("auth"));
     const disclosed = applyObligations(resource, c.get("auth"));
     return c.json(disclosed, 200, {
@@ -407,6 +454,12 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
     const id = c.req.param("id");
     const versions = await repo(rt).history(id);
     if (versions.length === 0) throw notFound(rt, id);
+    // patient-compartment scope: gate on the newest version's compartment membership.
+    const df = dataFilterFor(c, rt, "r");
+    if (df?.patientCompartmentId) {
+      const newest = JSON.parse((versions[0] as any).body_json) as FhirResource;
+      if (!inCompartment(rt, newest, df.patientCompartmentId)) throw notFound(rt, id);
+    }
     return c.json({
       resourceType: "Bundle",
       type: "history",
@@ -420,6 +473,8 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
   app.get("/:resourceType/_history", async (c) => {
     const rt = c.req.param("resourceType");
     assertR4Core(rt);
+    // Type-level history spans all patients; not available under a patient-restricted scope.
+    if (dataFilterFor(c, rt, "s")?.patientCompartmentId) throw forbidden("type-level _history is not available under a patient-restricted scope");
     const count = clampInt(c.req.query("_count"), 50);
     const offset = clampInt(c.req.query("_getpagesoffset"), 0);
     const { rows, total } = await repo(rt).historyAll(count, offset);
@@ -443,8 +498,10 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
 
   // GET /:resourceType/:id
   app.get("/:resourceType/:id", async (c) => {
-    assertR4Core(c.req.param("resourceType"));
-    const resource = await repo(c.req.param("resourceType")).read(c.req.param("id"));
+    const rt = c.req.param("resourceType");
+    assertR4Core(rt);
+    const resource = await repo(rt).read(c.req.param("id"));
+    gateInstance(c, rt, resource, "r"); // patient-compartment scope
     await enforceReadConsent(wh, resource, c.get("auth"));
     const disclosed = applyObligations(resource, c.get("auth"));
     return c.json(disclosed, 200, {
@@ -534,10 +591,24 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
     const { conds: chainConds, idIn } = await resolveChainsAndHas(rt, queries);
     const conds = [...buildConds(rt, queries), ...chainConds];
     const lastUpdated = sp.getAll("_lastUpdated").map(parseRangeParam).filter((x): x is { op: string; value: string } => x !== null);
+
+    // Auth points 3+4: scope this search to the caller's patient compartment + granular restrictions.
+    let effIdIn = idIn;
+    const df = dataFilterFor(c, rt, "s");
+    if (df?.patientCompartmentId) {
+      const cids = await compartmentIds(rt, df.patientCompartmentId);
+      effIdIn = effIdIn ? effIdIn.filter((x) => cids.includes(x)) : cids;
+    }
+    if (df) {
+      for (const [code, values] of Object.entries(df.queryRestrictions)) {
+        conds.push({ code, type: searchParam(rt, code)?.type ?? "token", value: "", valueIn: values });
+      }
+    }
+
     let resources: FhirResource[];
     let total: number;
     {
-      const r = await repo(rt).searchByParams({ conds, id: sp.get("_id") ?? undefined, idIn, lastUpdated, count, offset, sortDesc, sortParam });
+      const r = await repo(rt).searchByParams({ conds, id: sp.get("_id") ?? undefined, idIn: effIdIn, lastUpdated, count, offset, sortDesc, sortParam });
       resources = r.resources;
       total = r.total;
     }

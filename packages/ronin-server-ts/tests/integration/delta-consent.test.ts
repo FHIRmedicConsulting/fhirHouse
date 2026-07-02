@@ -74,8 +74,9 @@ describe.skipIf(!SIDECAR)("consent + DS4P label enforcement", () => {
   it("patient-context: own compartment allowed, other patient denied", async () => {
     // stub-patient-jane → launch/patient = jane-doe; the Observations are in jane's compartment
     expect((await req("GET", `/Observation/${normal}`, "stub-patient-jane")).status).toBe(200);
-    // a resource in another patient's compartment → denied
+    // a resource in another patient's compartment → denied by the compartment gate with 404
+    // (existence hidden — the resource is outside the token's patient compartment).
     await req("POST", "/Observation", "stub-system-all", { resourceType: "Observation", id: `o2${ts}`, status: "final", code: { text: "x" }, subject: { reference: "Patient/someone-else" } });
-    expect((await req("GET", `/Observation/o2${ts}`, "stub-patient-jane")).status).toBe(403);
+    expect((await req("GET", `/Observation/o2${ts}`, "stub-patient-jane")).status).toBe(404);
   });
 });
