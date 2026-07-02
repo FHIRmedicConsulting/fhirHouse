@@ -267,6 +267,28 @@ export class DeltaWarehouse implements Warehouse {
   }
 
   /**
+   * Run a read-modify-write critical section on a table's write chain (Priority #3 TOCTOU fix).
+   * The version-number read (currentRow) + the version write must be atomic w.r.t. other writers
+   * to the same table, else two concurrent same-id updates both read version N and write N+1.
+   * `fn` MUST use {@link writeVersionRaw}/reads only — calling a self-locking write (writeVersion,
+   * writeBronze, …) on the SAME table path from inside `fn` would deadlock the chain.
+   */
+  async serializeTable<T>(tier: Tier, resourceType: string, fn: () => Promise<T>): Promise<T> {
+    const path = this.catalog.tablePath(tier, resourceType);
+    const prev = this.writeChains.get(path) ?? Promise.resolve();
+    const next = prev.catch(() => {}).then(fn);
+    this.writeChains.set(path, next.catch(() => {}));
+    return next;
+  }
+
+  /** As {@link writeVersion} but WITHOUT acquiring the write chain — for use INSIDE serializeTable(). */
+  async writeVersionRaw(resourceType: string, row: RawBronzeRow, prevVersionId: number | null): Promise<void> {
+    const path = this.catalog.tablePath("bronze", resourceType);
+    await this.post("/write-version", { table_path: path, row, prev_version_id: prevVersionId, schema: "bronze" });
+    this.registerTable(this.catalog.tableName("bronze", resourceType), path);
+  }
+
+  /**
    * Compact one tier's Delta table (+ optional vacuum). Append-per-write makes many small
    * files; periodic compaction keeps scans fast. Vacuum defaults to a SAFE 168h retention
    * (enforced) preserving time-travel; `force` drops enforcement for dev/tests.

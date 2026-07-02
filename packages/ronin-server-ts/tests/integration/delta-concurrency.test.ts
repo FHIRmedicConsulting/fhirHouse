@@ -44,4 +44,23 @@ describe.skipIf(!SIDECAR)("single-writer concurrency (no lost writes)", () => {
     expect(versions.map((r) => Number(r.version_id))).toEqual([1, 2, 3, 4, 5, 6]); // contiguous, none lost/dup
     expect(versions.filter((r) => r.is_current === true).length).toBe(1);          // exactly one current
   });
+
+  it("concurrent same-id UPDATES via the API serialize the read-modify-write (no dup version)", async () => {
+    // The TOCTOU: update reads currentRow (version N) then writes N+1. Without serializing that
+    // read-modify-write, N concurrent updates all read N and write N+1 (duplicate version).
+    const id = `race-${ts}`;
+    await req("POST", "/Patient", { resourceType: "Patient", id, gender: "female" }); // v1
+    const N = 8;
+    const results = await Promise.all(Array.from({ length: N }, (_, i) =>
+      req("PUT", `/Patient/${id}`, { resourceType: "Patient", id, gender: i % 2 ? "male" : "female" }), // unconditional
+    ));
+    expect(results.every((r) => r.status === 200)).toBe(true);
+    const versions = await wh.query<{ version_id: number; is_current: boolean }>(
+      `SELECT version_id, is_current FROM patient WHERE id = ? ORDER BY version_id`, [id],
+    );
+    const ids = versions.map((r) => Number(r.version_id));
+    expect(ids).toEqual(Array.from({ length: N + 1 }, (_, i) => i + 1)); // 1..N+1 contiguous, no dup/loss
+    expect(new Set(ids).size).toBe(ids.length);                         // no duplicate version numbers
+    expect(versions.filter((r) => r.is_current === true).length).toBe(1);
+  });
 });

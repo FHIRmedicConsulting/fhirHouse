@@ -102,7 +102,8 @@ export class DeltaResourceRepository {
     const now = this.clock();
     const fhirId = input.id ?? uuidv7(now.getTime());
     const stamped = this.stamp(input, fhirId, 1, now);
-    await this.writeVersion(stamped, 1, now, false);
+    // Serialize on the table so concurrent writes don't race the version/commit (Priority #3).
+    await this.wh.serializeTable("bronze", this.resourceType, () => this.writeVersion(stamped, 1, now, false));
     return stamped;
   }
 
@@ -120,28 +121,35 @@ export class DeltaResourceRepository {
     input: FhirResource,
     expectedVersionId: string | null,
   ): Promise<FhirResource> {
-    const row = await this.currentRow(fhirId);
-    if (!row) throw notFound(this.resourceType, fhirId);
-    const currentVersion = Number(row.version_id);
-    if (expectedVersionId !== null && String(currentVersion) !== expectedVersionId) {
-      throw preconditionFailed(
-        `If-Match version ${expectedVersionId} does not match current version ${currentVersion}`,
-      );
-    }
-    const now = this.clock();
-    const newVersion = currentVersion + 1;
-    const stamped = this.stamp(input, fhirId, newVersion, now);
-    await this.writeVersion(stamped, newVersion, now, false);
-    return stamped;
+    // The read (currentRow → version N) + write (N+1, demote N) must be atomic w.r.t. other
+    // writers to this table, else two concurrent updates both read N and write N+1 (Priority #3).
+    return this.wh.serializeTable("bronze", this.resourceType, async () => {
+      const row = await this.currentRow(fhirId);
+      if (!row) throw notFound(this.resourceType, fhirId);
+      const currentVersion = Number(row.version_id);
+      if (expectedVersionId !== null && String(currentVersion) !== expectedVersionId) {
+        throw preconditionFailed(
+          `If-Match version ${expectedVersionId} does not match current version ${currentVersion}`,
+        );
+      }
+      const now = this.clock();
+      const newVersion = currentVersion + 1;
+      const stamped = this.stamp(input, fhirId, newVersion, now);
+      await this.writeVersion(stamped, newVersion, now, false);
+      return stamped;
+    });
   }
 
   /** Soft delete (ADR-0010 §8): append a `deleted=true` tombstone version. */
   async delete(fhirId: string): Promise<void> {
-    const current = await this.read(fhirId); // 404/410 guard
-    const row = await this.currentRow(fhirId);
-    const now = this.clock();
-    const newVersion = Number(row!.version_id) + 1;
-    await this.writeVersion(this.stamp(current, fhirId, newVersion, now), newVersion, now, true);
+    // Atomic read-compute-write on the table chain (Priority #3 TOCTOU).
+    await this.wh.serializeTable("bronze", this.resourceType, async () => {
+      const current = await this.read(fhirId); // 404/410 guard
+      const row = await this.currentRow(fhirId);
+      const now = this.clock();
+      const newVersion = Number(row!.version_id) + 1;
+      await this.writeVersion(this.stamp(current, fhirId, newVersion, now), newVersion, now, true);
+    });
   }
 
   /** All versions of a resource, newest-first (for `_history`). [] if never existed. */
@@ -350,7 +358,9 @@ export class DeltaResourceRepository {
     }
 
     // Versions are contiguous (1,2,3…) → the prior current version is versionId-1 (null on create).
-    await this.wh.writeVersion(
+    // writeVersionRaw (not writeVersion) because create/update/delete already hold the table's
+    // write chain via serializeTable — a self-locking write here would deadlock the chain.
+    await this.wh.writeVersionRaw(
       this.resourceType,
       bronzeRow(resource, versionId, now.toISOString(), deleted),
       versionId > 1 ? versionId - 1 : null,
