@@ -25,8 +25,17 @@ describe.skipIf(!SIDECAR)("REST: /metadata + $validate", () => {
     expect(cs.fhirVersion).toBe("4.0.1");
     const patient = cs.rest[0].resource.find((r: any) => r.type === "Patient");
     const codes = patient.interaction.map((i: any) => i.code);
-    expect(codes).toEqual(expect.arrayContaining(["read", "vread", "create", "update", "delete", "search-type", "history-instance"]));
+    expect(codes).toEqual(expect.arrayContaining(["read", "vread", "create", "update", "delete", "search-type", "history-instance", "history-type"]));
     expect(cs.rest[0].operation.some((o: any) => o.name === "validate")).toBe(true);
+    // accuracy: conditional ops + real search params + system-level interactions are declared honestly
+    expect(patient.conditionalCreate).toBe(true);
+    expect(patient.conditionalUpdate).toBe(true);
+    expect(patient.conditionalDelete).toBe("single");
+    expect(patient.updateCreate).toBe(false);
+    const params = patient.searchParam.map((s: any) => s.name);
+    expect(params).toEqual(expect.arrayContaining(["_id", "_lastUpdated", "identifier", "name", "birthdate", "gender"]));
+    expect(patient.operation.some((o: any) => o.name === "everything")).toBe(true);
+    expect(cs.rest[0].interaction.map((i: any) => i.code)).toEqual(expect.arrayContaining(["transaction", "batch", "history-system"]));
   });
 
   it("$validate returns a success OperationOutcome for a valid resource", async () => {

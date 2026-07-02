@@ -7,6 +7,7 @@
  * search). System-level transaction/batch and richer search are NOT advertised until built.
  */
 import { r4CoreResourceTypes } from "../fhir-schema/r4-registry.js";
+import { searchParamsFor } from "../fhir-schema/r4-search-params.js";
 import { listInstalledProfiles } from "./ig-loader.js";
 import { smartSecurityBlock } from "./smart-configuration.js";
 import type { DeltaWarehouse } from "../lib/delta-warehouse.js";
@@ -42,26 +43,42 @@ export async function buildCapabilityStatement(wh: DeltaWarehouse, baseUrl: stri
     ],
   };
 
+  // Per-resource operations: every type supports $validate; Patient adds $everything; the
+  // terminology resources add their tx ops. ($export is intentionally NOT advertised until it's
+  // production-grade — the current impl is an in-memory dev stub.)
+  const operationsFor = (rt: string) => {
+    const ops = [{ name: "validate", definition: "http://hl7.org/fhir/OperationDefinition/Resource-validate" }];
+    if (rt === "Patient") ops.push({ name: "everything", definition: "http://hl7.org/fhir/OperationDefinition/Patient-everything" });
+    if (TERMINOLOGY_OPS[rt]) ops.push(...TERMINOLOGY_OPS[rt]);
+    return ops;
+  };
+
+  // Real search params for the type (the generic engine indexes every registry param) + the
+  // common base params we support. Deduped by name.
+  const searchParamsAdvertised = (rt: string) => {
+    const out = new Map<string, { name: string; type: string }>();
+    out.set("_id", { name: "_id", type: "token" });
+    out.set("_lastUpdated", { name: "_lastUpdated", type: "date" });
+    for (const [name, def] of Object.entries(searchParamsFor(rt))) out.set(name, { name, type: def.type });
+    return [...out.values()];
+  };
+
   const resources = r4CoreResourceTypes.map((rt) => ({
     type: rt,
     interaction: [
-      { code: "read" },
-      { code: "vread" },
-      { code: "update" },
-      { code: "delete" },
-      { code: "create" },
-      { code: "search-type" },
-      { code: "history-instance" },
+      { code: "read" }, { code: "vread" }, { code: "update" }, { code: "delete" }, { code: "create" },
+      { code: "search-type" }, { code: "history-instance" }, { code: "history-type" },
     ],
     versioning: "versioned",
     readHistory: true,
-    updateCreate: false,
-    conditionalCreate: false,
-    conditionalUpdate: false,
-    conditionalDelete: "not-supported",
+    updateCreate: false,          // PUT [type]/[id] does not create a client-id'd resource (404)
+    conditionalCreate: true,      // POST + If-None-Exist
+    conditionalUpdate: true,      // PUT [type]?<search>
+    conditionalDelete: "single",  // DELETE [type]?<search> (single match)
     ...(profilesByType.has(rt) ? { supportedProfile: profilesByType.get(rt) } : {}),
-    searchParam: [{ name: "identifier", type: "token", documentation: "token search: system|value" }],
-    ...(TERMINOLOGY_OPS[rt] ? { operation: TERMINOLOGY_OPS[rt] } : {}),
+    searchRevInclude: ["Provenance:target"], // US Core provenance revinclude (generic _revinclude)
+    searchParam: searchParamsAdvertised(rt),
+    operation: operationsFor(rt),
   }));
 
   return {
@@ -77,8 +94,11 @@ export async function buildCapabilityStatement(wh: DeltaWarehouse, baseUrl: stri
     rest: [
       {
         mode: "server",
-        documentation: "Generic R4 Core CRUD + vread/history + identifier search + $validate on a single/medallion Delta store.",
+        documentation: "R4 Core CRUD + vread + instance/type/system history + rich search (token/string/date/number/quantity/uri/reference, modifiers, chaining, _has, _include/_revinclude, _sort/_summary/_elements, paging) + POST _search + conditional create/update/delete + transaction/batch + $everything + $validate + terminology ops, on a single/medallion Delta store.",
         security: smartSecurityBlock(baseUrl),
+        interaction: [
+          { code: "transaction" }, { code: "batch" }, { code: "history-system" },
+        ],
         resource: resources,
         operation: [{ name: "validate", definition: "http://hl7.org/fhir/OperationDefinition/Resource-validate" }],
       },
