@@ -5,12 +5,15 @@
  * any client_id is accepted as a public client (PKCE required), trusting the request redirect_uri.
  * Set the registry for production to lock down clients + redirect URIs.
  */
+import { createLocalJWKSet, createRemoteJWKSet } from "jose";
+
 export interface OAuthClient {
   clientId: string;
   redirectUris?: string[];
   type?: "public" | "confidential";
   secret?: string;   // confidential symmetric (client_secret)
-  jwksUri?: string;  // confidential asymmetric (backend services private_key_jwt) — future
+  jwksUri?: string;  // confidential asymmetric (backend services private_key_jwt)
+  jwks?: { keys: Record<string, unknown>[] }; // inline JWKS (alternative to jwksUri)
 }
 
 function registry(): OAuthClient[] | null {
@@ -29,4 +32,12 @@ export function resolveClient(clientId: string): OAuthClient | null {
 export function redirectAllowed(client: OAuthClient, uri: string): boolean {
   if (!client.redirectUris?.length) return true; // dev: trust the request's redirect_uri
   return client.redirectUris.includes(uri);
+}
+
+/** A jose key resolver for verifying a client's `private_key_jwt` assertion (inline JWKS or
+ * a JWKS URL). Null if the client has no registered asymmetric key (backend services requires it). */
+export function clientKeySet(client: OAuthClient): ReturnType<typeof createLocalJWKSet> | null {
+  if (client.jwks?.keys?.length) return createLocalJWKSet(client.jwks as Parameters<typeof createLocalJWKSet>[0]);
+  if (client.jwksUri) return createRemoteJWKSet(new URL(client.jwksUri));
+  return null;
 }

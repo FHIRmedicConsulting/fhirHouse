@@ -14,10 +14,11 @@
  * private_key_jwt) is a documented follow-up.
  */
 import { Hono } from "hono";
+import { jwtVerify, decodeJwt } from "jose";
 import { publicJwks } from "./keys.js";
-import { putCode, takeCode, putRefresh, takeRefresh } from "./store.js";
+import { putCode, takeCode, putRefresh, takeRefresh, jtiReplay } from "./store.js";
 import { signAccessToken, signIdToken, verifyPkce } from "./tokens.js";
-import { resolveClient, redirectAllowed } from "./clients.js";
+import { resolveClient, redirectAllowed, clientKeySet } from "./clients.js";
 
 export const oauthEnabled = (): boolean => process.env.RONIN_OAUTH_ENABLED === "true";
 
@@ -77,10 +78,13 @@ export function oauthRoutes(baseUrl: string): Hono {
       : null;
     const clientId = body.get("client_id") ?? basic?.[0] ?? undefined;
     const clientSecret = body.get("client_secret") ?? basic?.[1] ?? undefined;
-    const client = clientId ? resolveClient(clientId) : null;
-    if (!client) return err("invalid_client", "unknown client_id", 401);
-    if (client.type === "confidential" && client.secret && client.secret !== clientSecret) {
-      return err("invalid_client", "bad client_secret", 401);
+    // client_credentials authenticates via the client_assertion (below), not client_id/secret.
+    if (grantType !== "client_credentials") {
+      const client = clientId ? resolveClient(clientId) : null;
+      if (!client) return err("invalid_client", "unknown client_id", 401);
+      if (client.type === "confidential" && client.secret && client.secret !== clientSecret) {
+        return err("invalid_client", "bad client_secret", 401);
+      }
     }
 
     const issue = async (grant: { scope: string; patient?: string; user?: string; nonce?: string }, withRefresh: boolean) => {
@@ -114,8 +118,26 @@ export function oauthRoutes(baseUrl: string): Hono {
     }
 
     if (grantType === "client_credentials") {
-      // SMART Backend Services (private_key_jwt) — documented follow-up (needs client JWKS infra).
-      return err("unsupported_grant_type", "client_credentials / Backend Services not yet supported");
+      // SMART Backend Services: authenticate with a private_key_jwt client assertion, issue a
+      // system-scoped access token (no patient context, no refresh, no id_token).
+      const assertion = body.get("client_assertion");
+      if (body.get("client_assertion_type") !== "urn:ietf:params:oauth:client-assertion-type:jwt-bearer" || !assertion) {
+        return err("invalid_client", "backend services requires client_assertion_type=jwt-bearer + client_assertion", 401);
+      }
+      let peek: Record<string, unknown>;
+      try { peek = decodeJwt(assertion); } catch { return err("invalid_client", "malformed client_assertion", 401); }
+      const cid = (peek.iss ?? peek.sub) as string | undefined;         // client_id == assertion iss == sub
+      const bsClient = cid ? resolveClient(cid) : null;
+      const keySet = bsClient ? clientKeySet(bsClient) : null;
+      if (!bsClient || !keySet) return err("invalid_client", "unknown client or no registered key", 401);
+      try {
+        const { payload } = await jwtVerify(assertion, keySet, { audience: `${baseUrl}/oauth/token` });
+        if (payload.iss !== cid || payload.sub !== cid) return err("invalid_client", "assertion iss/sub must equal client_id", 401);
+        if (!payload.jti || jtiReplay(String(payload.jti))) return err("invalid_client", "missing or replayed jti", 401);
+      } catch { return err("invalid_client", "client_assertion verification failed", 401); }
+      const scope = body.get("scope") ?? "";
+      const access = await signAccessToken({ sub: cid!, scope, clientId: cid!, iss, aud: fhirAud, ttlSeconds: 300 });
+      return c.json({ access_token: access, token_type: "Bearer", expires_in: 300, scope }, 200, { "Cache-Control": "no-store", Pragma: "no-cache" });
     }
 
     return err("unsupported_grant_type", `unsupported grant_type: ${grantType}`);

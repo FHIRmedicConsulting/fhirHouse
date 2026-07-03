@@ -59,5 +59,16 @@ export function takeRefresh(t: string): RefreshGrant | null {
   return g.expiresAt > now() ? g : null;
 }
 
+// jti replay prevention for backend-services client assertions (each jti usable once).
+const seenJtis = new Map<string, number>();
+/** Record a jti; returns true if it was ALREADY seen (replay → reject). Expired entries are pruned. */
+export function jtiReplay(jti: string, ttlSeconds = 300): boolean {
+  const t = now();
+  for (const [k, exp] of seenJtis) if (exp <= t) seenJtis.delete(k); // prune
+  if (seenJtis.has(jti)) return true;
+  seenJtis.set(jti, t + ttlSeconds * 1000);
+  return false;
+}
+
 /** Test/maintenance helper. */
-export function clearOAuthStore(): void { codes.clear(); refresh.clear(); }
+export function clearOAuthStore(): void { codes.clear(); refresh.clear(); seenJtis.clear(); }
