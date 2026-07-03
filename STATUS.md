@@ -6,7 +6,9 @@ _Living snapshot of where the project is. Point-in-time narrative + resume runbo
 **Product:** open-source (Apache-2.0), no-Databricks FHIR R4 server on OSS Delta Lake
 (delta-rs / DataFusion via a Python sidecar; TypeScript/Hono REST tier). Local-first.
 
-**Health:** 16 commits · **120 delta + 120 unit tests green · tsc clean** · git working tree clean.
+**Health:** **143 delta + 120 unit tests green · typecheck + lint clean · CI wired** · git working tree clean.
+All 10 deep-review priorities (2026-07-02) are addressed — see `docs/status/2026-07-02-deep-review.md`
+(§next actions there are now done) and the session log.
 
 ---
 
@@ -38,11 +40,19 @@ Open: #5 storage-topology switch wiring · #6 CI + real lint + release · #7 **S
 server** (gates OAuth (g)(10) suites) · #8 `$export` async persistence · #9 search/slicing
 completeness · #10 config consolidation + TLS.
 
-## Next best actions
-1. **Broaden the tx surface** (validator batch `$validate-code` / `tx-resource` inline params) →
-   land the end-to-end "Inferno validates via our tx" run.
-2. **SMART authorization server** (`/authorize`, `/token`, launch context) — biggest remaining
-   lever; unblocks full (g)(10) certification.
+## Deep-review follow-ups (2026-07-02) — all 10 DONE
+✅ compartment enforcement · ✅ version TOCTOU · ✅ CapabilityStatement accuracy · ✅ **SMART
+authorization server** (`/oauth/authorize`+`/token`+PKCE+refresh+OIDC+JWKS) · ✅ profile-enforcement
+depth (nested required + profile bindings) · ✅ async disk-backed `$export` · ✅ prod hardening
+(500-sanitize, audit-failure log, TLS, non-root Docker+HEALTHCHECK, CI, real ESLint) · ✅ tx-endpoint
+breadth (codeableConcept validate, `$expand` filter/paging/total) · ✅ search completeness (numeric
+`_sort`, `_include:iterate`, `_revinclude` guard) · ✅ `is_current` migration.
+
+## Remaining follow-ups (explicitly deferred, lower priority)
+SMART **Backend Services** (client_credentials + private_key_jwt) · **composite** search params +
+multi-field `_sort` (codegen) · slicing max/closed + L4 invariants at depth ≥2 · **medallion**
+Gold-read-path (single store is the supported topology) · object-store **enumeration** for
+restart-registration + whole-store optimize · run the full **Inferno (g)(10)** suites end-to-end.
 
 ## Run / resume
 See `docs/status/session-033-2026-07-02.md` §6 (rebuild `.delta-inferno` with **rsync**, start
