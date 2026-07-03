@@ -534,10 +534,14 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
   const runSearch = async (c: any, rt: string, sp: URLSearchParams) => {
     const count = clampInt(sp.get("_count") ?? undefined, 50);
     const offset = clampInt(sp.get("_getpagesoffset") ?? undefined, 0);
-    const sortRaw = sp.get("_sort") ?? "-_lastUpdated"; // default newest-first
+    // _sort: first field honored (multi-field is a documented follow-up). Numeric/quantity sorts
+    // cast so 10 > 9 (string min would order "10" < "9").
+    const sortRaw = (sp.get("_sort") ?? "-_lastUpdated").split(",")[0]!;
     const sortDesc = sortRaw.startsWith("-");
     const sortField = sortRaw.replace(/^-/, "");
-    const sortParam = sortField !== "_lastUpdated" && searchParam(rt, sortField) ? sortField : undefined;
+    const sortDef = sortField !== "_lastUpdated" ? searchParam(rt, sortField) : undefined;
+    const sortParam = sortDef ? sortField : undefined;
+    const sortNumeric = sortDef?.type === "number" || sortDef?.type === "quantity";
 
     // Unified search: per-resource conditions + chaining/_has + base-column filters.
     const queries = recordOf(sp);
@@ -561,7 +565,7 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
     let resources: FhirResource[];
     let total: number;
     {
-      const r = await repo(rt).searchByParams({ conds, id: sp.get("_id") ?? undefined, idIn: effIdIn, lastUpdated, count, offset, sortDesc, sortParam });
+      const r = await repo(rt).searchByParams({ conds, id: sp.get("_id") ?? undefined, idIn: effIdIn, lastUpdated, count, offset, sortDesc, sortParam, sortNumeric });
       resources = r.resources;
       total = r.total;
     }
@@ -569,32 +573,51 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
     // _include / _revinclude — resolve referenced (or referencing) resources as include entries.
     const seen = new Set(resources.map((r) => `${rt}/${r.id}`));
     const includeEntries: any[] = [];
-    const addInclude = (type: string, res: FhirResource) => {
+    const addInclude = (type: string, res: FhirResource): FhirResource | null => {
       const key = `${type}/${res.id}`;
-      if (seen.has(key)) return;
+      if (seen.has(key)) return null;
       seen.add(key);
       includeEntries.push({ fullUrl: `${baseUrl}/${type}/${res.id}`, resource: res, search: { mode: "include" } });
+      return res;
     };
-    for (const inc of sp.getAll("_include")) {
-      const [srcType, param] = inc.split(":");
-      const def = srcType === rt && param ? searchParam(rt, param) : undefined;
-      if (!def || def.type !== "reference") continue;
-      for (const res of resources) {
+    // Resolve one `_include` spec (`SourceType:param[:targetType]`) over a working set; returns
+    // the newly-added resources (for `:iterate` to follow transitively).
+    const resolveInclude = async (spec: string, sources: FhirResource[]): Promise<FhirResource[]> => {
+      const [srcType, param, targetType] = spec.split(":");
+      const def = srcType && param && isR4CoreResource(srcType) ? searchParam(srcType, param) : undefined;
+      if (!def || def.type !== "reference") return [];
+      const added: FhirResource[] = [];
+      for (const res of sources) {
+        if ((res as any).resourceType !== srcType) continue;
         let refs: string[] = [];
         try { refs = (fhirpath.evaluate(res as any, def.expression, undefined, fhirpathR4Model) as any[]).map((x) => x?.reference).filter(Boolean); } catch { /* skip */ }
         for (const ref of refs) {
           const [tType, tId] = ref.split("/");
-          if (!tType || !tId || !isR4CoreResource(tType)) continue;
-          try { addInclude(tType, await repo(tType).read(tId)); } catch { /* unresolvable / deleted */ }
+          if (!tType || !tId || !isR4CoreResource(tType) || (targetType && tType !== targetType)) continue;
+          try { const inc = addInclude(tType, await repo(tType).read(tId)); if (inc) added.push(inc); } catch { /* unresolvable / deleted */ }
         }
+      }
+      return added;
+    };
+    for (const inc of sp.getAll("_include")) await resolveInclude(inc, resources);
+    // `_include:iterate` — follow includes transitively over the growing set (bounded depth).
+    const iterateSpecs = sp.getAll("_include:iterate");
+    if (iterateSpecs.length) {
+      let frontier = [...resources, ...includeEntries.map((e) => e.resource as FhirResource)];
+      for (let depth = 0; depth < 5 && frontier.length; depth++) {
+        const next: FhirResource[] = [];
+        for (const spec of iterateSpecs) next.push(...await resolveInclude(spec, frontier));
+        if (!next.length) break;
+        frontier = next;
       }
     }
     for (const rev of sp.getAll("_revinclude")) {
       const [srcType, param] = rev.split(":");
-      const def = srcType && param ? searchParam(srcType, param) : undefined;
+      if (!srcType || !param || !isR4CoreResource(srcType)) continue; // guard bogus/non-core types
+      const def = searchParam(srcType, param);
       if (!def || def.type !== "reference") continue;
       for (const res of resources) {
-        for (const m of await repo(srcType!).findReferencing([param!], `${rt}/${res.id}`)) addInclude(srcType!, m);
+        for (const m of await repo(srcType).findReferencing([param], `${rt}/${res.id}`)) addInclude(srcType, m);
       }
     }
 

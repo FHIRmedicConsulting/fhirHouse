@@ -205,6 +205,7 @@ export class DeltaResourceRepository {
     offset: number;
     sortDesc?: boolean;
     sortParam?: string; // search-param code to sort by (else last_updated)
+    sortNumeric?: boolean; // cast the sort key to DOUBLE (number/quantity) so 10 > 9
   }): Promise<{ resources: FhirResource[]; total: number }> {
     if (!this.wh.hasTable(this.table)) return { resources: [], total: 0 };
     if (opts.idIn && opts.idIn.length === 0) return { resources: [], total: 0 };
@@ -258,7 +259,10 @@ export class DeltaResourceRepository {
     let orderBy = `last_updated ${dir}`;
     const pageArgs: unknown[] = [...baseArgs];
     if (opts.sortParam) {
-      withClause = `WITH ${cur}, sortk AS (SELECT id, min(s.value) AS sv FROM ${unnested} WHERE t.s.code = ? GROUP BY id)`;
+      // Numeric/quantity → min over the CAST values (TRY_CAST tolerates non-numeric index rows),
+      // else min over the string values (ISO dates/strings sort lexically).
+      const keyExpr = opts.sortNumeric ? "min(TRY_CAST(s.value AS DOUBLE))" : "min(s.value)";
+      withClause = `WITH ${cur}, sortk AS (SELECT id, ${keyExpr} AS sv FROM ${unnested} WHERE t.s.code = ? GROUP BY id)`;
       pageArgs.push(opts.sortParam); // sortk CTE arg, after cur's baseArgs
       from = "cur LEFT JOIN sortk ON cur.id = sortk.id";
       orderBy = `sortk.sv ${dir}`;
