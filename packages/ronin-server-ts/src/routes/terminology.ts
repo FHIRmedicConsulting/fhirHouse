@@ -15,25 +15,33 @@ import { Hono } from "hono";
 import type { DeltaWarehouse } from "../lib/delta-warehouse.js";
 import { validateCode } from "../terminology/validate-code.js";
 
-/** Read operation params from the query string and/or a POST `Parameters` body (coding too). */
-async function readParams(c: any): Promise<Record<string, string>> {
-  const out: Record<string, string> = {};
-  for (const [k, v] of new URL(c.req.url).searchParams) out[k] = v;
+interface Coding { system?: string; code?: string; display?: string }
+
+/** Read operation params from the query string and/or a POST `Parameters` body — flat params
+ * plus the set of codings to validate (from `coding`, `codeableConcept`, or `code`+`system`). */
+async function readParams(c: any): Promise<{ p: Record<string, string>; codings: Coding[] }> {
+  const p: Record<string, string> = {};
+  const codings: Coding[] = [];
+  for (const [k, v] of new URL(c.req.url).searchParams) p[k] = v;
   if (c.req.method === "POST") {
     const body = await c.req.json().catch(() => null);
     if (body?.resourceType === "Parameters") {
-      for (const p of body.parameter ?? []) {
-        if (p.valueUri != null) out[p.name] = p.valueUri;
-        else if (p.valueString != null) out[p.name] = p.valueString;
-        else if (p.valueCode != null) out[p.name] = p.valueCode;
-        else if (p.valueBoolean != null) out[p.name] = String(p.valueBoolean);
-        else if (p.valueCoding) { out.system = p.valueCoding.system ?? out.system; out.code = p.valueCoding.code ?? out.code; if (p.valueCoding.display) out.display = p.valueCoding.display; }
+      for (const pr of body.parameter ?? []) {
+        if (pr.valueUri != null) p[pr.name] = pr.valueUri;
+        else if (pr.valueString != null) p[pr.name] = pr.valueString;
+        else if (pr.valueCode != null) p[pr.name] = pr.valueCode;
+        else if (pr.valueBoolean != null) p[pr.name] = String(pr.valueBoolean);
+        else if (pr.valueInteger != null) p[pr.name] = String(pr.valueInteger);
+        else if (pr.valueCoding) { codings.push({ ...pr.valueCoding }); p.system ??= pr.valueCoding.system; p.code ??= pr.valueCoding.code; }
+        else if (pr.valueCodeableConcept?.coding) for (const cd of pr.valueCodeableConcept.coding) codings.push({ ...cd });
+        else if (pr.resource?.resourceType === "ValueSet" && pr.resource.url) p.url ??= pr.resource.url; // inline valueSet param
       }
     } else if (body?.resourceType === "ValueSet" && body.url) {
-      out.url = body.url; // inline ValueSet → validate against its canonical (if loaded)
+      p.url = body.url; // inline ValueSet resource → validate against its canonical (if loaded)
     }
   }
-  return out;
+  if (p.code && !codings.length) codings.push({ system: p.system, code: p.code }); // code+system → a coding
+  return { p, codings };
 }
 
 const param = (name: string, value: unknown, kind = "valueString") =>
@@ -48,21 +56,31 @@ export function terminologyRoutes(wh: DeltaWarehouse): Hono {
   const app = new Hono();
 
   const doValidateCode = (kind: "valueSet" | "codeSystem") => async (c: any) => {
-    const p = await readParams(c);
-    const code = p.code;
+    const { p, codings } = await readParams(c);
     const target = p.url ?? (kind === "codeSystem" ? p.system : undefined);
-    if (!code || !target) {
-      return c.json({ resourceType: "Parameters", parameter: [{ name: "result", valueBoolean: false }, ...param("message", `${kind} $validate-code requires url${kind === "codeSystem" ? "|system" : ""} + code`)] }, 400);
+    if (!target || !codings.length) {
+      return c.json({ resourceType: "Parameters", parameter: [{ name: "result", valueBoolean: false }, ...param("message", `${kind} $validate-code requires url${kind === "codeSystem" ? "|system" : ""} + a code/coding/codeableConcept`)] }, 400);
     }
-    const r = await validateCode(wh, kind === "valueSet" ? { code, valueSet: target, system: p.system } : { code, system: target });
-    const parameter: any[] = [{ name: "result", valueBoolean: r.result }];
-    if (r.display) parameter.push({ name: "display", valueString: r.display });
-    if (p.system) parameter.push({ name: "system", valueUri: p.system });
-    parameter.push({ name: "code", valueCode: code });
-    if (r.message) parameter.push({ name: "message", valueString: r.message });
-    // 3-state → issue severity: invalid = error; unknown (not loaded) = warning (can't validate).
-    if (r.status === "invalid") parameter.push(issues("error", "code-invalid", r.message ?? "invalid code"));
-    else if (r.status === "unknown") parameter.push(issues("warning", "not-found", r.message ?? "not validated"));
+    // CodeableConcept / multiple codings: valid if ANY coding validates; else invalid if the VS/CS
+    // is loaded and none match; else unknown (not loaded → can't validate).
+    let anyValid = false, anyInvalid = false, anyUnknown = false;
+    let matched: { system?: string; code: string; display: string | null } | null = null;
+    let lastMsg: string | undefined;
+    for (const cd of codings) {
+      if (!cd.code) continue;
+      const r = await validateCode(wh, kind === "valueSet" ? { code: cd.code, valueSet: target, system: cd.system } : { code: cd.code, system: target });
+      lastMsg = r.message ?? lastMsg;
+      if (r.status === "valid") { anyValid = true; matched = { system: cd.system, code: cd.code, display: r.display }; break; }
+      if (r.status === "invalid") anyInvalid = true; else anyUnknown = true;
+    }
+    const first = codings.find((cd) => cd.code) ?? {};
+    const parameter: any[] = [{ name: "result", valueBoolean: anyValid }];
+    if (matched?.display) parameter.push({ name: "display", valueString: matched.display });
+    if ((matched?.system ?? first.system)) parameter.push({ name: "system", valueUri: matched?.system ?? first.system });
+    parameter.push({ name: "code", valueCode: matched?.code ?? first.code });
+    if (!anyValid && lastMsg) parameter.push({ name: "message", valueString: lastMsg });
+    if (!anyValid && anyInvalid) parameter.push(issues("error", "code-invalid", lastMsg ?? "no coding in the value set"));
+    else if (!anyValid && anyUnknown) parameter.push(issues("warning", "not-found", lastMsg ?? "not validated"));
     return c.json({ resourceType: "Parameters", parameter });
   };
 
@@ -72,17 +90,25 @@ export function terminologyRoutes(wh: DeltaWarehouse): Hono {
   app.post("/CodeSystem/$validate-code", doValidateCode("codeSystem"));
 
   const doExpand = async (c: any) => {
-    const p = await readParams(c);
+    const { p } = await readParams(c);
     if (!p.url) return c.json({ resourceType: "OperationOutcome", issue: [{ severity: "error", code: "required", details: { text: "$expand requires url" } }] }, 400);
     const count = Math.max(0, Math.min(Number(p.count ?? "1000"), 5000));
+    const offset = Math.max(0, Math.trunc(Number(p.offset ?? "0")) || 0);
+    const filter = p.filter?.toLowerCase();
     wh.registerTerminology("valueset_expansion");
+    // `filter` is a case-insensitive substring over code + display (FHIR $expand text filter).
+    const where = filter ? "valueset = ? AND (lower(code) LIKE ? OR lower(display) LIKE ?)" : "valueset = ?";
+    const args = filter ? [p.url, `%${filter}%`, `%${filter}%`] : [p.url];
+    const totalRows = await wh.query<{ n: number }>(`SELECT count(*) AS n FROM valueset_expansion WHERE ${where}`, args);
+    const total = Number(totalRows[0]?.n ?? 0);
     const rows = await wh.query<{ system: string; code: string; display: string | null }>(
-      `SELECT system, code, display FROM valueset_expansion WHERE valueset = ? LIMIT ${count}`, [p.url],
+      `SELECT system, code, display FROM valueset_expansion WHERE ${where} LIMIT ${count} OFFSET ${offset}`, args,
     );
     return c.json({
       resourceType: "ValueSet", url: p.url, status: "active",
       expansion: {
-        timestamp: new Date().toISOString(), total: rows.length,
+        timestamp: new Date().toISOString(), total, offset,
+        ...(filter ? { parameter: [{ name: "filter", valueString: p.filter }] } : {}),
         contains: rows.map((r) => ({ system: r.system, code: r.code, ...(r.display ? { display: r.display } : {}) })),
       },
     });
@@ -91,7 +117,7 @@ export function terminologyRoutes(wh: DeltaWarehouse): Hono {
   app.post("/ValueSet/$expand", doExpand);
 
   const doLookup = async (c: any) => {
-    const p = await readParams(c);
+    const { p } = await readParams(c);
     if (!p.system || !p.code) return c.json({ resourceType: "OperationOutcome", issue: [{ severity: "error", code: "required", details: { text: "$lookup requires system + code" } }] }, 400);
     wh.registerTerminology("codesystem_concept");
     const hit = await wh.query<{ display: string | null }>(

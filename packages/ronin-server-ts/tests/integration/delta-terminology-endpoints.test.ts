@@ -18,6 +18,10 @@ describe.skipIf(!SIDECAR)("terminology operation endpoints", () => {
   const wh = SIDECAR ? new DeltaWarehouse({ sidecarUrl: SIDECAR, base: BASE }) : (null as unknown as DeltaWarehouse);
   const app = SIDECAR ? createDeltaApp({ warehouse: wh, baseUrl: "http://test" }) : (null as unknown as ReturnType<typeof createDeltaApp>);
   const get = async (p: string) => { const r = await app.fetch(new Request(`http://test${p}`)); return { status: r.status, body: await r.json() }; };
+  const postParams = async (p: string, parameter: any[]) => {
+    const r = await app.fetch(new Request(`http://test${p}`, { method: "POST", headers: { "Content-Type": "application/fhir+json" }, body: JSON.stringify({ resourceType: "Parameters", parameter }) }));
+    return { status: r.status, body: await r.json() };
+  };
   const val = (params: any[], name: string) => params.find((x) => x.name === name);
 
   beforeAll(async () => {
@@ -25,9 +29,10 @@ describe.skipIf(!SIDECAR)("terminology operation endpoints", () => {
     if (!(await wh.health())) throw new Error("sidecar down");
     // Seed via the real loader so the terminology-table schema matches the other terminology tests
     // sharing this base (raw minimal rows would corrupt the shared schema).
+    const concepts = [{ code: "A", display: "Alpha" }, { code: "B", display: "Beta" }, { code: "C", display: "Gamma" }];
     await loadTerminologyResources(wh, [
-      { resourceType: "CodeSystem", url: CS, version: "1.0.0", content: "complete", concept: [{ code: "A", display: "Alpha" }] },
-      { resourceType: "ValueSet", url: VS, version: "1.0.0", compose: { include: [{ system: CS, concept: [{ code: "A", display: "Alpha" }] }] } },
+      { resourceType: "CodeSystem", url: CS, version: "1.0.0", content: "complete", concept: concepts },
+      { resourceType: "ValueSet", url: VS, version: "1.0.0", compose: { include: [{ system: CS, concept: concepts }] } },
     ]);
   });
 
@@ -52,10 +57,31 @@ describe.skipIf(!SIDECAR)("terminology operation endpoints", () => {
     expect(val(unknown.body.parameter, "issues").resource.issue[0].severity).toBe("warning"); // can't validate ≠ invalid
   });
 
+  it("ValueSet/$validate-code accepts a codeableConcept (valid if ANY coding matches)", async () => {
+    const { body } = await postParams("/ValueSet/$validate-code", [
+      { name: "url", valueUri: VS },
+      { name: "codeableConcept", valueCodeableConcept: { coding: [{ system: CS, code: "NOPE" }, { system: CS, code: "B" }] } },
+    ]);
+    expect(val(body.parameter, "result").valueBoolean).toBe(true);       // "B" matches
+    expect(val(body.parameter, "code").valueCode).toBe("B");
+  });
+
   it("ValueSet/$expand returns the expansion contents", async () => {
     const { body } = await get(`/ValueSet/$expand?url=${encodeURIComponent(VS)}`);
     expect(body.resourceType).toBe("ValueSet");
+    expect(body.expansion.total).toBe(3);
     expect(body.expansion.contains).toContainEqual({ system: CS, code: "A", display: "Alpha" });
+  });
+
+  it("ValueSet/$expand supports count/offset paging + filter (total is the full count)", async () => {
+    const page = (await get(`/ValueSet/$expand?url=${encodeURIComponent(VS)}&count=2`)).body;
+    expect(page.expansion.total).toBe(3);           // full total, not the page size
+    expect(page.expansion.contains.length).toBe(2); // page
+    const page2 = (await get(`/ValueSet/$expand?url=${encodeURIComponent(VS)}&count=2&offset=2`)).body;
+    expect(page2.expansion.contains.length).toBe(1);
+    const filtered = (await get(`/ValueSet/$expand?url=${encodeURIComponent(VS)}&filter=bet`)).body;
+    expect(filtered.expansion.total).toBe(1);       // only "Beta"
+    expect(filtered.expansion.contains[0].code).toBe("B");
   });
 
   it("CodeSystem/$lookup returns the display", async () => {
