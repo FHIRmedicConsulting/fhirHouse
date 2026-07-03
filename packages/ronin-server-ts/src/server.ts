@@ -32,6 +32,13 @@ async function main(): Promise<void> {
   const existing = await warehouse.registerExistingTables();
   if (existing.length) log.info({ tables: existing.length }, "registered existing Delta tables on startup");
 
+  // Opt-in one-time migration: backfill is_current on Bronze tables populated before it existed
+  // (fresh stores don't need it). Set RONIN_MIGRATE_IS_CURRENT=true once when upgrading.
+  if (process.env.RONIN_MIGRATE_IS_CURRENT === "true") {
+    const migrated = await warehouse.migrateAllBronzeIsCurrent();
+    log.info({ migrated }, "is_current schema migration complete");
+  }
+
   const app = createDeltaApp({ warehouse, baseUrl: publicUrl });
 
   // Transmission security (45 CFR §164.312(e)): terminate TLS at a reverse proxy (the common

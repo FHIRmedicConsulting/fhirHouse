@@ -288,6 +288,25 @@ export class DeltaWarehouse implements Warehouse {
     this.registerTable(this.catalog.tableName("bronze", resourceType), path);
   }
 
+  /** Backfill `is_current` on a pre-is_current Bronze table (schema migration; idempotent). Needed
+   * only for stores populated before is_current existed — fresh stores get the column at write. */
+  async migrateIsCurrent(resourceType: string): Promise<unknown> {
+    const path = this.catalog.tablePath("bronze", resourceType);
+    const r = await this.postWrite(path, "/migrate-is-current", { table_path: path });
+    this.registerTable(this.catalog.tableName("bronze", resourceType), path);
+    return r;
+  }
+
+  /** Migrate every on-disk Bronze table (local FS). Returns per-table results. */
+  async migrateAllBronzeIsCurrent(): Promise<Record<string, unknown>> {
+    const out: Record<string, unknown> = {};
+    for (const name of await this.registerExistingTables()) {
+      if (name.endsWith("_silver") || name.endsWith("_gold")) continue; // bronze names have no suffix
+      out[name] = await this.migrateIsCurrent(name);
+    }
+    return out;
+  }
+
   /**
    * Compact one tier's Delta table (+ optional vacuum). Append-per-write makes many small
    * files; periodic compaction keeps scans fast. Vacuum defaults to a SAFE 168h retention

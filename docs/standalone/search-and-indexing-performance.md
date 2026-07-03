@@ -17,6 +17,24 @@ Every search/read:
 
 Correct and fine for dev/synthetic volumes. The scaling costs are predictable.
 
+## Storage topology, migration & object-store parity (deep-review #10)
+
+- **`is_current` schema migration — ✅ DONE.** A Bronze table populated before `is_current`
+  existed lacks the column, so `WHERE is_current` search breaks. `DeltaWarehouse.migrateIsCurrent`
+  (sidecar `/migrate-is-current`) backfills it (`version_id = max per id` → current), idempotent;
+  `migrateAllBronzeIsCurrent` covers every Bronze table. Opt-in at startup via
+  `RONIN_MIGRATE_IS_CURRENT=true` (run once when upgrading). Test: `delta-migration`.
+- **Medallion read path — DEFERRED (decision).** `RONIN_STORAGE_MODE=medallion` today only prefixes
+  terminology/conformance paths with `gold/`; reads always hit Bronze and `promote.ts` isn't wired.
+  Per project scope, **single store is the supported topology** and data governance/quality/promotion
+  are **another app's** responsibility — so the medallion Gold-read-path is intentionally not built
+  here (it's a large feature behind the `Warehouse`/catalog seam, addable later without breaking single store).
+- **Object-store parity — KNOWN LIMITATION.** `registerExistingTables` (startup discovery) and
+  `optimize-all` (whole-store maintenance) are **local-FS only** (`os.walk`); on `s3://`/`gs://`/`az://`
+  bases they no-op / raise. delta-rs itself reads+writes object stores, so CRUD works there, but
+  restart table-registration + whole-store optimize need prefix-listing enumeration (a follow-up).
+  Per-table `/optimize` works on object stores regardless.
+
 ## What actually helps (priority order)
 
 1. **Current-version materialization — the #1 lever. ✅ DONE (single store).** The

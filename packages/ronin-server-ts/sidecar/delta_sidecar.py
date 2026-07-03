@@ -280,6 +280,24 @@ def do_query(req):
     return {"rows": pa.table(result).to_pylist()}
 
 
+def do_migrate_is_current(req):
+    """Backfill the `is_current` column on a pre-is_current Bronze table (schema migration).
+    Sets is_current = (version_id is the max for that id). One-time full rewrite (overwrite).
+    Idempotent: no-op if the column already exists or the table is missing."""
+    path = req["table_path"]
+    if _is_object_store(path) or not os.path.exists(path):
+        return {"migrated": False, "missing": not _is_object_store(path)}
+    dt = DeltaTable(path)
+    if "is_current" in {f.name for f in dt.schema().fields}:
+        return {"migrated": False, "already": True}
+    result = QueryBuilder().register("t", dt).execute(
+        "SELECT *, (version_id = max(version_id) OVER (PARTITION BY id)) AS is_current FROM t"
+    ).read_all()
+    tbl = pa.table(result)
+    _with_retry(lambda: write_deltalake(path, tbl, mode="overwrite", schema_mode="overwrite"))
+    return {"migrated": True, "rows": tbl.num_rows}
+
+
 def do_validate(req):
     """Validate-only (no write) — for benchmarking the Python validation path."""
     results = []
@@ -373,8 +391,8 @@ def do_delete(req):
 
 
 ROUTES = {"/write": do_write, "/write-version": do_write_version, "/merge": do_merge, "/query": do_query,
-          "/validate": do_validate, "/optimize": do_optimize, "/optimize-all": do_optimize_all,
-          "/delete": do_delete}
+          "/validate": do_validate, "/migrate-is-current": do_migrate_is_current,
+          "/optimize": do_optimize, "/optimize-all": do_optimize_all, "/delete": do_delete}
 
 
 class Handler(BaseHTTPRequestHandler):
