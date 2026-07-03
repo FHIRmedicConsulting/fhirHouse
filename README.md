@@ -63,7 +63,8 @@ Provisioning CLI: `scripts/ronin-terminology.ts` (`install-ig`, `load-terminolog
 |---|---|
 | `RONIN_DELTA_SIDECAR_URL` / `RONIN_DELTA_BASE` | sidecar URL + Delta root |
 | `RONIN_STORAGE_MODE` | `single` (default) \| `medallion` |
-| `RONIN_AUTH_ENABLED` / `RONIN_AUTH_STRATEGY` | auth gate (`stub`\|`jwks`\|`oidc`) |
+| `RONIN_AUTH_ENABLED` / `RONIN_AUTH_STRATEGY` | auth gate (`stub`\|`jwks`\|`local`\|`oidc`) |
+| `RONIN_OAUTH_ENABLED` | SMART authorization server (`/oauth/authorize`, `/oauth/token`, `/.well-known/jwks.json`); pair with `RONIN_AUTH_STRATEGY=local`. `RONIN_OAUTH_DEFAULT_PATIENT`/`RONIN_OAUTH_DEFAULT_USER` set the auto-approve launch context; `RONIN_OAUTH_CLIENTS` (JSON) locks down clients in prod |
 | `RONIN_AUDIT_ENABLED` | AuditEvent per access |
 | `RONIN_CONSENT_ENFORCEMENT` | read-time consent + DS4P label enforcement |
 | `RONIN_QUARANTINE_ON_UNKNOWN` | quarantine + auto-resolve unknown terminology |

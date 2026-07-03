@@ -13,6 +13,7 @@ import { IntrospectionService } from "./token-introspection.js";
 import { SmartVersionRegistry, ALL_ACTIVE_VERSIONS } from "./smart-versions/index.js";
 import { StubAuthStrategy } from "./idp/stub-auth.js";
 import { JwksAuthStrategy } from "./idp/jwks-auth.js";
+import { LocalAuthStrategy } from "./idp/local-auth.js";
 import type { AuthStrategy } from "./idp/types.js";
 
 export const authEnabled = (): boolean => process.env.RONIN_AUTH_ENABLED === "true";
@@ -21,6 +22,7 @@ function buildStrategy(): AuthStrategy {
   switch (process.env.RONIN_AUTH_STRATEGY ?? "jwks") {
     case "stub": return new StubAuthStrategy();
     case "jwks": return new JwksAuthStrategy();
+    case "local": return new LocalAuthStrategy(); // verify tokens from our own SMART auth server
     // case "oidc": return new OidcAuthStrategy({ discoveryUrl: process.env.RONIN_OIDC_DISCOVERY!, ... });
     default: return new JwksAuthStrategy();
   }
