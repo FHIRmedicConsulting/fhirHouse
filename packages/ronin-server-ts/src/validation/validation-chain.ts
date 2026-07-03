@@ -23,13 +23,15 @@ export interface ValidationResult {
   pending?: Array<{ valueSet: string; path: string }>;
 }
 
-/** Cached per-profile spec from the installed snapshot: required top-level elements + slicings. */
-interface ProfileSpec { required: string[]; slicings: Slicing[] }
+/** Cached per-profile spec from the installed snapshot: required element paths (any depth),
+ * profile-tightened required bindings, and slicings. Paths are relative to the resource type. */
+interface RequiredBinding { path: string; valueSet: string; fhirType: string }
+interface ProfileSpec { required: string[]; requiredBindings: RequiredBinding[]; slicings: Slicing[] }
 const profileSpecCache = new Map<string, ProfileSpec>();
 
 async function profileSpec(wh: DeltaWarehouse, url: string): Promise<ProfileSpec> {
   if (profileSpecCache.has(url)) return profileSpecCache.get(url)!;
-  let spec: ProfileSpec = { required: [], slicings: [] };
+  let spec: ProfileSpec = { required: [], requiredBindings: [], slicings: [] };
   try {
     wh.registerConformance("structuredefinition");
     const rows = await wh.query<{ json: string }>(
@@ -39,18 +41,58 @@ async function profileSpec(wh: DeltaWarehouse, url: string): Promise<ProfileSpec
     if (rows.length) {
       const sd = JSON.parse(rows[0].json);
       const rtype = sd.type;
-      const required: string[] = [];
+      const required = new Set<string>();
+      const requiredBindings: RequiredBinding[] = [];
       for (const e of sd.snapshot?.element ?? []) {
-        const segs = (e.path ?? "").split(".");
-        if (segs.length === 2 && segs[0] === rtype && (Number(e.min) || 0) >= 1) required.push(segs[1]);
+        const path = String(e.path ?? "");
+        if (path === rtype || !path.startsWith(`${rtype}.`)) continue;
+        const rel = path.slice(rtype.length + 1); // path relative to the resource (any depth)
+        if (rel.includes(":")) continue; // skip slice-qualified element ids
+        if ((Number(e.min) || 0) >= 1) required.add(rel);
+        if (e.binding?.strength === "required" && e.binding?.valueSet) {
+          requiredBindings.push({ path: rel, valueSet: String(e.binding.valueSet).split("|")[0], fhirType: e.type?.[0]?.code ?? "" });
+        }
       }
-      spec = { required, slicings: extractSlicings(sd.snapshot ?? { element: [] }) };
+      spec = { required: [...required], requiredBindings, slicings: extractSlicings(sd.snapshot ?? { element: [] }) };
     }
   } catch {
-    spec = { required: [], slicings: [] };
+    spec = { required: [], requiredBindings: [], slicings: [] };
   }
   profileSpecCache.set(url, spec);
   return spec;
+}
+
+/** Descend a dot-path (relative to the root), flattening arrays → the set of nodes at that path.
+ * `[x]` choice segments are not descended here (only meaningful as a leaf, handled by callers). */
+function nodesAtPath(root: unknown, segs: string[]): unknown[] {
+  let cur: unknown[] = [root];
+  for (const seg of segs) {
+    const next: unknown[] = [];
+    for (const node of cur) {
+      if (!node || typeof node !== "object") continue;
+      const v = (node as Record<string, unknown>)[seg];
+      if (v === undefined || v === null) continue;
+      if (Array.isArray(v)) next.push(...v);
+      else next.push(v);
+    }
+    cur = next;
+  }
+  return cur;
+}
+
+/** Missing-required-element issues for a relative path, conditional on parent presence (FHIR:
+ * a required nested element only applies where its container is present). Handles arrays + [x]. */
+function missingRequired(resource: Record<string, unknown>, rt: string, rel: string, url: string): ValidationIssue[] {
+  const segs = rel.split(".");
+  const leaf = segs[segs.length - 1]!;
+  const parents = segs.length === 1 ? [resource] : nodesAtPath(resource, segs.slice(0, -1));
+  const out: ValidationIssue[] = [];
+  for (const parent of parents) {
+    if (parent && typeof parent === "object" && !elementPresent(parent as Record<string, unknown>, leaf)) {
+      out.push({ path: `${rt}.${rel}`, message: `profile ${url} requires element '${rel}'` });
+    }
+  }
+  return out;
 }
 
 /** Synchronous structural-only validation (L1/L2) — no warehouse, in-process. */
@@ -97,12 +139,20 @@ export async function validateResource(
   // per the IG-provisioning research) — a wrong slicer false-rejects valid resources; the
   // generated `validateSliceCardinality` helper is the future hook.
   const profiles = ((resource.meta as any)?.profile ?? []) as string[];
+  const profileBindingTasks: BindingTask[] = [];
   if (opts?.warehouse && profiles.length) {
     for (const url of profiles) {
       const spec = await profileSpec(opts.warehouse, url);
-      for (const el of spec.required) {
-        if (!elementPresent(resource, el)) {
-          issues.push({ path: `${rt}.${el}`, message: `profile ${url} requires element '${el}'` });
+      // Required elements at ANY depth (conditional on parent presence).
+      for (const rel of spec.required) issues.push(...missingRequired(resource, rt, rel, url));
+      // Profile-tightened required bindings (this is where US Core CodeableConcept/Coding
+      // bindings live — the base R4 schema carries few). Collected here, checked below with
+      // the base bindings so the same 3-state (valid / invalid / unknown→pending) applies.
+      for (const rb of spec.requiredBindings) {
+        if (rb.path.includes("[x]")) continue; // choice-type binding paths deferred
+        for (const node of nodesAtPath(resource, rb.path.split("."))) {
+          const codings = extractCodings(node, rb.fhirType);
+          if (codings.length) profileBindingTasks.push({ path: `${rt}.${rb.path}`, valueSet: rb.valueSet, codings });
         }
       }
       // Slicing — required value/pattern-discriminated slices.
@@ -115,7 +165,7 @@ export async function validateResource(
   // "unknown" (ValueSet not loaded) degrades to a skip (warning), not a failure.
   const pending: Array<{ valueSet: string; path: string }> = [];
   if (opts?.warehouse) {
-    const tasks: BindingTask[] = [];
+    const tasks: BindingTask[] = [...profileBindingTasks]; // profile-tightened + base bindings
     collectBindings(resource, schemaFor(rt), rt, tasks);
     for (const task of tasks) {
       let anyValid = false, anyInvalid = false, anyUnknown = false;
