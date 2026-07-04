@@ -26,6 +26,38 @@ jobs:
       - run: npm run test:unit
       - run: npm run build
 
+  security:
+    name: supply-chain (audit · SBOM · pip-audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: packages/ronin-server-ts/package-lock.json
+      - run: npm ci
+      - name: npm audit (fail on high/critical)
+        run: npm run audit
+      - name: Install linked workspace deps (for a complete SBOM tree)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: packages/ronin-fhir-types
+      - name: Generate CycloneDX SBOM
+        run: npm sbom --sbom-format cyclonedx --omit dev > sbom.cdx.json
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-cyclonedx
+          path: packages/ronin-server-ts/sbom.cdx.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: pip-audit (sidecar deps)
+        working-directory: packages/ronin-server-ts/sidecar
+        run: |
+          pip install pip-audit
+          pip-audit -r requirements.txt
+
   integration:
     name: delta integration (sidecar)
     runs-on: ubuntu-latest

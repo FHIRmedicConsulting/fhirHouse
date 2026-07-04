@@ -24,6 +24,8 @@ import { buildCapabilityStatement } from "./conformance/capability-statement.js"
 import { buildTerminologyCapabilities } from "./conformance/terminology-capabilities.js";
 import { buildSmartConfiguration } from "./conformance/smart-configuration.js";
 import { oauthEnabled, oauthRoutes } from "./auth/oauth/oauth-routes.js";
+import { mountHttpHardening } from "./security/http-hardening.js";
+import { securityProfile } from "./security/profile.js";
 import { FhirError } from "./lib/errors.js";
 import type { OperationOutcome } from "@ronin/fhir-types";
 
@@ -35,6 +37,11 @@ export interface DeltaAppDeps {
 
 export function createDeltaApp(deps: DeltaAppDeps): Hono {
   const app = new Hono();
+
+  // HTTP-tier hardening (ADR-0033) — FIRST, so headers/CORS/body-limit/rate-limit apply to every
+  // request incl. auth denials. Non-breaking in the dev profile (headers on; CORS permissive;
+  // rate-limit off). The `production` profile engages strict CORS + rate limiting.
+  mountHttpHardening(app, { profile: securityProfile() });
 
   // Public routes (SMART): /health + /metadata are mounted BEFORE the auth gate so they
   // bypass it (Hono runs only middleware registered before a matched handler).

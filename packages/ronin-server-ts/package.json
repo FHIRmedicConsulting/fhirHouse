@@ -20,7 +20,9 @@
     "test:delta": "vitest run --no-file-parallelism tests/integration/delta-*.test.ts",
     "test:unit": "vitest run tests/unit",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src --max-warnings 0"
+    "lint": "eslint src --max-warnings 0",
+    "audit": "npm audit --omit=dev --audit-level=high",
+    "sbom": "npm sbom --sbom-format cyclonedx --omit dev"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.0",

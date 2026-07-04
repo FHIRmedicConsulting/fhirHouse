@@ -8,12 +8,13 @@
  */
 
 import { serve } from "@hono/node-server";
-import { readFileSync } from "node:fs";
 import { createServer as createHttpsServer } from "node:https";
 import pino from "pino";
 import { DeltaWarehouse } from "./lib/delta-warehouse.js";
 import { createDeltaApp } from "./app.js";
 import { startMaintenanceScheduler } from "./lib/maintenance.js";
+import { buildTlsConfig } from "./security/tls.js";
+import { evaluateSecurityPosture } from "./security/profile.js";
 
 const log = pino({ level: process.env.RONIN_LOG_LEVEL ?? "info" });
 
@@ -41,16 +42,24 @@ async function main(): Promise<void> {
 
   const app = createDeltaApp({ warehouse, baseUrl: publicUrl });
 
-  // Transmission security (45 CFR §164.312(e)): terminate TLS at a reverse proxy (the common
-  // deploy), OR run HTTPS directly by setting RONIN_TLS_CERT + RONIN_TLS_KEY (PEM paths).
-  const certPath = process.env.RONIN_TLS_CERT, keyPath = process.env.RONIN_TLS_KEY;
-  const tls = certPath && keyPath
-    ? { createServer: createHttpsServer, serverOptions: { cert: readFileSync(certPath), key: readFileSync(keyPath) } }
-    : {};
+  // Transmission security (45 CFR §164.312(e)): hardened in-process HTTPS when RONIN_TLS_CERT/KEY
+  // are set (NIST SP 800-52r2 ciphers, TLS 1.2 min), OR terminate TLS at a reverse proxy.
+  const tlsCfg = buildTlsConfig();
+  const tls = tlsCfg.enabled ? { createServer: createHttpsServer, serverOptions: tlsCfg.serverOptions! } : {};
+
+  // Fail-closed security posture check. In the `production` profile the server REFUSES TO BOOT
+  // when required controls (auth/audit/TLS/non-ephemeral keys) are missing (ADR-0032).
+  const posture = evaluateSecurityPosture({ tlsInProcess: tlsCfg.enabled });
+  for (const w of posture.warnings) log.warn({ security: true }, w);
+  if (!posture.ok) {
+    for (const e of posture.errors) log.fatal({ security: true }, e);
+    log.fatal(`security profile '${posture.profile}': refusing to start with an insecure posture (${posture.errors.length} unmet control(s))`);
+    process.exit(1);
+  }
+
   serve({ fetch: app.fetch, port, ...tls }, (info) =>
-    log.info({ port: info.port, sidecarUrl, base, tls: Boolean(certPath && keyPath) }, "ronin-standalone (delta) listening"),
+    log.info({ port: info.port, sidecarUrl, base, tls: tlsCfg.enabled, profile: posture.profile }, "ronin-standalone (delta) listening"),
   );
-  if (!(certPath && keyPath)) log.warn("TLS not configured (RONIN_TLS_CERT/KEY unset) — terminate TLS at a proxy before exposing PHI (§164.312(e))");
 
   // Opt-in store maintenance: Delta compaction (+ optional vacuum) on an interval
   // (RONIN_MAINTENANCE_INTERVAL_MIN). Keeps small files in check as the store grows.
