@@ -16,6 +16,9 @@ Status legend: ✅ approved (explicit Chad decision or ratified ADR) · ⚠️ n
 > **`@databricks/sql` is removed** (0 refs in src + lockfile); the **heritage `src/auth/` module is
 > ratified by ADR-0030**. New security deps added since (all **Node/Hono built-ins + existing `jose`**,
 > **no new runtime dependency**) are covered by ADR-0031..0036. Rows below updated accordingly.
+> **Optional, operator-installed (NOT in the dependency tree):** `ioredis` — lazy-imported only when
+> `RONIN_RATE_LIMIT_STORE=redis` for shared multi-node rate limiting (ADR-0033); single-node never loads
+> it. `@vitest/coverage-v8` — dev-only (coverage gate). Both disclosed here.
 
 ## Production server — `packages/ronin-server-ts`
 

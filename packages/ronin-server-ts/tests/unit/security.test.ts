@@ -11,6 +11,7 @@ import { Hono } from "hono";
 import { buildTlsConfig, NIST_TLS12_CIPHERS } from "../../src/security/tls.js";
 import { evaluateSecurityPosture, securityProfile } from "../../src/security/profile.js";
 import { rateLimit, MemoryRateLimitStore, type RateLimitStore } from "../../src/security/rate-limit.js";
+import { RedisRateLimitStore, type RedisEvalClient } from "../../src/security/redis-rate-limit-store.js";
 import { mountHttpHardening } from "../../src/security/http-hardening.js";
 
 // --- env isolation ------------------------------------------------------------
@@ -156,6 +157,30 @@ describe("rateLimit", () => {
     expect(s.size).toBe(1);
     s.sweep(2000); // past resetAt
     expect(s.size).toBe(0);
+  });
+
+  it("RedisRateLimitStore counts across the (shared) store + resets on window expiry", async () => {
+    // Fake Redis: simulate the store's fixed-window INCR+PEXPIRE Lua for any script string.
+    let t = 1000;
+    const map = new Map<string, { count: number; expireAt: number }>();
+    const redis: RedisEvalClient = {
+      async eval(_script, _n, key, windowMs) {
+        let e = map.get(String(key));
+        if (!e || e.expireAt <= t) { e = { count: 0, expireAt: t + Number(windowMs) }; map.set(String(key), e); }
+        e.count += 1;
+        return [e.count, Math.max(0, e.expireAt - t)];
+      },
+    };
+    const store = new RedisRateLimitStore(redis);
+    const app = new Hono();
+    app.use("*", rateLimit({ limit: 2, windowMs: 60_000, now: () => t, store }));
+    app.get("/x", (c) => c.text("ok"));
+    const hit = () => app.request("/x", { headers: { "x-forwarded-for": "8.8.8.8" } });
+    expect((await hit()).status).toBe(200);
+    expect((await hit()).status).toBe(200);
+    expect((await hit()).status).toBe(429);  // shared store enforces across requests
+    t += 61_000;                              // window expired
+    expect((await hit()).status).toBe(200);
   });
 
   it("accepts a pluggable (async, shared-store-style) backend", async () => {

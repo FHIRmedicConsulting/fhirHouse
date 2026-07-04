@@ -16,12 +16,15 @@ import type { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { cors } from "hono/cors";
 import { bodyLimit } from "hono/body-limit";
-import { rateLimit } from "./rate-limit.js";
+import { rateLimit, type RateLimitStore } from "./rate-limit.js";
 import type { SecurityProfile } from "./profile.js";
 
 export interface HardeningOptions {
   profile: SecurityProfile;
   env?: NodeJS.ProcessEnv;
+  /** Counter backend for rate limiting; defaults to a per-process store. Inject a shared store
+   *  (e.g. RedisRateLimitStore) for consistent limits across instances. */
+  rateLimitStore?: RateLimitStore;
 }
 
 const DEFAULT_MAX_BODY_BYTES = 10 * 1024 * 1024; // 10 MiB — generous for FHIR transaction bundles
@@ -85,6 +88,6 @@ export function mountHttpHardening(app: Hono, opts: HardeningOptions): void {
   const rlEnabled = env.RONIN_RATE_LIMIT_ENABLED === "true" || (isProd && env.RONIN_RATE_LIMIT_ENABLED !== "false");
   if (rlEnabled) {
     const rpm = Number(env.RONIN_RATE_LIMIT_RPM) || DEFAULT_RATE_LIMIT_RPM;
-    app.use("*", rateLimit({ limit: rpm, windowMs: 60_000 }));
+    app.use("*", rateLimit({ limit: rpm, windowMs: 60_000, store: opts.rateLimitStore }));
   }
 }

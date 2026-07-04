@@ -35,8 +35,9 @@ denials), using **Hono built-ins only (no new dependency)**:
 
 - (+) Standard API hardening; non-breaking defaults (headers harmless, CORS permissive in dev,
   rate-limit off in dev) — verified against the full unit + delta suites.
-- (−) The default rate-limit store is **single-node** (per-process counters). The limiter is now
-  **store-pluggable** (`RateLimitStore`, async-capable) so a shared store (e.g. Redis) can make limits
-  consistent across instances — the shared-store *implementation* is a follow-up (would add a Redis
-  dependency → its own disclosure/ADR). Single-node is fine for Alpha and as a per-instance backstop
-  behind an LB.
+- The default rate-limit store is **single-node** (per-process counters). A **shared Redis store** is
+  now available (`RedisRateLimitStore`, atomic fixed-window Lua) for consistent limits across
+  instances — opt-in via `RONIN_RATE_LIMIT_STORE=redis` + `RONIN_REDIS_URL`. It carries **no forced
+  dependency**: `ioredis` is lazy-imported only when configured (single-node deploys never load it;
+  the operator runs `npm i ioredis` to enable it). Falls back to the per-node store with a clear log
+  if unset/unavailable.

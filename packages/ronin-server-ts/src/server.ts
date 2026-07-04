@@ -17,8 +17,27 @@ import type { Server as HttpsServer } from "node:https";
 import { buildTlsConfig, watchTlsCert } from "./security/tls.js";
 import { evaluateSecurityPosture } from "./security/profile.js";
 import { startAuditAnchorScheduler } from "./audit/audit-anchor.js";
+import type { RateLimitStore } from "./security/rate-limit.js";
+import { RedisRateLimitStore, type RedisEvalClient } from "./security/redis-rate-limit-store.js";
 
 const log = pino({ level: process.env.RONIN_LOG_LEVEL ?? "info" });
+
+/** Build a Redis-backed rate-limit store when RONIN_RATE_LIMIT_STORE=redis; else undefined
+ *  (in-process store). Lazy-imports `ioredis` so it isn't a dependency for single-node deploys. */
+async function buildSharedRateLimitStore(logger: typeof log): Promise<RateLimitStore | undefined> {
+  if (process.env.RONIN_RATE_LIMIT_STORE !== "redis") return undefined;
+  const url = process.env.RONIN_REDIS_URL;
+  if (!url) { logger.error("RONIN_RATE_LIMIT_STORE=redis but RONIN_REDIS_URL is unset — using per-node store"); return undefined; }
+  try {
+    const mod = "ioredis"; // non-literal → not statically resolved (optional runtime dep)
+    const { default: Redis } = (await import(mod)) as { default: new (url: string) => RedisEvalClient };
+    logger.info("rate limiting: shared Redis store enabled");
+    return new RedisRateLimitStore(new Redis(url));
+  } catch {
+    logger.error("RONIN_RATE_LIMIT_STORE=redis but `ioredis` is not installed (run `npm i ioredis`) — using per-node store");
+    return undefined;
+  }
+}
 
 async function main(): Promise<void> {
   const sidecarUrl = process.env.RONIN_DELTA_SIDECAR_URL ?? "http://127.0.0.1:8077";
@@ -42,7 +61,11 @@ async function main(): Promise<void> {
     log.info({ migrated }, "is_current schema migration complete");
   }
 
-  const app = createDeltaApp({ warehouse, baseUrl: publicUrl });
+  // Optional shared rate-limit store for multi-node deployments (RONIN_RATE_LIMIT_STORE=redis).
+  // Lazy-loads a Redis client so single-node deployments carry no Redis dependency.
+  const rateLimitStore = await buildSharedRateLimitStore(log);
+
+  const app = createDeltaApp({ warehouse, baseUrl: publicUrl, rateLimitStore });
 
   // Transmission security (45 CFR §164.312(e)): hardened in-process HTTPS when RONIN_TLS_CERT/KEY
   // are set (NIST SP 800-52r2 ciphers, TLS 1.2 min), OR terminate TLS at a reverse proxy.

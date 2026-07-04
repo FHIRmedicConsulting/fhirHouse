@@ -27,6 +27,7 @@ import { oauthEnabled, oauthRoutes } from "./auth/oauth/oauth-routes.js";
 import { udapEnabled, udapRoutes } from "./auth/udap/udap-routes.js";
 import { mountHttpHardening } from "./security/http-hardening.js";
 import { securityProfile } from "./security/profile.js";
+import type { RateLimitStore } from "./security/rate-limit.js";
 import { FhirError } from "./lib/errors.js";
 import type { OperationOutcome } from "@ronin/fhir-types";
 
@@ -34,6 +35,8 @@ export interface DeltaAppDeps {
   warehouse: DeltaWarehouse;
   baseUrl: string;
   deploymentName?: string;
+  /** Optional shared rate-limit store (e.g. Redis) for consistent limits across instances. */
+  rateLimitStore?: RateLimitStore;
 }
 
 export function createDeltaApp(deps: DeltaAppDeps): Hono {
@@ -42,7 +45,7 @@ export function createDeltaApp(deps: DeltaAppDeps): Hono {
   // HTTP-tier hardening (ADR-0033) — FIRST, so headers/CORS/body-limit/rate-limit apply to every
   // request incl. auth denials. Non-breaking in the dev profile (headers on; CORS permissive;
   // rate-limit off). The `production` profile engages strict CORS + rate limiting.
-  mountHttpHardening(app, { profile: securityProfile() });
+  mountHttpHardening(app, { profile: securityProfile(), rateLimitStore: deps.rateLimitStore });
 
   // Public routes (SMART): /health + /metadata are mounted BEFORE the auth gate so they
   // bypass it (Hono runs only middleware registered before a matched handler).

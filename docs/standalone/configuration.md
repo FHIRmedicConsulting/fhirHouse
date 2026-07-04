@@ -78,6 +78,8 @@ writer, ADR-0026), `GOOGLE_SERVICE_ACCOUNT`, `AZURE_STORAGE_ACCOUNT_NAME`, `AZUR
 | `RONIN_CORS_ORIGINS` | dev: `*` / prod: none | Comma-separated allowlist; prod + empty ⇒ same-origin only. |
 | `RONIN_RATE_LIMIT_ENABLED` | prod on / dev off | Per-client rate limiting. |
 | `RONIN_RATE_LIMIT_RPM` | `600` | Requests per client per minute. |
+| `RONIN_RATE_LIMIT_STORE` | per-node | `redis` for shared limits across instances (lazy-loads `ioredis` — `npm i ioredis`). |
+| `RONIN_REDIS_URL` | — | `redis://…` when `RONIN_RATE_LIMIT_STORE=redis`. |
 | `RONIN_MAX_BODY_BYTES` | `10485760` | Request body cap (10 MiB) → 413. |
 
 ## Maintenance & misc
