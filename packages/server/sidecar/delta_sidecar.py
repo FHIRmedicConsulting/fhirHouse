@@ -358,18 +358,65 @@ def _find_delta_tables(base):
     return sorted(tables)
 
 
+def _object_store_fs(base):
+    """pyarrow filesystem + root path for an object-store base. Builds an explicit
+    S3FileSystem when AWS_ENDPOINT_URL is set (MinIO/R2) — from_uri ignores the env override."""
+    from pyarrow import fs as pafs
+    endpoint = os.environ.get("AWS_ENDPOINT_URL") or os.environ.get("AWS_ENDPOINT")
+    if base.startswith("s3://") and endpoint:
+        f = pafs.S3FileSystem(
+            access_key=os.environ.get("AWS_ACCESS_KEY_ID"),
+            secret_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+            region=os.environ.get("AWS_REGION") or "us-east-1",
+            endpoint_override=endpoint,
+            scheme="http" if endpoint.startswith("http://") else "https",
+        )
+        return f, base[len("s3://"):]
+    f, path = pafs.FileSystem.from_uri(base)
+    return f, path
+
+
+def _find_delta_tables_object(base):
+    """Enumerate Delta tables under an object-store base (any key path holding `_delta_log`)."""
+    from pyarrow import fs as pafs
+    f, root = _object_store_fs(base)
+    scheme = base.split("://", 1)[0]
+    try:
+        infos = f.get_file_info(pafs.FileSelector(root.rstrip("/"), recursive=True))
+    except FileNotFoundError:
+        return []
+    tables = {fi.path.split("/_delta_log", 1)[0] for fi in infos if "/_delta_log" in fi.path}
+    return sorted(f"{scheme}://{t}" for t in tables)
+
+
+def _find_tables_any(base):
+    return _find_delta_tables_object(base) if _is_object_store(base) else _find_delta_tables(base)
+
+
+def _rel(base, path):
+    if _is_object_store(base):
+        return path[len(base):].lstrip("/") if path.startswith(base) else path
+    return os.path.relpath(path, base)
+
+
+def do_list_tables(req):
+    """Enumerate Delta tables under the base (local walk OR object-store listing) —
+    restart-registration/startup discovery on any storage backend."""
+    base = req.get("base") or _BASE
+    paths = _find_tables_any(base)
+    return {"base": base, "tables": [{"path": p, "rel": _rel(base, p)} for p in paths]}
+
+
 def do_optimize_all(req):
     """Compact (+ Z-order cluster by `id` where present + optional vacuum) EVERY Delta table
     under the store base — covers Bronze resource tables, audit, terminology, conformance,
-    dead-letter, pending. Local-FS bases only (object-store enumeration is a follow-up)."""
+    dead-letter, pending. Local FS and object stores (enumerated via pyarrow.fs)."""
     base = req.get("base") or _BASE
-    if _is_object_store(base):
-        raise RuntimeError(f"optimize-all requires a local base; got object store '{base}' (per-table /optimize instead)")
     vacuum, retention_hours, force = req.get("vacuum", False), req.get("retention_hours", 168), req.get("force", False)
     zorder = req.get("zorder")
     results = {}
-    for path in _find_delta_tables(base):
-        rel = os.path.relpath(path, base)
+    for path in _find_tables_any(base):
+        rel = _rel(base, path)
         try:
             results[rel] = _optimize_table(path, vacuum=vacuum, retention_hours=retention_hours, force=force, zorder=zorder)
         except Exception as e:
@@ -392,7 +439,8 @@ def do_delete(req):
 
 ROUTES = {"/write": do_write, "/write-version": do_write_version, "/merge": do_merge, "/query": do_query,
           "/validate": do_validate, "/migrate-is-current": do_migrate_is_current,
-          "/optimize": do_optimize, "/optimize-all": do_optimize_all, "/delete": do_delete}
+          "/optimize": do_optimize, "/optimize-all": do_optimize_all, "/delete": do_delete,
+          "/list-tables": do_list_tables}
 
 
 class Handler(BaseHTTPRequestHandler):

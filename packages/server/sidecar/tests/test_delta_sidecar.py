@@ -122,3 +122,24 @@ def test_infer_schema_empty_string_roundtrips(tmp_path):
     ds.do_write({"table_path": p, "rows": [{"id": "2", "display": "value"}], "schema": "infer"})
     rows = q(p, "SELECT id, display FROM t ORDER BY id")
     assert [r["display"] for r in rows] == ["", "value"]
+
+
+# --- table enumeration (/list-tables: restart-registration / startup discovery) ---
+def test_list_tables_local_walk(tmp_path):
+    base = str(tmp_path)
+    ds.do_write({"table_path": f"{base}/bronze/patient", "rows": [bronze("a", 1, True)], "schema": "bronze"})
+    ds.do_write({"table_path": f"{base}/terminology/codesystem_concept",
+                 "rows": [{"system": "s", "code": "c", "display": None, "version": None}], "schema": "infer"})
+    out = ds.do_list_tables({"base": base})
+    rels = sorted(t["rel"] for t in out["tables"])
+    assert rels == ["bronze/patient", "terminology/codesystem_concept"]
+    assert all(t["path"].startswith(base) for t in out["tables"])
+
+
+def test_list_tables_missing_base(tmp_path):
+    out = ds.do_list_tables({"base": str(tmp_path / "nope")})
+    assert out["tables"] == []
+
+
+def test_object_store_rel_paths():
+    assert ds._rel("s3://bucket/delta", "s3://bucket/delta/bronze/patient") == "bronze/patient"

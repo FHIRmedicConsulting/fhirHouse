@@ -97,12 +97,30 @@ export class DeltaWarehouse implements Warehouse {
   }
 
   /**
-   * Discover + register tables already on disk so a freshly-started server can read data it
-   * didn't write this process (table registration is otherwise in-memory). Local-FS bases only;
-   * object stores register lazily on first write. Returns the registered logical table names.
+   * Discover + register tables already in the store so a freshly-started server can read data
+   * it didn't write this process (table registration is otherwise in-memory). Local-FS bases
+   * scan directly; object-store bases enumerate via the sidecar (`/list-tables`, pyarrow.fs).
+   * Returns the registered logical table names.
    */
   async registerExistingTables(): Promise<string[]> {
-    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(this.base)) return []; // object store → skip FS scan
+    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(this.base)) {
+      const registered: string[] = [];
+      let tables: Array<{ path: string; rel: string }> = [];
+      try {
+        tables = ((await this.post<{ tables?: Array<{ path: string; rel: string }> }>(
+          "/list-tables", { base: this.base })).tables) ?? [];
+      } catch { return []; } // older sidecar / listing unavailable → lazy registration as before
+      for (const t of tables) {
+        const parts = t.rel.split("/");
+        if (parts.length !== 2) continue; // only tier tables (bronze/silver/gold); others register on demand
+        const [tier, d] = parts;
+        const name = tier === "bronze" ? d : tier === "silver" ? `${d}_silver` : tier === "gold" ? `${d}_gold` : null;
+        if (!name) continue;
+        this.registerTable(name, t.path);
+        registered.push(name);
+      }
+      return registered;
+    }
     const fs = await import("node:fs/promises");
     const registered: string[] = [];
     const scan = async (subdir: string, name: (dir: string) => string) => {
