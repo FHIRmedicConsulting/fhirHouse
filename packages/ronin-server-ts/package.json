@@ -19,6 +19,7 @@
     "test:integration": "vitest run tests/integration",
     "test:delta": "vitest run --no-file-parallelism tests/integration/delta-*.test.ts",
     "test:unit": "vitest run tests/unit",
+    "test:coverage": "vitest run --no-file-parallelism --coverage",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --max-warnings 0",
     "audit": "npm audit --omit=dev --audit-level=high",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@vitest/coverage-v8": "^4.1.9",
     "eslint": "^9.39.4",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
