@@ -8,7 +8,7 @@ Lucidchart export) — two install-time deployment options.
 
 ```
 FHIR via API  ┐
-NDJSON Bulk   ┼─►  Ronin  ─►  Single Delta Store
+NDJSON Bulk   ┼─►  fhirEngine  ─►  Single Delta Store
               ┘         ◄── "API Data" (reads served from the same store)
 ```
 
@@ -19,7 +19,7 @@ flattened search columns. No tier separation, no promotion, no enterprise-analyt
 
 ```
 FHIR via API ┐
-NDJSON Bulk  ┼─► Ronin ─► Bronze ─► Silver ─► Gold
+NDJSON Bulk  ┼─► fhirEngine ─► Bronze ─► Silver ─► Gold
 Document ────┘        ◄── "API Data" (reads served from Gold)
                                      Silver ─► Enterprise Analytics Silver ─► (out)
 ```
@@ -32,7 +32,7 @@ the API reads/writes here)**. Silver feeds an external **Enterprise Analytics** 
 - **Single store is the dev default**; medallion is an install-time option. Config
   `FHIRENGINE_STORAGE_MODE = single | medallion` (switch still to wire).
 - **Gold is the operational/transactional store in medallion** (confirmed by the diagram's
-  `Ronin ↔ Gold` "API Data" edge).
+  `fhirEngine ↔ Gold` "API Data" edge).
 - **Flattening is topology-independent.** Per-resource search needs flattened, queryable
   columns; in **single store those columns live in the one store** (it already carries
   `body_json` + a materialized `identifier_index` — richer search just materializes more
@@ -55,8 +55,8 @@ medallion build. **Does not affect single store.**
 
 ## Open questions (unanswered — do not assume)
 
-1. Process-block label "Ronin" — shared server *engine* name, or should the standalone
-   diagram read "fhirEngine"? (distinct products)
+1. ~~Process-block label "Ronin"~~ — RESOLVED (2026-07-04): the standalone diagrams read
+   "fhirEngine" (the source Lucidchart export predates the rename).
 2. "Document" input (medallion only, via "API Calls") — FHIR Document Bundle /
    `DocumentReference`, or an external doc source? Intentionally absent from single store?
 3. "Enterprise Analytics Silver" — a separate copy fed from Silver, or a read of our Silver?

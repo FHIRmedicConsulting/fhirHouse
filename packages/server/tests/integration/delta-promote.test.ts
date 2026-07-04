@@ -24,9 +24,9 @@ describe.skipIf(!SIDECAR)("Medallion promotion (Bronze → Silver + Gold)", () =
     last_updated: `2026-06-28T00:00:0${ver}Z`,
     body_json: JSON.stringify({
       resourceType: "Patient", id, gender, birthDate: "1985-05-05",
-      identifier: [{ system: "urn:ronin:test", value: id }],
+      identifier: [{ system: "urn:fhirengine:test", value: id }],
     }),
-    identifier_index: [{ system: "urn:ronin:test", value: id, typeCode: null }],
+    identifier_index: [{ system: "urn:fhirengine:test", value: id, typeCode: null }],
     ext_json: "{}",
     deleted,
     _ingested_at: "2026-06-28T00:00:00Z",

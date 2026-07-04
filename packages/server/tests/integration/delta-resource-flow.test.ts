@@ -23,7 +23,7 @@ describe.skipIf(!SIDECAR)("Standalone Delta resource flow (delta-rs + DataFusion
 
   // Unique id per run — Bronze is append-only, so isolate from prior runs.
   const pid = `t${Date.now()}`;
-  const system = "urn:ronin:test";
+  const system = "urn:fhirengine:test";
   const value = `mrn-${pid}`;
 
   const patient = () => ({

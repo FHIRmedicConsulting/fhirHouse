@@ -1,11 +1,11 @@
 /**
- * Ronin-specific utilities that aren't part of `@fhirengine/fhir-types`.
+ * fhirEngine-specific utilities that aren't part of `@fhirengine/fhir-types`.
  *
  * Most FHIR types come from the generated `@fhirengine/fhir-types` package (R4
  * core today; per-IG profile narrowings will land incrementally). The
- * generated types are stricter than what Ronin hand-rolled — typed
+ * generated types are stricter than what was previously hand-rolled — typed
  * `Reference<T>` targets, value-set enum unions, closed `resourceType`
- * unions on `Resource`. This module adds the small set of Ronin-side
+ * unions on `Resource`. This module adds the small set of fhirEngine-side
  * helpers that don't have a generated equivalent:
  *
  *   - `SearchsetBundle<T>` — generated `Bundle` is non-generic; we wrap it

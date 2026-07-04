@@ -6,4 +6,4 @@ import { webcrypto } from "node:crypto";
 import { CryptoEngine, setEngine } from "pkijs";
 
 type EngineCrypto = ConstructorParameters<typeof CryptoEngine>[0]["crypto"];
-setEngine("ronin", new CryptoEngine({ name: "ronin", crypto: webcrypto as unknown as EngineCrypto }));
+setEngine("fhirengine", new CryptoEngine({ name: "fhirengine", crypto: webcrypto as unknown as EngineCrypto }));

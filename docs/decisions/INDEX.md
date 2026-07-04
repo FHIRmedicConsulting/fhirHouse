@@ -2,6 +2,14 @@
 
 Architecture Decision Records, chronological. Numbers never reused. Status: Proposed / Accepted / Superseded / Rejected / Deprecated.
 
+> **Heritage naming:** ADRs are historical records. Records that predate the 2026-07
+> rename say **"Ronin"** in prose — at the time, that was this project's name (and it
+> remains the name of the separate, private Databricks-optimized sibling product that
+> fhirEngine forked from; see
+> [`docs/standalone/product-definition.md`](../standalone/product-definition.md)).
+> Mechanical tokens (env vars, package names, paths) have been updated to their current
+> `FHIRENGINE_*` / `@fhirengine/*` forms throughout.
+
 | # | Title | Status | Date |
 |---|---|---|---|
 | 0001 | [Vision, Scope, and Project Posture](0001-vision-and-scope.md) | Superseded by 0008 | 2026-05-29 (2026-06-17 superseded) |

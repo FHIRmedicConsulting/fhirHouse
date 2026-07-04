@@ -37,7 +37,7 @@ curl -s http://localhost:3000/metadata
 
 Set the base to an object-store URI + creds in `.env` — no volume needed:
 ```bash
-FHIRENGINE_DELTA_BASE=s3://my-bucket/ronin
+FHIRENGINE_DELTA_BASE=s3://my-bucket/fhirengine
 AWS_ACCESS_KEY_ID=…  AWS_SECRET_ACCESS_KEY=…  AWS_REGION=…
 AWS_S3_ALLOW_UNSAFE_RENAME=true   # native AWS S3, single-writer (omit for R2/MinIO/GCS)
 ```

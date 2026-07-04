@@ -11,7 +11,7 @@ import { resetKeys } from "../../src/auth/oauth/keys.js";
 
 const SIDECAR = process.env.FHIRENGINE_DELTA_SIDECAR_URL;
 const BASE = process.env.FHIRENGINE_DELTA_BASE ?? "./.delta-test";
-const URLBASE = "http://ronin.test";
+const URLBASE = "http://fhirengine.test";
 const CID = `svc-${Date.now()}`;
 
 describe.skipIf(!SIDECAR)("SMART Backend Services (client_credentials + private_key_jwt)", () => {

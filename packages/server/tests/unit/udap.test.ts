@@ -16,7 +16,7 @@ import { udapRoutes } from "../../src/auth/udap/udap-routes.js";
 import { getRegisteredClient, resetRegisteredClients, loadRegisteredClients, type UdapClientBackend } from "../../src/auth/udap/registered-clients.js";
 import { resolveClient } from "../../src/auth/oauth/clients.js";
 
-const BASE = "http://ronin.test";
+const BASE = "http://fhirengine.test";
 const REG = `${BASE}/udap/register`;
 const CLIENT_URI = "https://client.example/fhir";
 
@@ -56,7 +56,7 @@ let opensslOk = true;
 
 beforeAll(() => {
   try {
-    dir = mkdtempSync(join(tmpdir(), "ronin-udap-"));
+    dir = mkdtempSync(join(tmpdir(), "fhirengine-udap-"));
     trusted = mintCa(dir, "trusted", CLIENT_URI);
     untrusted = mintCa(dir, "untrusted", CLIENT_URI);
     process.env.FHIRENGINE_UDAP_TRUST_ANCHORS = trusted.caPath; // only the trusted CA is an anchor

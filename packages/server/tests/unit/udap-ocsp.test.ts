@@ -12,7 +12,7 @@ import { SignJWT, importPKCS8 } from "jose";
 import { OcspRevocationChecker } from "../../src/auth/udap/ocsp.js";
 import { verifySoftwareStatement } from "../../src/auth/udap/software-statement.js";
 
-const REG = "http://ronin.test/udap/register";
+const REG = "http://fhirengine.test/udap/register";
 const CID = "https://client.example/fhir";
 const OCSP_URL = "http://ocsp.test";
 
@@ -24,10 +24,10 @@ let resp1: Uint8Array, resp2: Uint8Array;
 
 beforeAll(() => {
   try {
-    dir = mkdtempSync(join(tmpdir(), "ronin-ocsp-"));
+    dir = mkdtempSync(join(tmpdir(), "fhirengine-ocsp-"));
     const p = (f: string) => join(dir, f);
     const ossl = (...a: string[]) => execFileSync("openssl", a, { cwd: dir });
-    ossl("req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", "ca.key", "-out", "ca.crt", "-days", "5", "-subj", "/CN=Ronin OCSP Test CA");
+    ossl("req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", "ca.key", "-out", "ca.crt", "-days", "5", "-subj", "/CN=fhirEngine OCSP Test CA");
     writeFileSync(p("index.txt"), ""); writeFileSync(p("serial"), "1000\n"); writeFileSync(p("crlnumber"), "1000\n");
     writeFileSync(p("openssl.cnf"),
       "[ca]\ndefault_ca=CA_default\n[CA_default]\ndatabase=./index.txt\nnew_certs_dir=.\ncertificate=./ca.crt\n" +

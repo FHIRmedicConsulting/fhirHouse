@@ -15,7 +15,7 @@ function patient(i: number) {
   return {
     resourceType: "Patient",
     id: `bench-${i}`,
-    identifier: [{ system: "urn:ronin:mrn", value: `mrn-${i}` }],
+    identifier: [{ system: "urn:fhirengine:mrn", value: `mrn-${i}` }],
     name: [{ family: "Bench", given: ["A", "B"] }],
     gender: i % 2 ? "male" : "female",
     birthDate: "1990-01-01",

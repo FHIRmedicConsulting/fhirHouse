@@ -1,5 +1,5 @@
 /**
- * Ronin FHIR types codegen driver.
+ * fhirEngine FHIR types codegen driver.
  *
  * Reads FHIR core + the active-IG matrix from the package registry, runs the
  * @atomic-ehr/codegen TypeSchema pipeline, emits TypeScript interfaces +

@@ -6,8 +6,8 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { createDeltaApp } from "../../../src/app.js";
 
 const stubWh = { hasTable: () => false, query: async () => [] } as never;
-const mk = () => createDeltaApp({ warehouse: stubWh, baseUrl: "http://ronin.test" });
-const json = async (p: string, init?: RequestInit) => mk().fetch(new Request(`http://ronin.test${p}`, init));
+const mk = () => createDeltaApp({ warehouse: stubWh, baseUrl: "http://fhirengine.test" });
+const json = async (p: string, init?: RequestInit) => mk().fetch(new Request(`http://fhirengine.test${p}`, init));
 
 describe("SMART discovery document (/.well-known/smart-configuration)", () => {
   beforeEach(() => { delete process.env.FHIRENGINE_AUTH_ENABLED; delete process.env.FHIRENGINE_SMART_AUTHORIZE_URL; });
@@ -15,8 +15,8 @@ describe("SMART discovery document (/.well-known/smart-configuration)", () => {
 
   it("advertises the required SMART discovery fields", async () => {
     const d = await (await json("/.well-known/smart-configuration")).json();
-    expect(d.authorization_endpoint).toBe("http://ronin.test/oauth/authorize");
-    expect(d.token_endpoint).toBe("http://ronin.test/oauth/token");
+    expect(d.authorization_endpoint).toBe("http://fhirengine.test/oauth/authorize");
+    expect(d.token_endpoint).toBe("http://fhirengine.test/oauth/token");
     expect(Array.isArray(d.capabilities)).toBe(true);
     expect(d.capabilities).toEqual(expect.arrayContaining(["launch-standalone", "client-public", "sso-openid-connect"]));
     expect(d.code_challenge_methods_supported).toContain("S256"); // PKCE S256 required by g10
@@ -37,8 +37,8 @@ describe("CapabilityStatement SMART security block (/metadata)", () => {
     const sec = meta.rest[0].security;
     expect(sec.service[0].coding[0].code).toBe("SMART-on-FHIR");
     const uris = sec.extension.find((e: { url: string }) => e.url.endsWith("oauth-uris")).extension;
-    expect(uris.find((e: { url: string }) => e.url === "authorize").valueUri).toBe("http://ronin.test/oauth/authorize");
-    expect(uris.find((e: { url: string }) => e.url === "token").valueUri).toBe("http://ronin.test/oauth/token");
+    expect(uris.find((e: { url: string }) => e.url === "authorize").valueUri).toBe("http://fhirengine.test/oauth/authorize");
+    expect(uris.find((e: { url: string }) => e.url === "token").valueUri).toBe("http://fhirengine.test/oauth/token");
   });
 });
 

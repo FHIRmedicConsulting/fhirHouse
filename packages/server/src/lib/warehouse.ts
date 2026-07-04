@@ -4,7 +4,7 @@
  * Implementations in the standalone (OSS):
  *  - `InMemoryWarehouse` (here) — tests and local dev; Maps mirroring the SQL subset.
  *  - `DeltaWarehouse` (`delta-warehouse.ts`) — delta-rs write / DataFusion read.
- * (The Databricks-backed implementation lives in the separate, private Ronin product
+ * (The Databricks-backed implementation lives in a separate, private sibling product
  * repo and plugs into this same interface; it is not part of the OSS distribution.)
  *
  * The interface deliberately surfaces SQL primitives rather than ORM-style

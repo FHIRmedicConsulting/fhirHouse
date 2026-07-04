@@ -19,7 +19,7 @@
  *   - `agent[0].name` = formatted "client_id:<id>" for searchability.
  *   - `agent[0].requestor` = true (the calling identity is the requestor).
  *   - `agent[0].purposeOfUse` = parsed from `X-Purpose-Of-Use` request header.
- *   - `source.observer` = Ronin server's `Device` reference; `source.site` =
+ *   - `source.observer` = fhirEngine server's `Device` reference; `source.site` =
  *     the deployment name.
  *   - `entity[0].what` = Reference to the touched resource (`Patient/<id>`,
  *     `Coverage/<id>`, etc.).
@@ -83,7 +83,7 @@ export interface AuditEventInput {
   purposeOfUse: string | null;
   /** Source IP / network address of the caller, if available. */
   networkAddress: string | null;
-  /** Ronin server identity (Device reference) per ADR-0016 §2.1.1. */
+  /** fhirEngine server identity (Device reference) per ADR-0016 §2.1.1. */
   serverDeviceId: string;
   /** Deployment name for `source.site`. */
   deploymentName: string;

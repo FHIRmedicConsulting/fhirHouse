@@ -4,7 +4,7 @@
  *   L1/L2 structural  — vendored R4 columnar registry (required + shape)
  *   L2–L5 profile     — required-elements from INSTALLED profile snapshots (conformance store)
  *   L3 bindings       — (future) terminology $validate-code on required bindings
- * Replaces the Python-sidecar validation (which forked from Ronin); the sidecar becomes
+ * Replaces the Python-sidecar validation (which forked from the Databricks sibling); the sidecar becomes
  * a pure writer. See docs/research/2026-06-28-fhir-validation-approach-comparison.md.
  */
 import type { DeltaWarehouse } from "../lib/delta-warehouse.js";

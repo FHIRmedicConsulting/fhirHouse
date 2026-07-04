@@ -6,7 +6,7 @@
  *   - Adding a new version (e.g., 2.3.0) is a file-add + this-registry-edit;
  *     no other code touches required.
  *
- * Deployment-time selection via `ronin_smart_active_versions`. The discovery
+ * Deployment-time selection via `FHIRENGINE_SMART_VERSIONS`. The discovery
  * document is the UNION of capabilities across all active versions. Scope
  * parsing tries each active version's grammar in declared order.
  */
@@ -17,7 +17,7 @@ import { SmartV2_0_0 } from "./smart-2-0-0.js";
 import { SmartV2_1_0 } from "./smart-2-1-0.js";
 import { SmartV2_2_0 } from "./smart-2-2-0.js";
 
-/** All versions Ronin can support. Add new versions here. */
+/** All versions fhirEngine can support. Add new versions here. */
 export const ALL_SMART_VERSIONS: readonly SmartVersionSpec[] = [
   SmartV1_0_0,
   SmartV2_0_0,
@@ -31,7 +31,7 @@ export const PAYER_BASELINE_ACTIVE_VERSIONS = ["2.0.0", "2.1.0", "2.2.0"];
 /** Default active version set for `strict_federal` (latest only). */
 export const STRICT_FEDERAL_ACTIVE_VERSIONS = ["2.2.0"];
 
-/** Default active version set for tests + v1 default (everything Ronin supports). */
+/** Default active version set for tests + v1 default (everything fhirEngine supports). */
 export const ALL_ACTIVE_VERSIONS = ALL_SMART_VERSIONS.map((v) => v.version);
 
 /**
@@ -73,7 +73,7 @@ export class SmartVersionRegistry {
 
   /**
    * Parse a space-separated scope string into canonical scopes; ignores
-   * unparseable scopes (the IdP may have granted scopes Ronin doesn't recognize).
+   * unparseable scopes (the IdP may have granted scopes fhirEngine doesn't recognize).
    */
   parseScopeString(scopeString: string): CanonicalScope[] {
     return scopeString

@@ -60,7 +60,7 @@ describe.skipIf(!canRun)("Provision US Core 6.1.0 on R4 Core + validate", () => 
     const goodId = `${run}-good`;
     const good = await req("POST", "/Patient", {
       resourceType: "Patient", id: goodId, meta: { profile: [US_CORE_PATIENT] },
-      identifier: [{ system: "urn:ronin:mrn", value: goodId }],
+      identifier: [{ system: "urn:fhirengine:mrn", value: goodId }],
       name: [{ family: "Provision", given: ["A"] }], gender: "female",
     });
     expect(good.status).toBe(201);

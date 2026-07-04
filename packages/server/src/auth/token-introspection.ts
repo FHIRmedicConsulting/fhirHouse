@@ -4,7 +4,7 @@
  * Per ADR-0006 §6:
  *   - Default cache TTL: 60s
  *   - `strict_federal`: 30s
- *   - Configurable via `ronin_introspection_cache_ttl`
+ *   - Configurable via the `ttlSeconds` option
  *
  * The cache key is the token itself (memory-resident; tokens are short-lived
  * and bounded in count); entries are evicted on TTL OR on capacity (oldest

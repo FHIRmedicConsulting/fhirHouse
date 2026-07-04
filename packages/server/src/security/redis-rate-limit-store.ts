@@ -22,7 +22,7 @@ const FIXED_WINDOW_LUA =
   "return {c, redis.call('PTTL', KEYS[1])}";
 
 export class RedisRateLimitStore implements RateLimitStore {
-  constructor(private readonly redis: RedisEvalClient, private readonly prefix = "ronin:rl:") {}
+  constructor(private readonly redis: RedisEvalClient, private readonly prefix = "fhirengine:rl:") {}
 
   async hit(key: string, windowMs: number, now: number): Promise<RateLimitState> {
     const res = (await this.redis.eval(FIXED_WINDOW_LUA, 1, this.prefix + key, windowMs)) as [number, number];

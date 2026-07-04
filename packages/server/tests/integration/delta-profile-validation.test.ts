@@ -50,7 +50,7 @@ describe.skipIf(!canRun)("Profile validation (US Core enforced prior to Bronze)"
     const id = `${run}-good`;
     const res = await req("POST", "/Patient", {
       resourceType: "Patient", id, meta: { profile: [PROFILE] },
-      identifier: [{ system: "urn:ronin:mrn", value: id }],
+      identifier: [{ system: "urn:fhirengine:mrn", value: id }],
       name: [{ family: "Test", given: ["A"] }], gender: "female",
     });
     expect(res.status).toBe(201);

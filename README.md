@@ -4,8 +4,8 @@ An open-source **FHIR R4 server on OSS Delta Lake** — no Databricks, no cloud 
 TypeScript/Hono REST tier over a **delta-rs / DataFusion** storage engine (via a small
 Python sidecar). Apache-2.0.
 
-> Sister project to *Ronin* (the Databricks-optimized product). They share the
-> backend-agnostic FHIR/REST layers behind a `Warehouse` seam; this repo ships the
+> The backend-agnostic FHIR/REST layers sit behind a `Warehouse` seam shared with a
+> separate, proprietary Databricks-optimized sibling product; this repo ships the
 > **OSS Delta** backend only.
 
 ## Architecture

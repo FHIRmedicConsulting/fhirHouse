@@ -8,7 +8,7 @@ import { generateKeyPair, exportJWK, calculateJwkThumbprint, SignJWT } from "jos
 import { oauthRoutes } from "../../src/auth/oauth/oauth-routes.js";
 import { resetKeys } from "../../src/auth/oauth/keys.js";
 
-const BASE = "http://ronin.test";
+const BASE = "http://fhirengine.test";
 const CID = "https://app.example/fhir";
 const REDIRECT = "https://app.example/cb";
 

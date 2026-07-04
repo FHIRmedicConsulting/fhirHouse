@@ -1,7 +1,7 @@
 /**
  * Minimal standalone (OSS-Delta) Hono app — TS/Hono tier on the DeltaWarehouse.
  *
- * Same framework as Ronin (keep the codebases similar); the only thing different
+ * Same framework as the private Databricks sibling (keep the codebases similar); the only thing different
  * below the `Warehouse` seam is the backend (delta-rs/DataFusion vs Databricks).
  *
  * v0 surface: /health, /metadata, and the generic `:resourceType` CRUD + search.

@@ -1,5 +1,5 @@
 /**
- * Ronin FHIR types — generated entry point.
+ * fhirEngine FHIR types — generated entry point.
  *
  * Re-exports the R4 catalog from the generated tree. Per the codegen strategy
  * note ([docs/research/2026-06-22-fhir-codegen-strategy.md](../../../docs/research/2026-06-22-fhir-codegen-strategy.md))

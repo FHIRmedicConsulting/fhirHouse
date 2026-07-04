@@ -12,7 +12,7 @@ import { resetKeys } from "../../src/auth/oauth/keys.js";
 
 const SIDECAR = process.env.FHIRENGINE_DELTA_SIDECAR_URL;
 const BASE = process.env.FHIRENGINE_DELTA_BASE ?? "./.delta-test";
-const URLBASE = "http://ronin.test";
+const URLBASE = "http://fhirengine.test";
 const REDIRECT = "http://app.example/cb";
 
 describe.skipIf(!SIDECAR)("SMART authorization server (end-to-end)", () => {

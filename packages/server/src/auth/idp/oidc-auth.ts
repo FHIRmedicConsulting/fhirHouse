@@ -16,9 +16,9 @@ import type { AuthStrategy, IntrospectionResult } from "./types.js";
 export interface OidcAuthOptions {
   /** OIDC discovery URL — e.g., https://your-idp/.well-known/openid-configuration */
   discoveryUrl: string;
-  /** Ronin's client_id at the IdP. */
+  /** fhirEngine's client_id at the IdP. */
   clientId: string;
-  /** Ronin's client_secret (or null if private_key_jwt). */
+  /** fhirEngine's client_secret (or null if private_key_jwt). */
   clientSecret: string | null;
   /** JWKS cache TTL in seconds. */
   jwksCacheTtl: number;

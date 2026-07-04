@@ -1,6 +1,6 @@
 # @fhirengine/fhir-types
 
-Generated FHIR types for the Ronin server. Per [`docs/research/2026-06-22-fhir-codegen-strategy.md`](../../docs/research/2026-06-22-fhir-codegen-strategy.md), this package replaces hand-rolled FHIR types in `packages/server/src/lib/fhir-types.ts` with output from `@atomic-ehr/codegen` driven against the spec.
+Generated FHIR types for the fhirEngine server. Per [`docs/research/2026-06-22-fhir-codegen-strategy.md`](../../docs/research/2026-06-22-fhir-codegen-strategy.md), this package replaces hand-rolled FHIR types in `packages/server/src/lib/fhir-types.ts` with output from `@atomic-ehr/codegen` driven against the spec.
 
 ## What's generated
 
@@ -53,7 +53,7 @@ The generator downloads packages from `https://packages.simplifier.net/` (the HL
 
 ### Sandbox FD throttle
 
-`preload-graceful-fs.cjs` is a callback-and-promise FS shim that caps concurrent `open`/`readFile` to `FHIRENGINE_FS_CONCURRENCY` (default 64). Necessary because Ronin's dev sandbox imposes a per-mount FD limit far lower than what `/proc/self/limits` reports; without the shim, the canonical-manager hits `EMFILE` partway through the cache populate.
+`preload-graceful-fs.cjs` is a callback-and-promise FS shim that caps concurrent `open`/`readFile` to `FHIRENGINE_FS_CONCURRENCY` (default 64). Necessary because the dev sandbox imposes a per-mount FD limit far lower than what `/proc/self/limits` reports; without the shim, the canonical-manager hits `EMFILE` partway through the cache populate.
 
 ### Why the cache survives `npm run clean`
 

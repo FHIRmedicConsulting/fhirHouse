@@ -58,7 +58,7 @@ A single **conformance-resource loader** runs at provision/install time and on d
 5. **Idempotent + versioned**: re-runnable; writes a new version, flips the active pin
    (§7). Same `delta-rs` single-writer + dead-letter discipline as ingestion.
 
-Operator surface: `ronin install-ig <pkg>` / `ronin load-terminology <source>` (CLI),
+Operator surface: `fhirengine-terminology install-ig <pkg>` / `fhirengine-terminology load-terminology <source>` (CLI),
 and/or an authenticated admin endpoint. Self-hosted: runs in the deploy container;
 licensed sources mounted/provided by the operator.
 

@@ -32,7 +32,7 @@ describe("buildTlsConfig", () => {
   });
 
   it("builds hardened options (TLS 1.2 min, NIST AEAD ciphers, honored order) when cert/key set", () => {
-    const dir = mkdtempSync(join(tmpdir(), "ronin-tls-"));
+    const dir = mkdtempSync(join(tmpdir(), "fhirengine-tls-"));
     const cert = join(dir, "c.pem"), key = join(dir, "k.pem");
     writeFileSync(cert, "dummy-cert"); writeFileSync(key, "dummy-key");
     process.env.FHIRENGINE_TLS_CERT = cert; process.env.FHIRENGINE_TLS_KEY = key;
@@ -46,7 +46,7 @@ describe("buildTlsConfig", () => {
   });
 
   it("honors a FHIRENGINE_TLS_CIPHERS override", () => {
-    const dir = mkdtempSync(join(tmpdir(), "ronin-tls-"));
+    const dir = mkdtempSync(join(tmpdir(), "fhirengine-tls-"));
     const cert = join(dir, "c.pem"), key = join(dir, "k.pem");
     writeFileSync(cert, "x"); writeFileSync(key, "y");
     process.env.FHIRENGINE_TLS_CERT = cert; process.env.FHIRENGINE_TLS_KEY = key;

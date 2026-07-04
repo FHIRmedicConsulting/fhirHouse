@@ -35,7 +35,7 @@ export interface AuditSink {
 
 export interface AuditMiddlewareOptions {
   auditRepo: AuditSink;
-  /** Ronin server identity (Device reference). Set per deployment. */
+  /** fhirEngine server identity (Device reference). Set per deployment. */
   serverDeviceId: string;
   /** Deployment name surfaced in `source.site`. */
   deploymentName: string;

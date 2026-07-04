@@ -16,7 +16,7 @@ let inDer: string, outDer: string;
 
 beforeAll(() => {
   try {
-    const dir = mkdtempSync(join(tmpdir(), "ronin-path-"));
+    const dir = mkdtempSync(join(tmpdir(), "fhirengine-path-"));
     const p = (f: string) => join(dir, f);
     const ossl = (...a: string[]) => execFileSync("openssl", a, { cwd: dir });
     // CA constrained to the example.com DNS subtree, with keyCertSign.

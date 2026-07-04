@@ -1,5 +1,5 @@
 """
-Ronin Delta sidecar — the single-engine (delta-rs / DataFusion) write+read service
+fhirEngine Delta sidecar — the single-engine (delta-rs / DataFusion) write+read service
 the TypeScript FHIR server calls (ADR-0022 Amendment 1). No Spark, no Databricks.
 
 Long-lived HTTP service (stdlib only — no FastAPI dependency):
@@ -486,7 +486,7 @@ def main():
     if not _is_object_store(args.base):
         os.makedirs(args.base, exist_ok=True)
     srv = ThreadingHTTPServer((args.host, args.port), Handler)
-    print(f"ronin delta sidecar on http://{args.host}:{args.port} (base={args.base})", flush=True)
+    print(f"fhirengine delta sidecar on http://{args.host}:{args.port} (base={args.base})", flush=True)
     srv.serve_forever()
 
 

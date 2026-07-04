@@ -13,7 +13,7 @@ import { SignJWT, importPKCS8 } from "jose";
 import { CrlRevocationChecker } from "../../src/auth/udap/crl.js";
 import { verifySoftwareStatement, UdapError } from "../../src/auth/udap/software-statement.js";
 
-const REG = "http://ronin.test/udap/register";
+const REG = "http://fhirengine.test/udap/register";
 const CID = "https://client.example/fhir";
 const CRL_URL = "http://crl.test/ca.crl";
 
@@ -24,10 +24,10 @@ let leaf1Key: string, leaf1Der: string, crlDer: Uint8Array;
 
 beforeAll(() => {
   try {
-    dir = mkdtempSync(join(tmpdir(), "ronin-crl-"));
+    dir = mkdtempSync(join(tmpdir(), "fhirengine-crl-"));
     const p = (f: string) => join(dir, f);
     const ossl = (...a: string[]) => execFileSync("openssl", a, { cwd: dir });
-    ossl("req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", "ca.key", "-out", "ca.crt", "-days", "5", "-subj", "/CN=Ronin CRL Test CA");
+    ossl("req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", "ca.key", "-out", "ca.crt", "-days", "5", "-subj", "/CN=fhirEngine CRL Test CA");
     writeFileSync(p("index.txt"), ""); writeFileSync(p("serial"), "1000\n"); writeFileSync(p("crlnumber"), "1000\n");
     writeFileSync(p("openssl.cnf"),
       "[ca]\ndefault_ca=CA_default\n[CA_default]\ndatabase=./index.txt\nnew_certs_dir=.\ncertificate=./ca.crt\n" +

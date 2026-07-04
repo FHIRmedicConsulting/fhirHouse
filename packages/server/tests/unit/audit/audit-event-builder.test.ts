@@ -16,8 +16,8 @@ function baseInput(
     launchPatientId: null,
     purposeOfUse: null,
     networkAddress: null,
-    serverDeviceId: "ronin-test",
-    deploymentName: "ronin-test-deployment",
+    serverDeviceId: "fhirengine-test",
+    deploymentName: "fhirengine-test-deployment",
     ...overrides,
   };
 }
@@ -130,12 +130,12 @@ describe("buildAuditEvent", () => {
   });
 
   it("source.site reflects the deployment name", () => {
-    const event = buildAuditEvent(baseInput({ deploymentName: "ronin-acme-prod" }));
-    expect(event.source.site).toBe("ronin-acme-prod");
+    const event = buildAuditEvent(baseInput({ deploymentName: "fhirengine-acme-prod" }));
+    expect(event.source.site).toBe("fhirengine-acme-prod");
   });
 
-  it("source.observer references the Ronin server's Device id", () => {
-    const event = buildAuditEvent(baseInput({ serverDeviceId: "ronin-acme-server-7" }));
-    expect(event.source.observer.reference).toBe("Device/ronin-acme-server-7");
+  it("source.observer references the fhirEngine server's Device id", () => {
+    const event = buildAuditEvent(baseInput({ serverDeviceId: "fhirengine-acme-server-7" }));
+    expect(event.source.observer.reference).toBe("Device/fhirengine-acme-server-7");
   });
 });
