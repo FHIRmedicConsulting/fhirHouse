@@ -16,12 +16,19 @@ const registry: Record<string, Record<string, SearchParamDef>> = JSON.parse(
   readFileSync(fileURLToPath(new URL("./r4-search-params.json", import.meta.url)), "utf8"),
 );
 
-/** Supported search params for a resource type ({} if none/unknown). */
+// Additive IG params (e.g. CARIN BB EOB `type`/`service-date`) — imported after the core registry so
+// core is the base and profile params extend it. Kept separate so the generated core JSON stays pure.
+import { PROFILE_SEARCH_PARAMS } from "./profile-search-params.js";
+
+/** Supported search params for a resource type (core + additive profile params; {} if none/unknown). */
 export function searchParamsFor(resourceType: string): Record<string, SearchParamDef> {
-  return registry[resourceType] ?? {};
+  const core = registry[resourceType];
+  const profile = PROFILE_SEARCH_PARAMS[resourceType];
+  if (!core && !profile) return {};
+  return { ...(profile ?? {}), ...(core ?? {}) }; // core last → core always wins; profile only fills gaps
 }
 
 /** A single param definition, or undefined if not supported for that type. */
 export function searchParam(resourceType: string, code: string): SearchParamDef | undefined {
-  return registry[resourceType]?.[code];
+  return registry[resourceType]?.[code] ?? PROFILE_SEARCH_PARAMS[resourceType]?.[code];
 }
