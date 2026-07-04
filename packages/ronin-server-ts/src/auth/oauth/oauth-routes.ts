@@ -42,7 +42,29 @@ export function oauthRoutes(baseUrl: string): Hono {
   // --- Authorization endpoint (auto-approve) ---
   app.get("/oauth/authorize", async (c) => {
     const q = c.req.query();
-    const clientId = q.client_id, redirectUri = q.redirect_uri, state = q.state;
+
+    // UDAP tiered OAuth (RFC 9101 JAR): a signed `request` object, verified against the client's
+    // registered key, supersedes the query params — proving the request came from the client.
+    let p: Record<string, string | undefined> = q;
+    if (q.request) {
+      const client0 = q.client_id ? resolveClient(q.client_id) : null;
+      const keySet = client0 ? clientKeySet(client0) : null;
+      if (!client0 || !keySet) {
+        return c.json({ error: "invalid_request", error_description: "signed request requires a registered client with a key" }, 400);
+      }
+      try {
+        const { payload } = await jwtVerify(q.request, keySet, { audience: iss });
+        if (payload.iss && payload.iss !== q.client_id) {
+          return c.json({ error: "invalid_request", error_description: "request iss must equal client_id" }, 400);
+        }
+        const strClaims = Object.fromEntries(Object.entries(payload).filter(([, v]) => typeof v === "string")) as Record<string, string>;
+        p = { ...q, ...strClaims, client_id: q.client_id }; // JWT claims win; keep the outer client_id
+      } catch {
+        return c.json({ error: "invalid_request", error_description: "signed request verification failed" }, 400);
+      }
+    }
+
+    const clientId = p.client_id, redirectUri = p.redirect_uri, state = p.state;
     const client = clientId ? resolveClient(clientId) : null;
     // Can't safely redirect without a validated client + redirect_uri → 400.
     if (!client || !redirectUri || !redirectAllowed(client, redirectUri)) {
@@ -54,16 +76,16 @@ export function oauthRoutes(baseUrl: string): Hono {
       if (state) u.searchParams.set("state", state);
       return c.redirect(u.toString(), 302);
     };
-    if (q.response_type !== "code") return back({ error: "unsupported_response_type" });
-    if (q.aud && q.aud !== fhirAud) return back({ error: "invalid_request", error_description: "aud must be the FHIR base URL" });
+    if (p.response_type !== "code") return back({ error: "unsupported_response_type" });
+    if (p.aud && p.aud !== fhirAud) return back({ error: "invalid_request", error_description: "aud must be the FHIR base URL" });
     // PKCE required for public clients (SMART); only S256 accepted.
     if (client.type !== "confidential") {
-      if (!q.code_challenge) return back({ error: "invalid_request", error_description: "code_challenge required (PKCE)" });
-      if ((q.code_challenge_method ?? "plain") !== "S256") return back({ error: "invalid_request", error_description: "code_challenge_method must be S256" });
+      if (!p.code_challenge) return back({ error: "invalid_request", error_description: "code_challenge required (PKCE)" });
+      if ((p.code_challenge_method ?? "plain") !== "S256") return back({ error: "invalid_request", error_description: "code_challenge_method must be S256" });
     }
-    const scope = q.scope ?? "";
+    const scope = p.scope ?? "";
     const { patient, user } = launchContext(scope);
-    const code = putCode({ clientId: clientId!, redirectUri, scope, codeChallenge: q.code_challenge, codeChallengeMethod: q.code_challenge_method, patient, user, nonce: q.nonce });
+    const code = putCode({ clientId: clientId!, redirectUri, scope, codeChallenge: p.code_challenge, codeChallengeMethod: p.code_challenge_method, patient, user, nonce: p.nonce });
     return back({ code });
   });
 

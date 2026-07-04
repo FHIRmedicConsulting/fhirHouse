@@ -39,6 +39,9 @@ Add a UDAP **foundation** (opt-in `RONIN_UDAP_ENABLED`, `RONIN_UDAP_TRUST_ANCHOR
 - (+) **Persistent client registry** — DCR registrations are written through to a durable `udap_client`
   Delta table (`registered-clients.ts` + catalog/warehouse), loaded into the in-memory cache on
   startup, so registrations survive restarts and repopulate a fleet (latest-per-client_id wins).
+- (+) **Signed discovery** (`signed_metadata` at `.well-known/udap`) + **tiered OAuth** — `/oauth/authorize`
+  accepts a signed **request object (RFC 9101 JAR)** verified against the client's registered key, so the
+  authorization request is provably from the client.
 - (−) **Not complete SSRAA yet.** Deferred (**OPEN QUESTIONS / follow-ups**): **live CRL/OCSP** fetching
   (current revocation is a static operator-managed list); full RFC 5280 path validation +
   name-constraints; UDAP **certifications/endorsements**; and community/trust-bundle management.
