@@ -16,6 +16,7 @@ import { startMaintenanceScheduler } from "./lib/maintenance.js";
 import type { Server as HttpsServer } from "node:https";
 import { buildTlsConfig, watchTlsCert } from "./security/tls.js";
 import { evaluateSecurityPosture } from "./security/profile.js";
+import { startAuditAnchorScheduler } from "./audit/audit-anchor.js";
 
 const log = pino({ level: process.env.RONIN_LOG_LEVEL ?? "info" });
 
@@ -73,6 +74,10 @@ async function main(): Promise<void> {
   // (RONIN_MAINTENANCE_INTERVAL_MIN). Keeps small files in check as the store grows.
   const stopMaintenance = startMaintenanceScheduler(warehouse, log);
 
+  // Opt-in external audit-chain anchoring (RONIN_AUDIT_ANCHOR_INTERVAL_MIN + _WEBHOOK) — publishes
+  // signed chain-tip snapshots to an external sink so a rewritten/truncated audit log is detectable.
+  const stopAnchor = startAuditAnchorScheduler(warehouse, log);
+
   // Graceful shutdown: stop background timers, stop accepting new connections, and let in-flight
   // requests (incl. single-writer Delta commits) drain before exit — so `docker stop` / SIGTERM
   // doesn't cut a write mid-commit. Force-exit after a grace window if draining stalls.
@@ -82,6 +87,7 @@ async function main(): Promise<void> {
     shuttingDown = true;
     log.info({ signal }, "shutting down — draining connections");
     stopMaintenance?.();
+    stopAnchor?.();
     stopCertWatch?.();
     const force = setTimeout(() => { log.warn("shutdown grace elapsed — forcing exit"); process.exit(1); }, 15_000);
     force.unref();

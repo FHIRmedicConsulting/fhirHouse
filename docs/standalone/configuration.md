@@ -71,6 +71,9 @@ writer, ADR-0026), `GOOGLE_SERVICE_ACCOUNT`, `AZURE_STORAGE_ACCOUNT_NAME`, `AZUR
 | Var | Default | Description |
 |---|---|---|
 | `RONIN_AUDIT_ENABLED` | off | Capture (hash-chained) AuditEvents. **_req(prod)_.** |
+| `RONIN_AUDIT_ANCHOR_INTERVAL_MIN` | off | Publish signed audit chain-tip anchors every N min (external tamper detection). |
+| `RONIN_AUDIT_ANCHOR_WEBHOOK` | — | External append-only sink URL to POST anchors to. |
+| `RONIN_AUDIT_ANCHOR_KEY` | — | PEM (PKCS8) key to sign anchors (optional). |
 | `RONIN_CONSENT_ENFORCEMENT` | off | Enforce consent/DS4P at read time (advisory in prod). |
 | `RONIN_CORS_ORIGINS` | dev: `*` / prod: none | Comma-separated allowlist; prod + empty ⇒ same-origin only. |
 | `RONIN_RATE_LIMIT_ENABLED` | prod on / dev off | Per-client rate limiting. |

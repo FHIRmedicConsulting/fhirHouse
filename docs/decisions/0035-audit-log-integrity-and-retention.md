@@ -39,9 +39,16 @@ Add a **hash chain** over the audit store (`src/audit/audit-integrity.ts`):
 - (+) Tamper-**evidence** with no new dependency (Node `crypto`); unit-tested (edit/delete/fork/restart).
   Gives the standalone its own §164.312(b)(c) integrity story independent of Databricks UC.
 - (+) Verifiable on demand (`ronin-audit-verify`) — supports incident response / audit review.
-- (−) Not tamper-**proof**: an attacker who can rewrite the *entire* chain (recompute all hashes) could
-  hide edits. Closing that needs **external anchoring** — periodic publish of the chain tip to WORM /
-  a notary / a second trust domain. **OPEN QUESTION / follow-up** (out of Alpha).
+- (+) **External anchoring implemented** (`src/audit/audit-anchor.ts`): an opt-in scheduler
+  (`RONIN_AUDIT_ANCHOR_INTERVAL_MIN`) publishes a **signed** chain-tip snapshot `{count, tip, at}`
+  (`RONIN_AUDIT_ANCHOR_KEY`) to an external append-only sink (`RONIN_AUDIT_ANCHOR_WEBHOOK`).
+  `verifyAgainstAnchor` then detects a chain that was **truncated** or **fully rewritten** — the case
+  the hash chain alone cannot catch (a rewritten chain is internally consistent). This addresses the
+  former "tamper-proof needs external anchoring" gap. Signing + external immutability mean forging past
+  anchors needs the key the external sink holds.
+- (−) Residual: the external sink's immutability/WORM guarantees + long-term anchor storage are an
+  **operator/deployment** responsibility; live CRL/OCSP-style automated anchor verification tooling is
+  a follow-up.
 - (−) Schema: fresh audit tables get `prev_hash`/`hash` from the first write; **pre-existing** audit
   tables need a one-time schema add before they chain (dev stores are disposable — not an issue for
   Alpha). Continuous external anchoring + WORM object-lock are the post-Alpha hardening steps.

@@ -3,10 +3,12 @@
  * tampering, deletion, and forks. Uses an in-memory fake backend (no sidecar).
  */
 import { describe, it, expect } from "vitest";
+import { generateKeyPair, exportPKCS8 } from "jose";
 import {
   AuditChain, verifyAuditChain, auditHash, AUDIT_GENESIS,
   type AuditBackend, type AuditRow,
 } from "../../src/audit/audit-integrity.js";
+import { computeAnchor, verifyAgainstAnchor } from "../../src/audit/audit-anchor.js";
 
 class FakeAudit implements AuditBackend {
   rows: AuditRow[] = [];
@@ -23,10 +25,11 @@ class FakeAudit implements AuditBackend {
   }
 }
 
-const mkRow = (i: number): AuditRow => ({
+const mkRow = (i: number, over: Partial<AuditRow> = {}): AuditRow => ({
   id: `evt-${i}`, recorded: `2026-07-04T00:00:0${i}Z`, action: "R", outcome: "0",
   subtype: "read", agent_who: "Practitioner/x", entity_ref: `Patient/p${i}`, patient: `p${i}`,
   body_json: JSON.stringify({ resourceType: "AuditEvent", id: `evt-${i}` }),
+  ...over,
 });
 
 describe("audit hash chain", () => {
@@ -84,5 +87,51 @@ describe("audit hash chain", () => {
     await new AuditChain(wh).append(mkRow(1)); // fresh chain instance, same store
     expect(wh.rows[1]!.prev_hash).toBe(wh.rows[0]!.hash); // continued, not a new genesis
     expect((await verifyAuditChain(wh)).ok).toBe(true);
+  });
+});
+
+describe("external audit anchoring", () => {
+  const build = async (n: number) => {
+    const wh = new FakeAudit();
+    const chain = new AuditChain(wh);
+    for (let i = 0; i < n; i++) await chain.append(mkRow(i));
+    return wh;
+  };
+
+  it("an anchor matches the current chain", async () => {
+    const wh = await build(4);
+    const anchor = await computeAnchor(wh, "2026-07-04T00:00:00Z");
+    expect(anchor.count).toBe(4);
+    expect(anchor.tip).toBe(wh.rows[3]!.hash);
+    expect((await verifyAgainstAnchor(wh, anchor)).ok).toBe(true);
+  });
+
+  it("detects truncation below the anchored count", async () => {
+    const wh = await build(4);
+    const anchor = await computeAnchor(wh, "t");
+    wh.rows.pop(); // records deleted after anchoring
+    const v = await verifyAgainstAnchor(wh, anchor);
+    expect(v.ok).toBe(false);
+    expect(v.reason).toMatch(/truncated/);
+  });
+
+  it("detects a FULL rewrite (internally-consistent chain that diverges from the anchor)", async () => {
+    const wh = await build(4);
+    const anchor = await computeAnchor(wh, "t");
+    // Attacker rewrites the whole chain, altering record 1 and recomputing every hash:
+    wh.rows = [];
+    const chain = new AuditChain(wh);
+    for (let i = 0; i < 4; i++) await chain.append(mkRow(i, i === 1 ? { body_json: '{"tampered":true}' } : {}));
+    expect((await verifyAuditChain(wh)).ok).toBe(true);          // internally consistent — hash chain alone can't tell
+    expect((await verifyAgainstAnchor(wh, anchor)).ok).toBe(false); // ...but the external anchor catches it
+  });
+
+  it("signs the anchor when a key is configured", async () => {
+    const wh = await build(2);
+    expect((await computeAnchor(wh, "t", {})).jws).toBeUndefined(); // no key → unsigned
+    const kp = await generateKeyPair("RS256", { extractable: true });
+    const env = { RONIN_AUDIT_ANCHOR_KEY: await exportPKCS8(kp.privateKey) } as unknown as NodeJS.ProcessEnv;
+    const signed = await computeAnchor(wh, "t", env);
+    expect(typeof signed.jws).toBe("string"); // JWS over {count, tip, at}
   });
 });
