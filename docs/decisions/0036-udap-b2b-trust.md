@@ -42,7 +42,12 @@ Add a UDAP **foundation** (opt-in `RONIN_UDAP_ENABLED`, `RONIN_UDAP_TRUST_ANCHOR
 - (+) **Signed discovery** (`signed_metadata` at `.well-known/udap`) + **tiered OAuth** — `/oauth/authorize`
   accepts a signed **request object (RFC 9101 JAR)** verified against the client's registered key, so the
   authorization request is provably from the client.
-- (−) **Not complete SSRAA yet.** Deferred (**OPEN QUESTIONS / follow-ups**): **live CRL/OCSP** fetching
-  (current revocation is a static operator-managed list); full RFC 5280 path validation +
-  name-constraints; UDAP **certifications/endorsements**; and community/trust-bundle management.
-  Required before production TEFCA use.
+- (−) **Not complete SSRAA yet.** Deferred (**OPEN QUESTIONS / follow-ups**):
+  - **Live CRL/OCSP fetching** — needs a **new dependency decision** (flag per the component-disclosure
+    policy): Node's `crypto` has no CRL/OCSP support. Recommended path: **`pkijs` + `asn1js`** (pure-JS,
+    no native build) to download the cert's CRL Distribution Point, parse it, and check the serial —
+    CRL first (simpler; no request signing), OCSP (AIA responder) as a follow-up. Both plug into the
+    existing revocation seam (`loadRevokedCerts`/`verifyCertChain`). **Meanwhile the static operator
+    revocation list is a real revocation control.** Requires Chad's approval of the PKI dep before build.
+  - Full RFC 5280 path validation + name-constraints; UDAP **certifications/endorsements**; and
+    community/trust-bundle management. Required before production TEFCA use.
