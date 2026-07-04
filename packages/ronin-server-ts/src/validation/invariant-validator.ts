@@ -5,6 +5,7 @@
  * constraints (e.g. pat-1 on Patient.contact); deeper-nested contexts are deferred.
  */
 import fhirpath from "fhirpath";
+import { fhirpathR4Model } from "../lib/fhirpath-model.js";
 import type { ValidationIssue } from "./structural-validator.js";
 
 export interface Invariant {
@@ -31,10 +32,12 @@ export function validateInvariants(resource: Record<string, unknown>, invariants
     for (const node of nodes) {
       let ok = true;
       try {
-        const res = fhirpath.evaluate(node, inv.expression) as unknown[];
+        // Evaluate WITH the R4 model so type-aware expressions (ofType/as/resolve/choice types)
+        // resolve instead of throwing — otherwise most non-trivial invariants silently pass.
+        const res = fhirpath.evaluate(node, inv.expression, undefined, fhirpathR4Model) as unknown[];
         ok = res.length === 0 ? true : res.every((x: unknown) => x !== false);
       } catch {
-        ok = true; // expression needs a model / unevaluable → skip (don't false-fail)
+        ok = true; // engine still can't evaluate (unsupported fn) → skip, don't false-fail a valid resource
       }
       if (!ok) {
         issues.push({ path: inv.path, message: `invariant ${inv.key} violated: ${inv.expression}` });

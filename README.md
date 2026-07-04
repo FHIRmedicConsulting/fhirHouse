@@ -20,8 +20,14 @@ HTTP (Hono)
 
 - **Storage topology (install-time):** single Delta store (dev default) or medallion
   (Bronze→Silver→Gold, Gold operational). `RONIN_STORAGE_MODE=single|medallion`.
+  _(Alpha: single-store serving is the supported path; the medallion Gold read-path is WIP.)_
 - **Clean-room columnar flattener** generated from CC0 HL7 R4 StructureDefinitions
   (no proprietary schemas).
+
+> **Status: pre-alpha.** Broad FHIR surface + a real security baseline (hardened TLS, fail-closed
+> production profile, HTTP hardening, tamper-evident audit, SMART/Backend-Services/UDAP). **Not** ONC
+> (g)(10)-certified — individual US Core groups pass in Inferno, but the full suite hasn't been run
+> end-to-end. Synthetic data only until you configure the production profile. See `STATUS.md`.
 
 ## Features
 
@@ -31,14 +37,20 @@ HTTP (Hono)
   `_summary`/`_elements` + paging), `$everything`, `$export`, batch/transaction,
   conditional create/update/delete.
 - **Validation prior to Bronze** — structural + cardinality + terminology bindings +
-  FHIRPath invariants + slicing + installed-profile required-elements; invalid →
-  resource-level dead-letter. Optional quarantine-and-auto-resolve for unknown terminology.
+  L4 FHIRPath invariants (top-level/one-level) + slicing + installed-profile required-elements
+  & bindings; invalid → resource-level dead-letter. Optional quarantine-and-auto-resolve for
+  unknown terminology. _(Not full L5 IG conformance — no closed/max slices, discriminators, or
+  must-support; the authoritative profile verdict is the external HL7 validator.)_
 - **Provisioning + terminology** — install FHIR IG packages (profiles + carried
   terminology), load operator-supplied SNOMED/LOINC/RxNorm release files, pull VSAC
   value sets ($expand) once at IG load. Pure-local `$validate-code`.
-- **Security / privacy / consent (opt-in)** — SMART/UDAP auth, AuditEvent + accounting,
-  computable consent, DS4P security-label enforcement, 42 CFR Part 2 + element-level
-  redaction. The server *enforces* labels/consent; tagging is done upstream.
+- **Security / privacy / consent (opt-in)** — SMART auth + Backend Services + UDAP B2B trust,
+  AuditEvent + accounting, computable consent, DS4P security-label enforcement, 42 CFR Part 2 +
+  element-level redaction. The server *enforces* labels/consent; tagging is done upstream.
+- **Security infrastructure** — hardened TLS (NIST SP 800-52r2, cert hot-reload), a **fail-closed
+  production profile**, HTTP hardening (headers, enforced CORS, rate limiting, body limits),
+  **tamper-evident (hash-chained) audit**, and SBOM + dependency/secret/vuln scanning in CI.
+  See `docs/standalone/security-hardening-and-deployment.md` (ADR-0031..0036).
 
 ## Quickstart
 

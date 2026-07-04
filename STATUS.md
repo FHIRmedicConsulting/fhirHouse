@@ -19,9 +19,9 @@ All 10 deep-review priorities (2026-07-02) are addressed — see `docs/status/20
 | FHIR R4 REST surface | ✅ CRUD, history (instance/type/system), vread, CapabilityStatement, `$validate`, batch/transaction, conditional create/update/delete |
 | Search | ✅ token/string/date/number/quantity/uri/**reference (bare-id + full)**, modifiers, chaining, `_has`, `_include`/`_revinclude`, `_sort`/`_summary`/`_elements`, paging, **GET + POST `_search`** |
 | Operations | ✅ `$everything`, `$export` (dev), `$validate` |
-| Validation (pre-Bronze) | ✅ structural + cardinality + **choice-type `[x]`** + terminology bindings (3-state) + FHIRPath invariants + installed-profile required-elements + slicing (first cut) |
+| Validation (pre-Bronze) | ✅ structural + cardinality + **choice-type `[x]`** + terminology bindings (3-state) + **L4 FHIRPath invariants (top-level/one-level, R4-model-aware; deeper contexts deferred)** + installed-profile **required-elements + required bindings + required (value/pattern) slices** (NOT full L5 IG conformance — no closed/max slices, discriminators, or must-support; the authoritative profile verdict is the external HL7 validator) + slicing (first cut) |
 | Transactions | ✅ urn:uuid resolution + **conditional references** (`Type?identifier=…` → literal) + **`ifNoneExist`** conditional create |
-| Storage (Delta) | ✅ OPTIMIZE + VACUUM (all tables), **Z-order by `id`**, **current-version `is_current`** (atomic demote), **single-writer serialization + sidecar retry**, **startup table discovery** |
+| Storage (Delta) | ✅ OPTIMIZE + VACUUM (all tables), **Z-order by `id`**, **current-version `is_current`** (atomic demote), **single-writer serialization + sidecar retry**, **startup table discovery** (⚠️ **single-store serving only**: `RONIN_STORAGE_MODE=medallion` Gold-read-path not wired; startup discovery is **local-FS only** — object-store restart-registration WIP) |
 | Terminology | ✅ local store (752k concepts loadable) + **tx-server endpoints**: `ValueSet/$validate-code`, `CodeSystem/$validate-code`, `ValueSet/$expand`, `CodeSystem/$lookup` |
 | Provisioning | ✅ IG install, operator file loaders (LOINC/SNOMED/RxNorm), VSAC `$expand`, quarantine-reconcile |
 | Security (enforcement) | ✅ SMART scopes + JWKS auth, **Backend Services** (client_credentials+private_key_jwt), **UDAP B2B trust foundation** (cert-chain software statements + trusted DCR + `.well-known/udap`, opt-in), AuditEvent + accounting, consent + DS4P labels, obligations; ✅ **SMART discovery** + 401/WWW-Authenticate |
@@ -29,6 +29,12 @@ All 10 deep-review priorities (2026-07-02) are addressed — see `docs/status/20
 | CapabilityStatement | ✅ US Core `supportedProfile` + `instantiates`, JSON-only `format`, SMART `oauth-uris`, terminology ops, `TerminologyCapabilities` (`?mode=terminology`) |
 
 ## Conformance — Inferno (g)(10)
+> **Honest status:** the full (g)(10) suite has **NOT** been run start-to-finish with the SMART App
+> Launch / OAuth-gated flows. What's verified: individual **US Core v6.1.0** resource/search/read
+> groups pass, and profile `validation_test` passes with external tx suppressed (Option B). This is
+> **not** an ONC certification claim — do not say "passes (g)(10)." SMART auth server + Backend
+> Services exist but aren't yet proven end-to-end through the harness.
+
 Harness stood up (docker g10 kit); server driven headlessly. **Run 9 (2026-07-03) — validator LIVE:**
 fixed the OOM (Docker VM → **12 GB** + validator **`-Xmx8g`**) and the base-URL mismatch (server
 launched with **`RONIN_PUBLIC_URL=http://host.docker.internal:3000`** so paginated/revinclude links
