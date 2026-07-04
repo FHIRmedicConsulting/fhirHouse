@@ -21,6 +21,7 @@ import { mountTransaction } from "./routes/transaction.js";
 import { mountMemberMatch } from "./routes/member-match.js";
 import { mountPriorAuth } from "./routes/prior-auth.js";
 import { mountCdsHooks } from "./routes/cds-hooks.js";
+import { mountDtr } from "./routes/dtr.js";
 import { authEnabled, buildAuthMiddleware } from "./auth/configure.js";
 import { auditEnabled, buildAuditMiddleware } from "./audit/configure.js";
 import { buildCapabilityStatement } from "./conformance/capability-statement.js";
@@ -96,6 +97,8 @@ export function createDeltaApp(deps: DeltaAppDeps): Hono {
   mountPriorAuth(app, deps.warehouse, deps.baseUrl);
   // Da Vinci CRD — CDS Hooks discovery + coverage-requirements service (CMS-0057).
   mountCdsHooks(app, deps.baseUrl);
+  // Da Vinci DTR — Questionnaire/$questionnaire-package (CMS-0057) — before the generic routes.
+  mountDtr(app, deps.warehouse);
   // Terminology operations ($validate-code/$expand/$lookup) — BEFORE the generic /:resourceType/:id
   // routes so `/ValueSet/$validate-code` isn't captured as a resource read.
   app.route("/", terminologyRoutes(deps.warehouse));

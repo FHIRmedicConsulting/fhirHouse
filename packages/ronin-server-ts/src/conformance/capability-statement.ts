@@ -58,6 +58,9 @@ export async function buildCapabilityStatement(wh: DeltaWarehouse, baseUrl: stri
       { name: "submit", definition: "http://hl7.org/fhir/us/davinci-pas/OperationDefinition/Claim-submit" },
       { name: "inquire", definition: "http://hl7.org/fhir/us/davinci-pas/OperationDefinition/Claim-inquire" },
     );
+    if (rt === "Questionnaire") ops.push(
+      { name: "questionnaire-package", definition: "http://hl7.org/fhir/us/davinci-dtr/OperationDefinition/questionnaire-package" },
+    );
     if (TERMINOLOGY_OPS[rt]) ops.push(...TERMINOLOGY_OPS[rt]);
     return ops;
   };
