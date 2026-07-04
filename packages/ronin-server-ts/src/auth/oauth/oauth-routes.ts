@@ -4,14 +4,16 @@
  *
  *   GET  /oauth/authorize   authorization_code + PKCE (auto-approve; no interactive login in
  *                           this headless server — patient/user come from config).
- *   POST /oauth/token       authorization_code | refresh_token → access + (openid) id + refresh.
+ *   POST /oauth/token       authorization_code | refresh_token | client_credentials → tokens.
  *   GET  /.well-known/jwks.json   public keys for verifying issued tokens.
  *
  * The issued access token is a JWT the auth gate verifies in-process (RONIN_AUTH_STRATEGY=local)
  * or via this JWKS — closing the loop: this server issues, our gate enforces.
  *
- * Scope: standalone patient/practitioner app flow. Backend Services (client_credentials +
- * private_key_jwt) is a documented follow-up.
+ * Scope: standalone patient/practitioner app flow PLUS SMART Backend Services
+ * (client_credentials + private_key_jwt client assertion, verified against the client's JWKS;
+ * see the client_credentials branch below). NOT yet implemented: UDAP/SSRAA (dynamic client
+ * registration, X.509 software statements) — a documented follow-up.
  */
 import { Hono } from "hono";
 import { jwtVerify, decodeJwt } from "jose";

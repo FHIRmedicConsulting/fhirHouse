@@ -39,10 +39,13 @@ non-conformance** (only error-level lines are remote-tx cache errors on SNOMED `
 values` search fails are **served correctly on direct probe** (harness value-extraction). **Run 10**
 (terminology config): **Option B (suppress external tx.fhir.org errors, ONC-aligned) WORKS** — with tx
 filters added to both suites, Encounter/DiagnosticReport `validation_test` now PASS (our data is
-US-Core-conformant; failures were flaky external tx, not our data). **Option A (point validator at our
-tx endpoint)** is viable but blocked on transport (validator speaks TLS, our endpoint is HTTP) +
-needs a TerminologyCapabilities handshake + batch `$validate-code` — a bounded follow-up to prove our
-terminology server end-to-end. Prior Run 8:
+US-Core-conformant; failures were flaky external tx, not our data). **Option A finished (Run 11): NOT achievable** — TLS
+solved (TLS listener + cert in validator truststore) and TerminologyCapabilities handshake added
+(`/metadata?mode=terminology`, 1157 systems), but the HL7 validator **deliberately refuses** any tx
+server not approved via HL7's FHIR Terminology Ecosystem conformance program ("not approved… does not
+pass the required tests"); **no bypass flag exists**. Our tx endpoint is for our own clients, not the
+cert validator — Option B is the correct path (and is what ONC's hosted validator does). Kept the
+`TerminologyCapabilities` endpoint (standards-compliant improvement). Prior Run 8:
 zero `fhir_client` crashes, Patient 10 PASS, clinical search/read/revinclude clean. Detail:
 `docs/standalone/inferno-g10-findings.md` §Run 9; drivers: `docs/standalone/inferno/`.
 

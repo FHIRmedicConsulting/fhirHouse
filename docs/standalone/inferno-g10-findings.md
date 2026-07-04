@@ -422,3 +422,60 @@ compound-search value-extraction (served correctly on direct probe — harness-s
   the way to actually prove our terminology endpoint against the validator; deferred.
 - These suite/container/cache edits live in the **scratchpad g10 kit** (not the product) and are not
   persisted if the kit is rebuilt; re-apply via `inferno/reload.sh` + the two filter snippets above.
+
+---
+
+## Run 11 (2026-07-04) — Option A finished: TLS solved, then blocked by HL7's tx-server APPROVAL gate
+
+Picked Option A back up and drove it to a definitive conclusion. Two real blockers were cleared;
+a third — a deliberate HL7 gate — stops it, and there is **no bypass**.
+
+**Cleared blocker 1 — transport (TLS).** The earlier "Unsupported or unrecognized SSL message" was
+the validator's tx client speaking TLS to our plaintext HTTP endpoint. Fix that works:
+- Ran a **second server instance with TLS** on **:3443** over the same Delta store (FHIR endpoint
+  stays HTTP on :3000 so Inferno's CRUD/search tests are unaffected). Self-signed cert with
+  `subjectAltName=DNS:host.docker.internal`.
+- **Imported the cert into the validator container's Java truststore** (`keytool -import` into
+  `/opt/java/openjdk/lib/security/cacerts`; **restart, not `--force-recreate`**, or the truststore
+  edit is lost).
+- Result: the validator now **connects cleanly** to `https://host.docker.internal:3443` — SSL error
+  gone.
+
+**Cleared blocker 2 — the tx handshake.** Added **TerminologyCapabilities** at
+`GET /metadata?mode=terminology` (new `src/conformance/terminology-capabilities.ts`, wired in
+`app.ts`) generated from the loaded `codesystem_concept` table — advertises **1157 code systems**
+incl. SNOMED/LOINC/RxNorm. Our `$validate-code` also resolves the sample SNOMED encounter code
+directly (`162673000` → true). So the server side is genuinely a working local tx server.
+
+**The hard stop — approval gate (no bypass):**
+```
+TerminologyServiceException: The terminology server https://host.docker.internal:3443
+is not approved for use with this software (it does not pass the required tests)
+```
+Per HL7 (Using the FHIR Validator; FHIR Terminology Ecosystem IG), the Java validator will only use
+a `-tx` server that is **tx.fhir.org, a clone of it, or software that has passed the FHIR
+Terminology Ecosystem conformance test suite AND been approved by the HL7 FHIR product director.**
+The inferno `fhir-validator-wrapper` exposes only `TX_SERVER_URL`, `DISABLE_TX`, and
+`DISPLAY_ISSUES_ARE_WARNINGS` — **no flag to trust an unapproved server**; the check lives in the
+core validator, not the wrapper.
+
+**Conclusion — Option A is not achievable for the Inferno/HL7-validator use case.** Not because of
+TLS or our handshake (both solved) but because HL7 deliberately gates which terminology servers the
+validator will trust. Clearing it = passing HL7's formal terminology-ecosystem conformance program —
+a large, external, HL7-owned process, **out of RoninStandAlone scope** and **not required for
+(g)(10)**: ONC's own hosted validator runs with the external tx **disabled/filtered** — i.e.
+**Option B**, which is already in place and gives clean validation runs.
+
+**Architecture takeaway:** our terminology endpoint is for **our own** clients (the server's
+validation pipeline, SMART apps, real tx consumers) — *not* for the Inferno validator. Pointing the
+certification validator at it was the wrong target; Option B is correct.
+
+**Kept from this work (real improvements, retained in the product):**
+- `TerminologyCapabilities` at `/metadata?mode=terminology` — a legitimate, standards-compliant
+  endpoint a proper tx server should expose (complements the existing `$validate-code`/`$expand`/
+  `$lookup`). Typecheck + 120 unit tests green.
+- Corrected a **stale docstring** in `oauth/oauth-routes.ts` that claimed SMART Backend Services was
+  a "documented follow-up" — it is in fact **implemented** (client_credentials + private_key_jwt).
+
+**Teardown:** the :3443 TLS instance was stopped; the us_core + G10 suites are back in the working
+**Option B** state. The validator truststore alias (`ronin-tx`) is harmless and left in place.

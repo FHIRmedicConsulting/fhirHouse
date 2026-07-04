@@ -21,6 +21,7 @@ import { mountTransaction } from "./routes/transaction.js";
 import { authEnabled, buildAuthMiddleware } from "./auth/configure.js";
 import { auditEnabled, buildAuditMiddleware } from "./audit/configure.js";
 import { buildCapabilityStatement } from "./conformance/capability-statement.js";
+import { buildTerminologyCapabilities } from "./conformance/terminology-capabilities.js";
 import { buildSmartConfiguration } from "./conformance/smart-configuration.js";
 import { oauthEnabled, oauthRoutes } from "./auth/oauth/oauth-routes.js";
 import { FhirError } from "./lib/errors.js";
@@ -39,7 +40,11 @@ export function createDeltaApp(deps: DeltaAppDeps): Hono {
   // bypass it (Hono runs only middleware registered before a matched handler).
   app.get("/health", (c) => c.json({ status: "ok", backend: "delta", deployment: deps.deploymentName ?? "ronin-standalone" }));
 
-  app.get("/metadata", async (c) => c.json(await buildCapabilityStatement(deps.warehouse, deps.baseUrl)));
+  app.get("/metadata", async (c) =>
+    c.req.query("mode") === "terminology"
+      ? c.json(await buildTerminologyCapabilities(deps.warehouse, deps.baseUrl))
+      : c.json(await buildCapabilityStatement(deps.warehouse, deps.baseUrl)),
+  );
 
   // SMART App Launch discovery (public, pre-auth-gate). Advertises the authorization/token
   // endpoints + the capability/scope union across active SMART versions (ADR-0006 / ADR-0030).
