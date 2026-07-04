@@ -80,6 +80,11 @@ const issuedBy = (cert: X509Certificate, issuer: X509Certificate): boolean => {
   catch { return false; }
 };
 
+/** Find the certificate that issued `cert` among `candidates` (its chain + anchors). For OCSP. */
+export function issuerOf(cert: X509Certificate, candidates: X509Certificate[]): X509Certificate | undefined {
+  return candidates.find((c) => c.fingerprint256 !== cert.fingerprint256 && issuedBy(cert, c));
+}
+
 export interface ChainResult {
   ok: boolean;
   leaf?: X509Certificate;

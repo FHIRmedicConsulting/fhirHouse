@@ -43,10 +43,11 @@ Add a UDAP **foundation** (opt-in `RONIN_UDAP_ENABLED`, `RONIN_UDAP_TRUST_ANCHOR
   accepts a signed **request object (RFC 9101 JAR)** verified against the client's registered key, so the
   authorization request is provably from the client.
 - (−) **Not complete SSRAA yet.** Deferred (**OPEN QUESTIONS / follow-ups**):
-  - ~~Live CRL fetching~~ **DONE** (2026-07-04; `pkijs`+`asn1js` approved): `src/auth/udap/crl.ts` —
-    downloads the cert's CRL Distribution Point (or `RONIN_UDAP_CRL_URLS`), **verifies the CRL is signed
-    by a trusted issuer** (so a forged/empty CRL can't hide a revocation), checks the serial, and caches
-    per `nextUpdate`. Opt-in `RONIN_UDAP_CRL_CHECK`; soft-fail by default, `RONIN_UDAP_CRL_HARD_FAIL` to
-    fail closed. Enforced in `verifySoftwareStatement`. **OCSP** (AIA responder) remains a follow-up.
-  - Full RFC 5280 path validation + name-constraints; UDAP **certifications/endorsements**; and
-    community/trust-bundle management. Required before production TEFCA use.
+  - ~~Live CRL/OCSP~~ **DONE** (2026-07-04; `pkijs`+`asn1js` approved). **CRL** (`crl.ts`): downloads the
+    cert's CRL Distribution Point (or `RONIN_UDAP_CRL_URLS`), **verifies the CRL is signed by a trusted
+    issuer**, checks the serial, caches per `nextUpdate` (`RONIN_UDAP_CRL_CHECK`). **OCSP** (`ocsp.ts`,
+    RFC 6960): queries the responder from the cert's AIA (or `RONIN_UDAP_OCSP_URLS`), pkijs builds the
+    request and **verifies the signed response** (`RONIN_UDAP_OCSP_CHECK`). Both soft-fail by default
+    (`*_HARD_FAIL` to fail closed) and are enforced in `verifySoftwareStatement`.
+  - Remaining: full RFC 5280 path validation + name-constraints; UDAP **certifications/endorsements**;
+    and community/trust-bundle management. Required before production TEFCA use.

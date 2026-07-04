@@ -7,8 +7,9 @@
  */
 import { jwtVerify, decodeProtectedHeader, exportJWK, calculateJwkThumbprint } from "jose";
 import type { X509Certificate } from "node:crypto";
-import { verifyCertChain, loadTrustAnchors, leafPublicKey, parseX5c } from "./trust.js";
+import { verifyCertChain, loadTrustAnchors, leafPublicKey, parseX5c, issuerOf } from "./trust.js";
 import { CrlRevocationChecker, crlCheckEnabled } from "./crl.js";
+import { OcspRevocationChecker, ocspCheckEnabled } from "./ocsp.js";
 
 export class UdapError extends Error {}
 
@@ -31,6 +32,8 @@ export interface VerifyOptions {
   now?: Date;
   /** Injectable live-CRL checker (tests); defaults to a real one when RONIN_UDAP_CRL_CHECK=true. */
   crlChecker?: CrlRevocationChecker;
+  /** Injectable OCSP checker (tests); defaults to a real one when RONIN_UDAP_OCSP_CHECK=true. */
+  ocspChecker?: OcspRevocationChecker;
 }
 
 export async function verifySoftwareStatement(jwt: string, opts: VerifyOptions): Promise<SoftwareStatement> {
@@ -44,14 +47,26 @@ export async function verifySoftwareStatement(jwt: string, opts: VerifyOptions):
   const chain = verifyCertChain(x5c, anchors, opts.now);
   if (!chain.ok || !chain.leaf) throw new UdapError(`untrusted certificate: ${chain.reason}`);
 
-  // Live CRL revocation (opt-in, async) — checks each cert against its CRL, verified vs a trusted issuer.
-  if (opts.crlChecker || crlCheckEnabled()) {
+  // Live revocation (opt-in, async): CRL and/or OCSP. CRL verifies vs any trusted issuer; OCSP needs
+  // the cert's specific issuer. Either mechanism reporting "revoked" rejects the statement.
+  if (opts.crlChecker || opts.ocspChecker || crlCheckEnabled() || ocspCheckEnabled()) {
     const certs = parseX5c(x5c);
-    const issuers = [...certs, ...anchors];
-    const checker = opts.crlChecker ?? new CrlRevocationChecker();
-    for (const cert of certs) {
-      const r = await checker.isRevoked(cert, issuers);
-      if (r.revoked) throw new UdapError(`untrusted certificate: ${r.reason}`);
+    const candidates = [...certs, ...anchors];
+    if (opts.crlChecker || crlCheckEnabled()) {
+      const crl = opts.crlChecker ?? new CrlRevocationChecker();
+      for (const cert of certs) {
+        const r = await crl.isRevoked(cert, candidates);
+        if (r.revoked) throw new UdapError(`untrusted certificate: ${r.reason}`);
+      }
+    }
+    if (opts.ocspChecker || ocspCheckEnabled()) {
+      const ocsp = opts.ocspChecker ?? new OcspRevocationChecker();
+      for (const cert of certs) {
+        const issuer = issuerOf(cert, candidates);
+        if (!issuer) continue; // no issuer available → can't OCSP this cert
+        const r = await ocsp.isRevoked(cert, issuer);
+        if (r.revoked) throw new UdapError(`untrusted certificate: ${r.reason}`);
+      }
     }
   }
 

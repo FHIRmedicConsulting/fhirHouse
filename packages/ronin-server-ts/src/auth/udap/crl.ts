@@ -9,13 +9,10 @@
  *
  * Uses `pkijs` + `asn1js` (pure-JS; approved 2026-07-04) with Node's Web Crypto engine.
  */
-import { X509Certificate, webcrypto } from "node:crypto";
+import { X509Certificate } from "node:crypto";
 import * as asn1js from "asn1js";
-import { CertificateRevocationList, Certificate, CryptoEngine, setEngine } from "pkijs";
-
-// pkijs needs a crypto engine for signature verification — Node's Web Crypto (Node ≥ 20).
-type EngineCrypto = ConstructorParameters<typeof CryptoEngine>[0]["crypto"];
-setEngine("ronin", new CryptoEngine({ name: "ronin", crypto: webcrypto as unknown as EngineCrypto }));
+import { CertificateRevocationList, Certificate } from "pkijs";
+import "./pki-engine.js"; // sets the pkijs crypto engine (side effect)
 
 /** A standalone ArrayBuffer copy of a byte view (avoids SharedArrayBuffer / offset issues). */
 const ab = (u8: Uint8Array): ArrayBuffer => new Uint8Array(u8).buffer as ArrayBuffer;
