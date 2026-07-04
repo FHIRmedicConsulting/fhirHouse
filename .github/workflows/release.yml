@@ -1,0 +1,42 @@
+name: Release
+
+# Tag a release: git tag v0.1.0-alpha.1 && git push --tags
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write   # create the GitHub Release
+
+jobs:
+  release:
+    name: Create GitHub release (+ SBOM)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/ronin-server-ts
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: packages/ronin-server-ts/package-lock.json
+      - run: npm ci
+      # Full tree so the SBOM resolves the file:-linked workspace.
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: packages/ronin-fhir-types
+      - name: Generate CycloneDX SBOM
+        run: npm sbom --sbom-format cyclonedx --omit dev > "sbom-${GITHUB_REF_NAME}.cdx.json"
+      - name: Create release with auto-generated notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PRERELEASE=""
+          case "$GITHUB_REF_NAME" in *-alpha*|*-beta*|*-rc*) PRERELEASE="--prerelease";; esac
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes $PRERELEASE \
+            "sbom-${GITHUB_REF_NAME}.cdx.json#SBOM (CycloneDX)"

@@ -1,0 +1,44 @@
+name: Bug report
+description: Report a defect in RoninStandAlone
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! **Do not include PHI or secrets.** Use synthetic data only.
+        For security vulnerabilities, do NOT file here — see [SECURITY.md](../blob/main/SECURITY.md).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you observe vs. expect?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps / request (synthetic data only).
+      placeholder: |
+        1. Start server with RONIN_SECURITY_PROFILE=dev …
+        2. POST /Patient …
+        3. GET /Patient?… → …
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: OS, Node/Python versions, storage mode, security profile, Docker vs. source.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs / OperationOutcome
+      description: Redact anything sensitive.
+      render: shell

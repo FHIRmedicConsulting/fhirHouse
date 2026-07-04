@@ -1,0 +1,11 @@
+# Code owners — auto-requested for review. Replace @OWNER with the real maintainer handle/team
+# before enabling branch protection that requires code-owner review.
+* @OWNER
+
+# Security-sensitive areas warrant extra scrutiny:
+/packages/ronin-server-ts/src/auth/       @OWNER
+/packages/ronin-server-ts/src/security/   @OWNER
+/packages/ronin-server-ts/src/audit/      @OWNER
+/deploy/                                   @OWNER
+/docs/decisions/                           @OWNER
+/SECURITY.md                               @OWNER
