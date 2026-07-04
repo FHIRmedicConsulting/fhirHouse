@@ -98,6 +98,21 @@ def test_with_retry_propagates_non_conflict_immediately():
     assert calls["n"] == 1  # failed fast, no retry
 
 
+# --- optimize actually compacts many small files (controlled append path) -----
+def test_optimize_compacts_small_files(tmp_path):
+    p = str(tmp_path / "obs")
+    for i in range(6):  # 6 separate append commits → 6 small files
+        ds.do_write({"table_path": p, "rows": [{"id": str(i), "v": i}], "schema": "infer", "mode": "append"})
+    out = ds.do_optimize({"table_path": p, "zorder": False})
+    assert out["files_before"] >= 6
+    assert out["files_after"] < out["files_before"]  # compacted into fewer files
+    assert q(p, "SELECT count(*) AS n FROM t")[0]["n"] == 6  # no data lost
+
+    # z-order by id clusters (and still compacts) when the table has an id column
+    z = ds.do_optimize({"table_path": p})
+    assert z["zorder"] == ["id"]
+
+
 # --- infer-schema null-cast gotcha (write "" not null for optional strings) --
 def test_infer_schema_empty_string_roundtrips(tmp_path):
     p = str(tmp_path / "audit")

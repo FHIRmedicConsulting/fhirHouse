@@ -89,15 +89,30 @@ jobs:
         with:
           python-version: "3.12"
       - run: npm ci
-      - name: Install sidecar deps
+      - name: Install sidecar deps (+ pytest)
         working-directory: packages/ronin-server-ts/sidecar
-        run: pip install -r requirements.txt
-      - name: Start delta sidecar
+        run: pip install -r requirements-dev.txt
+      - name: Sidecar unit tests (pytest)
+        working-directory: packages/ronin-server-ts/sidecar
+        run: pytest tests/ -q
+      - name: Start delta sidecar (fail hard if it never comes up)
         run: |
           python sidecar/delta_sidecar.py --port 8077 --base ./.delta-ci &
-          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:8077/health && break; sleep 1; done
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:8077/health >/dev/null && ok=1 && break; sleep 1; done
+          [ "${ok:-}" = 1 ] || { echo "::error::delta sidecar did not become healthy — failing (avoids silently skipped delta tests)"; exit 1; }
       - name: Delta integration tests
         env:
           RONIN_DELTA_SIDECAR_URL: http://127.0.0.1:8077
           RONIN_DELTA_BASE: ./.delta-ci
         run: npm run test:delta
+      - name: Server boot smoke (real entrypoint, dev profile)
+        env:
+          RONIN_DELTA_SIDECAR_URL: http://127.0.0.1:8077
+          RONIN_DELTA_BASE: ./.delta-ci-smoke
+        run: |
+          npx tsx src/server.ts & SRV=$!
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:3000/ready >/dev/null && ok=1 && break; sleep 1; done
+          [ "${ok:-}" = 1 ] || { echo "::error::server did not become ready"; kill $SRV 2>/dev/null; exit 1; }
+          curl -fsS http://127.0.0.1:3000/health  | grep -q '"status":"ok"'
+          curl -fsS http://127.0.0.1:3000/metadata | grep -q CapabilityStatement
+          kill $SRV 2>/dev/null || true
