@@ -63,16 +63,32 @@ async function main(): Promise<void> {
   );
 
   // Hot-reload the TLS cert on renewal (ACME/cert-manager) — no restart needed (ADR-0031).
-  if (tlsCfg.enabled) {
-    watchTlsCert(server as unknown as HttpsServer, (err) =>
-      err ? log.error({ err }, "TLS cert reload failed — keeping previous certificate")
-          : log.info("TLS certificate reloaded"),
-    );
-  }
+  const stopCertWatch = tlsCfg.enabled
+    ? watchTlsCert(server as unknown as HttpsServer, (err) =>
+        err ? log.error({ err }, "TLS cert reload failed — keeping previous certificate")
+            : log.info("TLS certificate reloaded"))
+    : undefined;
 
   // Opt-in store maintenance: Delta compaction (+ optional vacuum) on an interval
   // (RONIN_MAINTENANCE_INTERVAL_MIN). Keeps small files in check as the store grows.
-  startMaintenanceScheduler(warehouse, log);
+  const stopMaintenance = startMaintenanceScheduler(warehouse, log);
+
+  // Graceful shutdown: stop background timers, stop accepting new connections, and let in-flight
+  // requests (incl. single-writer Delta commits) drain before exit — so `docker stop` / SIGTERM
+  // doesn't cut a write mid-commit. Force-exit after a grace window if draining stalls.
+  let shuttingDown = false;
+  const shutdown = (signal: string) => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    log.info({ signal }, "shutting down — draining connections");
+    stopMaintenance?.();
+    stopCertWatch?.();
+    const force = setTimeout(() => { log.warn("shutdown grace elapsed — forcing exit"); process.exit(1); }, 15_000);
+    force.unref();
+    server.close(() => { log.info("closed cleanly"); clearTimeout(force); process.exit(0); });
+  };
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 }
 
 main().catch((err) => {

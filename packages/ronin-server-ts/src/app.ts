@@ -46,7 +46,15 @@ export function createDeltaApp(deps: DeltaAppDeps): Hono {
 
   // Public routes (SMART): /health + /metadata are mounted BEFORE the auth gate so they
   // bypass it (Hono runs only middleware registered before a matched handler).
+  // Liveness — the process is up (does not check dependencies).
   app.get("/health", (c) => c.json({ status: "ok", backend: "delta", deployment: deps.deploymentName ?? "ronin-standalone" }));
+
+  // Readiness — the server can serve traffic (storage sidecar reachable). 503 until it is, so an
+  // orchestrator/LB doesn't route writes that would 5xx (§164.312 availability; ops).
+  app.get("/ready", async (c) => {
+    const ok = await deps.warehouse.health().catch(() => false);
+    return c.json({ status: ok ? "ready" : "not-ready", sidecar: ok }, ok ? 200 : 503);
+  });
 
   app.get("/metadata", async (c) =>
     c.req.query("mode") === "terminology"
