@@ -3,19 +3,16 @@
 RoninStandAlone is a FHIR R4 server intended to handle **Protected Health Information (PHI)** in
 production. We take security seriously and appreciate responsible disclosure.
 
-> ⚠️ **Maintainers:** replace the `SECURITY_CONTACT` placeholder below with a monitored security
-> address and enable **GitHub Private Vulnerability Reporting** (Settings → Code security) before the
-> first public release.
+> ⚠️ **Maintainers:** enable **GitHub Private Vulnerability Reporting** (repo Settings → Code security
+> → Private vulnerability reporting) so the link below works, before the first public release.
 
 ## Reporting a vulnerability
 
 **Please do NOT open a public issue for security vulnerabilities.**
 
-Report privately via either:
-
-1. **GitHub Private Vulnerability Reporting** — the repository's **Security → Report a vulnerability**
-   tab (preferred), or
-2. **Email** — `SECURITY_CONTACT` (e.g. `security@<project-domain>`), encrypted if possible.
+Report privately via **GitHub Private Vulnerability Reporting** — open the repository's
+**Security → [Report a vulnerability](https://github.com/419onscene/RoninStandAlone/security/advisories/new)**
+tab. This keeps the report private to the maintainers until a fix is released.
 
 Please include:
 - a description of the issue and its impact,

@@ -32,4 +32,4 @@ All notable changes to RoninStandAlone are documented here. Format based on
   (not implemented as filters). L5 profile/IG conformance is partial (external HL7 validator is authoritative).
 - UDAP is a foundation (no revocation/CRL-OCSP, tiered OAuth, or persistent registry yet).
 
-[Unreleased]: https://github.com/OWNER/REPO/commits/main
+[Unreleased]: https://github.com/419onscene/RoninStandAlone/commits/main

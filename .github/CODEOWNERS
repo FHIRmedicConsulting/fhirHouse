@@ -1,11 +1,10 @@
-# Code owners — auto-requested for review. Replace @OWNER with the real maintainer handle/team
-# before enabling branch protection that requires code-owner review.
-* @OWNER
+# Code owners — auto-requested for review. Add teams/co-maintainers here as the project grows.
+* @419onscene
 
 # Security-sensitive areas warrant extra scrutiny:
-/packages/ronin-server-ts/src/auth/       @OWNER
-/packages/ronin-server-ts/src/security/   @OWNER
-/packages/ronin-server-ts/src/audit/      @OWNER
-/deploy/                                   @OWNER
-/docs/decisions/                           @OWNER
-/SECURITY.md                               @OWNER
+/packages/ronin-server-ts/src/auth/       @419onscene
+/packages/ronin-server-ts/src/security/   @419onscene
+/packages/ronin-server-ts/src/audit/      @419onscene
+/deploy/                                   @419onscene
+/docs/decisions/                           @419onscene
+/SECURITY.md                               @419onscene

@@ -36,9 +36,12 @@ officially representing the community in public spaces.
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community
-leaders responsible for enforcement at **`CONDUCT_CONTACT`** (maintainers: set a monitored address
-before public release). All complaints will be reviewed and investigated promptly and fairly.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the
+maintainer **[@419onscene](https://github.com/419onscene)**. All complaints will be reviewed and
+investigated promptly and fairly.
+
+> _Note: as the community grows, add a dedicated, monitored conduct email here so reporters have a
+> private channel that doesn't depend on GitHub._
 
 ## Attribution
 
