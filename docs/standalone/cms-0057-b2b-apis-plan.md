@@ -75,7 +75,8 @@ the **authorization semantics** (attribution, opt-out/opt-in consent) specific t
    CapabilityStatement. First slice — probabilistic/MPI matching + a consent gate on the match itself
    are follow-ups (consent on the subsequent clinical pull is already enforced, ADR-0030).
 3. ✅ **Provider Access** attribution Group + opt-out consent + scoped `$export` — **DONE** (2026-07-04).
-4. Patient Access PDex/EOB surface. *(small–medium — not yet built)*
+4. ✅ **Patient Access PDex/EOB surface** — **DONE** (2026-07-04): EOB served as R4 + patient-compartment
+   member (search / `_include` / `$everything` / `$export`) + CARIN BB `type` and `service-date` search.
 5. ✅ **Prior Auth FHIR-facing operations (PAS → CRD → DTR)** — **DONE** (2026-07-04), with the two
    heavy engines explicitly deferred (see below).
 
@@ -94,9 +95,10 @@ the existing substrate. Every one is honest about where a deferred engine takes 
 | DTR | `Questionnaire/$questionnaire-package` | resolve Questionnaire + package cqf-library Libraries + answerValueSet ValueSets | **CQL auto-population** |
 | Payer-to-Payer | `$member-match` opt-in gate | active-permit `Consent` required (`RONIN_P2P_CONSENT_REQUIRED`) | — |
 | Provider Access | `Group/$export` opt-out filter | drop opted-out patients (`RONIN_PROVIDER_ACCESS_OPTOUT`) | — |
+| Patient Access (CARIN BB/PDex) | `ExplanationOfBenefit` search / `_include` / `$everything` / `$export` | R4-served, compartment-linked; CARIN `type` + `service-date` search added | CARIN/PDex profile *conformance* (IG install, L5) |
 
 Advertised in the CapabilityStatement (Claim submit/inquire, Patient member-match, Questionnaire
-questionnaire-package). CDS Hooks discovery is at `/cds-services`.
+questionnaire-package, EOB `type`/`service-date`). CDS Hooks discovery is at `/cds-services`.
 
 ## Deferred major components — NEED A DECISION before "real" prior-auth (OPEN)
 
@@ -120,4 +122,3 @@ DTR packages forms/dependencies but does not populate. All three are labelled as
   APIs may not belong in a self-hostable FHIR server.)
 - Confirm the CMS-0057 compliance dates and which **actor** RoninStandAlone plays (provider-side vs.
   payer-side changes the API set).
-- Patient Access PDex/EOB surface (item 4) is not yet built.
