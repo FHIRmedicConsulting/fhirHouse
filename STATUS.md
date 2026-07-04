@@ -77,6 +77,17 @@ See `docs/status/session-033-2026-07-02.md` §6 (rebuild `.delta-inferno` with *
 sidecar+server, reload Synthea, drive Inferno). Tests: `npm run test:delta` (needs sidecar) ·
 `npm run test:unit`.
 
+## Security infrastructure (2026-07-04, ADR-0031..0036 Accepted)
+Alpha security baseline built + the ranked deferred items: **#1** TLS hardening (SP 800-52r2 + cert
+hot-reload) · prod fail-closed profile · HTTP hardening (headers/CORS/rate-limit/body-limit, pluggable
+store) · SBOM+audit+gitleaks+Trivy CI. **#2** audit hash-chain tamper-evidence (`ronin-audit-verify`).
+**#3** UDAP B2B trust foundation (cert-chain software statements + trusted DCR + `.well-known/udap`).
+**#4** CMS-0057 B2B APIs = **plan** (`docs/standalone/cms-0057-b2b-apis-plan.md`) — multi-week program,
+not built. Runbook: `docs/standalone/security-hardening-and-deployment.md`. Gap analysis:
+`docs/research/2026-07-03-tls-and-cms-compliance-security-deep-dive.md`.
+
 ## Not yet ratified / known debt
 TS/Hono stack (ADR pending) · storage-topology ADR · `@ronin/fhir-types` codegen review · heritage
-Databricks ADRs still in `docs/decisions/` for context.
+Databricks ADRs still in `docs/decisions/` for context. UDAP follow-ups (revocation/CRL-OCSP, tiered
+OAuth, persistent registry) before real-partner B2B; shared-store rate limiter + external audit
+anchoring post-Alpha.
