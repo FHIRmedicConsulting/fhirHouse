@@ -1,4 +1,4 @@
-# RoninStandAlone — self / cloud-hosted (non-Databricks) deployment.
+# fhirEngine — self / cloud-hosted (non-Databricks) deployment.
 # Two services on one shared codebase: TS/Hono FHIR server + delta-rs/DataFusion
 # storage sidecar (single-writer). Delta lives on a local volume OR an object store.
 #
@@ -6,10 +6,10 @@
 #   Production (PHI-capable):   docker compose -f docker-compose.yml -f docker-compose.prod.yml up
 #
 # The base file runs the DEV security profile (controls opt-in/off) for SYNTHETIC data only.
-# The prod overlay flips RONIN_SECURITY_PROFILE=production, which FAILS CLOSED unless auth + audit +
+# The prod overlay flips FHIRENGINE_SECURITY_PROFILE=production, which FAILS CLOSED unless auth + audit +
 # transport security are configured (ADR-0032). See deploy/README.md + the security runbook
 # (docs/standalone/security-hardening-and-deployment.md).
-name: ronin-standalone
+name: fhirengine
 
 services:
   sidecar:
@@ -17,9 +17,9 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile.sidecar
     environment:
-      RONIN_DELTA_SIDECAR_PORT: "8077"
-      RONIN_DELTA_BASE: ${RONIN_DELTA_BASE:-/data/delta}
-      # Object-store creds — only needed when RONIN_DELTA_BASE is s3://, gs://, az://
+      FHIRENGINE_DELTA_SIDECAR_PORT: "8077"
+      FHIRENGINE_DELTA_BASE: ${FHIRENGINE_DELTA_BASE:-/data/delta}
+      # Object-store creds — only needed when FHIRENGINE_DELTA_BASE is s3://, gs://, az://
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       AWS_REGION: ${AWS_REGION:-}
@@ -38,25 +38,25 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile.server
     environment:
-      RONIN_DEPLOY_MODE: self-hosted
-      RONIN_DELTA_SIDECAR_URL: http://sidecar:8077
+      FHIRENGINE_DEPLOY_MODE: self-hosted
+      FHIRENGINE_DELTA_SIDECAR_URL: http://sidecar:8077
       # Must match the sidecar's base — the server sends table paths to the sidecar.
-      RONIN_DELTA_BASE: ${RONIN_DELTA_BASE:-/data/delta}
+      FHIRENGINE_DELTA_BASE: ${FHIRENGINE_DELTA_BASE:-/data/delta}
       PORT: "3000"
-      RONIN_PUBLIC_URL: ${RONIN_PUBLIC_URL:-http://localhost:3000}
-      RONIN_LOG_LEVEL: ${RONIN_LOG_LEVEL:-info}
+      FHIRENGINE_PUBLIC_URL: ${FHIRENGINE_PUBLIC_URL:-http://localhost:3000}
+      FHIRENGINE_LOG_LEVEL: ${FHIRENGINE_LOG_LEVEL:-info}
       # Security profile — 'dev' (default, synthetic-only) or 'production' (fail-closed, ADR-0032).
       # The prod overlay sets this + the required controls. See deploy/.env.example for all vars.
-      RONIN_SECURITY_PROFILE: ${RONIN_SECURITY_PROFILE:-dev}
-      RONIN_AUTH_ENABLED: ${RONIN_AUTH_ENABLED:-}
-      RONIN_AUTH_STRATEGY: ${RONIN_AUTH_STRATEGY:-}
-      RONIN_AUDIT_ENABLED: ${RONIN_AUDIT_ENABLED:-}
-      RONIN_CONSENT_ENFORCEMENT: ${RONIN_CONSENT_ENFORCEMENT:-}
-      RONIN_TLS_TERMINATED_AT_PROXY: ${RONIN_TLS_TERMINATED_AT_PROXY:-}
-      RONIN_CORS_ORIGINS: ${RONIN_CORS_ORIGINS:-}
-      RONIN_RATE_LIMIT_ENABLED: ${RONIN_RATE_LIMIT_ENABLED:-}
+      FHIRENGINE_SECURITY_PROFILE: ${FHIRENGINE_SECURITY_PROFILE:-dev}
+      FHIRENGINE_AUTH_ENABLED: ${FHIRENGINE_AUTH_ENABLED:-}
+      FHIRENGINE_AUTH_STRATEGY: ${FHIRENGINE_AUTH_STRATEGY:-}
+      FHIRENGINE_AUDIT_ENABLED: ${FHIRENGINE_AUDIT_ENABLED:-}
+      FHIRENGINE_CONSENT_ENFORCEMENT: ${FHIRENGINE_CONSENT_ENFORCEMENT:-}
+      FHIRENGINE_TLS_TERMINATED_AT_PROXY: ${FHIRENGINE_TLS_TERMINATED_AT_PROXY:-}
+      FHIRENGINE_CORS_ORIGINS: ${FHIRENGINE_CORS_ORIGINS:-}
+      FHIRENGINE_RATE_LIMIT_ENABLED: ${FHIRENGINE_RATE_LIMIT_ENABLED:-}
     ports:
-      - "${RONIN_PORT:-3000}:3000"
+      - "${FHIRENGINE_PORT:-3000}:3000"
     depends_on:
       sidecar:
         condition: service_healthy   # don't take traffic until storage is reachable

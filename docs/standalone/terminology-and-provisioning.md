@@ -1,4 +1,4 @@
-# Terminology services & provisioning-time loading — RoninStandAlone (design)
+# Terminology services & provisioning-time loading — fhirEngine (design)
 
 Fleshes out the standalone terminology service + **how terminologies, value sets,
 concept maps, and profiles get loaded at provisioning**. Adapts the heritage
@@ -99,7 +99,7 @@ redistributed; loaded by the operator under their own license. Ties to
 ## Implementation status (session 032)
 
 - **Storage follows the topology** (Chad, session 032): provisioning data (terminology +
-  conformance) lands per `RONIN_STORAGE_MODE` — **single** = directly under the one store;
+  conformance) lands per `FHIRENGINE_STORAGE_MODE` — **single** = directly under the one store;
   **medallion** = under `gold/` (**Gold-only**, no Bronze raw landing). `PathCatalog`
   takes a `StorageMode`; `DeltaWarehouse` resolves it (default single). See
   [[storage-topology]].
@@ -108,7 +108,7 @@ redistributed; loaded by the operator under their own license. Ties to
   (RRF; SAB=RXNORM English atoms). Streamed + batched (20k/batch) → `codesystem_concept` +
   `codesystem_header`. `display` always non-null (falls back to code) for stable Delta
   column type. Verified against the real release files (`limit` slices) + `$validate-code`.
-- **Provisioning CLI** (`scripts/ronin-terminology.ts`): `load-terminology
+- **Provisioning CLI** (`scripts/fhirengine-terminology.ts`): `load-terminology
   <loinc|snomed|rxnorm> <dir> [--limit N] [--no-descriptions]` and `install-ig <dir> [id]`.
   Command logic in shared modules so a future authenticated admin endpoint reuses the core
   (CLI now, endpoint later). Run under `op run` for API keys.

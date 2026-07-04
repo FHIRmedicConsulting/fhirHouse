@@ -23,8 +23,8 @@ Correct and fine for dev/synthetic volumes. The scaling costs are predictable.
   existed lacks the column, so `WHERE is_current` search breaks. `DeltaWarehouse.migrateIsCurrent`
   (sidecar `/migrate-is-current`) backfills it (`version_id = max per id` → current), idempotent;
   `migrateAllBronzeIsCurrent` covers every Bronze table. Opt-in at startup via
-  `RONIN_MIGRATE_IS_CURRENT=true` (run once when upgrading). Test: `delta-migration`.
-- **Medallion read path — DEFERRED (decision).** `RONIN_STORAGE_MODE=medallion` today only prefixes
+  `FHIRENGINE_MIGRATE_IS_CURRENT=true` (run once when upgrading). Test: `delta-migration`.
+- **Medallion read path — DEFERRED (decision).** `FHIRENGINE_STORAGE_MODE=medallion` today only prefixes
   terminology/conformance paths with `gold/`; reads always hit Bronze and `promote.ts` isn't wired.
   Per project scope, **single store is the supported topology** and data governance/quality/promotion
   are **another app's** responsibility — so the medallion Gold-read-path is intentionally not built
@@ -65,7 +65,7 @@ Correct and fine for dev/synthetic volumes. The scaling costs are predictable.
      each with optional `vacuum` (safe **168h enforced** retention by default; `force` for dev).
    - `DeltaWarehouse.optimizeAll/optimize/optimizeTerminology` (`OptimizeOpts`).
    - `lib/maintenance.ts` — `runMaintenance` + opt-in single-flight `startMaintenanceScheduler`
-     (`RONIN_MAINTENANCE_INTERVAL_MIN`, `RONIN_VACUUM_ENABLED`, `RONIN_VACUUM_RETENTION_HOURS`),
+     (`FHIRENGINE_MAINTENANCE_INTERVAL_MIN`, `FHIRENGINE_VACUUM_ENABLED`, `FHIRENGINE_VACUUM_RETENTION_HOURS`),
      wired into the server entry.
    - CLI `optimize [--vacuum] [--retention-hours N] [--force] [--no-zorder] [tables…]`. Tested.
    - Follow-up: object-store base enumeration (currently local-FS walk).

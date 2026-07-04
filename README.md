@@ -1,4 +1,4 @@
-# RoninStandAlone
+# fhirEngine
 
 An open-source **FHIR R4 server on OSS Delta Lake** — no Databricks, no cloud lock-in.
 TypeScript/Hono REST tier over a **delta-rs / DataFusion** storage engine (via a small
@@ -19,7 +19,7 @@ HTTP (Hono)
 ```
 
 - **Storage topology (install-time):** single Delta store (dev default) or medallion
-  (Bronze→Silver→Gold, Gold operational). `RONIN_STORAGE_MODE=single|medallion`.
+  (Bronze→Silver→Gold, Gold operational). `FHIRENGINE_STORAGE_MODE=single|medallion`.
   _(Alpha: single-store serving is the supported path; the medallion Gold read-path is WIP.)_
 - **Clean-room columnar flattener** generated from CC0 HL7 R4 StructureDefinitions
   (no proprietary schemas).
@@ -56,32 +56,32 @@ HTTP (Hono)
 
 ```bash
 # 1. Python sidecar (delta-rs / DataFusion)
-cd packages/ronin-server-ts/sidecar
+cd packages/server/sidecar
 python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
 python delta_sidecar.py --port 8077 --base ./delta &
 
 # 2. Server
-cd packages/ronin-server-ts
+cd packages/server
 npm install
-RONIN_DELTA_SIDECAR_URL=http://127.0.0.1:8077 RONIN_DELTA_BASE=./delta npm run dev
+FHIRENGINE_DELTA_SIDECAR_URL=http://127.0.0.1:8077 FHIRENGINE_DELTA_BASE=./delta npm run dev
 ```
 
-Provisioning CLI: `scripts/ronin-terminology.ts` (`install-ig`, `load-terminology`,
+Provisioning CLI: `scripts/fhirengine-terminology.ts` (`install-ig`, `load-terminology`,
 `expand-vsac`, `check-updates`, `reconcile-terminology`, `optimize`).
 
 ## Configuration (env)
 
 | Var | Purpose |
 |---|---|
-| `RONIN_DELTA_SIDECAR_URL` / `RONIN_DELTA_BASE` | sidecar URL + Delta root |
-| `RONIN_STORAGE_MODE` | `single` (default) \| `medallion` |
-| `RONIN_AUTH_ENABLED` / `RONIN_AUTH_STRATEGY` | auth gate (`stub`\|`jwks`\|`local`\|`oidc`) |
-| `RONIN_OAUTH_ENABLED` | SMART authorization server (`/oauth/authorize`, `/oauth/token`, `/.well-known/jwks.json`); pair with `RONIN_AUTH_STRATEGY=local`. `RONIN_OAUTH_DEFAULT_PATIENT`/`RONIN_OAUTH_DEFAULT_USER` set the auto-approve launch context; `RONIN_OAUTH_CLIENTS` (JSON) locks down clients in prod |
-| `RONIN_AUDIT_ENABLED` | AuditEvent per access |
-| `RONIN_CONSENT_ENFORCEMENT` | read-time consent + DS4P label enforcement |
-| `RONIN_QUARANTINE_ON_UNKNOWN` | quarantine + auto-resolve unknown terminology |
+| `FHIRENGINE_DELTA_SIDECAR_URL` / `FHIRENGINE_DELTA_BASE` | sidecar URL + Delta root |
+| `FHIRENGINE_STORAGE_MODE` | `single` (default) \| `medallion` |
+| `FHIRENGINE_AUTH_ENABLED` / `FHIRENGINE_AUTH_STRATEGY` | auth gate (`stub`\|`jwks`\|`local`\|`oidc`) |
+| `FHIRENGINE_OAUTH_ENABLED` | SMART authorization server (`/oauth/authorize`, `/oauth/token`, `/.well-known/jwks.json`); pair with `FHIRENGINE_AUTH_STRATEGY=local`. `FHIRENGINE_OAUTH_DEFAULT_PATIENT`/`FHIRENGINE_OAUTH_DEFAULT_USER` set the auto-approve launch context; `FHIRENGINE_OAUTH_CLIENTS` (JSON) locks down clients in prod |
+| `FHIRENGINE_AUDIT_ENABLED` | AuditEvent per access |
+| `FHIRENGINE_CONSENT_ENFORCEMENT` | read-time consent + DS4P label enforcement |
+| `FHIRENGINE_QUARANTINE_ON_UNKNOWN` | quarantine + auto-resolve unknown terminology |
 | `UMLS_API_KEY` | VSAC `$expand` (inject via 1Password `op run`) |
-| `RONIN_MAINTENANCE_INTERVAL_MIN` | opt-in periodic Delta compaction (+ `RONIN_VACUUM_ENABLED`, `RONIN_VACUUM_RETENTION_HOURS`) |
+| `FHIRENGINE_MAINTENANCE_INTERVAL_MIN` | opt-in periodic Delta compaction (+ `FHIRENGINE_VACUUM_ENABLED`, `FHIRENGINE_VACUUM_RETENTION_HOURS`) |
 
 Security controls are **opt-in** (default off for dev); production enablement is a deploy gate.
 

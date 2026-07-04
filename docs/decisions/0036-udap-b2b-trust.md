@@ -16,7 +16,7 @@ but no certificate-based trust or DCR — gap **A3** in the security deep-dive.
 
 ## Decision
 
-Add a UDAP **foundation** (opt-in `RONIN_UDAP_ENABLED`, `RONIN_UDAP_TRUST_ANCHORS`), in
+Add a UDAP **foundation** (opt-in `FHIRENGINE_UDAP_ENABLED`, `FHIRENGINE_UDAP_TRUST_ANCHORS`), in
 `src/auth/udap/`, **no new dependency** (Node `crypto.X509Certificate` + existing `jose`):
 
 - **`trust.ts`** — load trust anchors (PEM); `verifyCertChain(x5c, anchors)` validates leaf→…→anchor
@@ -32,8 +32,8 @@ Add a UDAP **foundation** (opt-in `RONIN_UDAP_ENABLED`, `RONIN_UDAP_TRUST_ANCHOR
 
 - (+) Certificate-rooted B2B trust + DCR — the on-ramp to CMS-0057 B2B / TEFCA; reuses the Backend
   Services token path. Tested against real openssl-minted CA/leaf certs.
-- (+) **Revocation implemented** (operator revocation list): `RONIN_UDAP_REVOKED_CERTS` /
-  `RONIN_UDAP_REVOKED_CERTS_FILE` (cert SHA-256 fingerprints and/or serials). A revoked cert anywhere
+- (+) **Revocation implemented** (operator revocation list): `FHIRENGINE_UDAP_REVOKED_CERTS` /
+  `FHIRENGINE_UDAP_REVOKED_CERTS_FILE` (cert SHA-256 fingerprints and/or serials). A revoked cert anywhere
   in a presented chain rejects the whole chain — so a compromised partner cert can be revoked
   immediately, without waiting for expiry. No new dependency.
 - (+) **Persistent client registry** — DCR registrations are written through to a durable `udap_client`
@@ -44,15 +44,15 @@ Add a UDAP **foundation** (opt-in `RONIN_UDAP_ENABLED`, `RONIN_UDAP_TRUST_ANCHOR
   authorization request is provably from the client.
 - (−) **Not complete SSRAA yet.** Deferred (**OPEN QUESTIONS / follow-ups**):
   - ~~Live CRL/OCSP~~ **DONE** (2026-07-04; `pkijs`+`asn1js` approved). **CRL** (`crl.ts`): downloads the
-    cert's CRL Distribution Point (or `RONIN_UDAP_CRL_URLS`), **verifies the CRL is signed by a trusted
-    issuer**, checks the serial, caches per `nextUpdate` (`RONIN_UDAP_CRL_CHECK`). **OCSP** (`ocsp.ts`,
-    RFC 6960): queries the responder from the cert's AIA (or `RONIN_UDAP_OCSP_URLS`), pkijs builds the
-    request and **verifies the signed response** (`RONIN_UDAP_OCSP_CHECK`). Both soft-fail by default
+    cert's CRL Distribution Point (or `FHIRENGINE_UDAP_CRL_URLS`), **verifies the CRL is signed by a trusted
+    issuer**, checks the serial, caches per `nextUpdate` (`FHIRENGINE_UDAP_CRL_CHECK`). **OCSP** (`ocsp.ts`,
+    RFC 6960): queries the responder from the cert's AIA (or `FHIRENGINE_UDAP_OCSP_URLS`), pkijs builds the
+    request and **verifies the signed response** (`FHIRENGINE_UDAP_OCSP_CHECK`). Both soft-fail by default
     (`*_HARD_FAIL` to fail closed) and are enforced in `verifySoftwareStatement`.
   - ~~RFC 5280 path validation + name-constraints~~ **DONE** (2026-07-04): `path-validation.ts` enforces
     **basic constraints** (CA flag + pathLen), **key usage** (keyCertSign on CAs), and **name
     constraints** (permitted/excluded dNSName/URI/rfc822 subtrees) over the full leaf→root path. On by
-    default (`RONIN_UDAP_STRICT_PATH`, `false` to disable); fail-closed. NB: pkijs'
+    default (`FHIRENGINE_UDAP_STRICT_PATH`, `false` to disable); fail-closed. NB: pkijs'
     `CertificateChainValidationEngine` does **not** reliably enforce name constraints (verified — it
     accepted an out-of-subtree leaf), so name-constraint matching is implemented directly; pkijs is used
     only to parse the extensions.

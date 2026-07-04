@@ -7,7 +7,7 @@ on:
 
 defaults:
   run:
-    working-directory: packages/ronin-server-ts
+    working-directory: packages/server
 
 jobs:
   unit:
@@ -19,9 +19,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: packages/ronin-server-ts/package-lock.json
+          cache-dependency-path: packages/server/package-lock.json
       - run: npm ci
-      - run: npm run typecheck   # self-builds @ronin/fhir-types dist first
+      - run: npm run typecheck   # self-builds @fhirengine/fhir-types dist first
       - run: npm run lint
       - run: npm run test:unit
       - run: npm run build
@@ -35,25 +35,25 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: packages/ronin-server-ts/package-lock.json
+          cache-dependency-path: packages/server/package-lock.json
       - run: npm ci
       - name: npm audit (fail on high/critical)
         run: npm run audit
       - name: Install linked workspace deps (for a complete SBOM tree)
         run: npm ci --ignore-scripts --no-audit --no-fund
-        working-directory: packages/ronin-fhir-types
+        working-directory: packages/fhir-types
       - name: Generate CycloneDX SBOM
         run: npm sbom --sbom-format cyclonedx --omit dev > sbom.cdx.json
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
         with:
           name: sbom-cyclonedx
-          path: packages/ronin-server-ts/sbom.cdx.json
+          path: packages/server/sbom.cdx.json
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: pip-audit (sidecar deps)
-        working-directory: packages/ronin-server-ts/sidecar
+        working-directory: packages/server/sidecar
         run: |
           pip install pip-audit
           pip-audit -r requirements.txt
@@ -84,16 +84,16 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: packages/ronin-server-ts/package-lock.json
+          cache-dependency-path: packages/server/package-lock.json
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: npm ci
       - name: Install sidecar deps (+ pytest)
-        working-directory: packages/ronin-server-ts/sidecar
+        working-directory: packages/server/sidecar
         run: pip install -r requirements-dev.txt
       - name: Sidecar unit tests (pytest)
-        working-directory: packages/ronin-server-ts/sidecar
+        working-directory: packages/server/sidecar
         run: pytest tests/ -q
       - name: Start delta sidecar (fail hard if it never comes up)
         run: |
@@ -102,13 +102,13 @@ jobs:
           [ "${ok:-}" = 1 ] || { echo "::error::delta sidecar did not become healthy — failing (avoids silently skipped delta tests)"; exit 1; }
       - name: Tests + coverage gate (unit + delta; thresholds in vitest.config)
         env:
-          RONIN_DELTA_SIDECAR_URL: http://127.0.0.1:8077
-          RONIN_DELTA_BASE: ./.delta-ci
+          FHIRENGINE_DELTA_SIDECAR_URL: http://127.0.0.1:8077
+          FHIRENGINE_DELTA_BASE: ./.delta-ci
         run: npm run test:coverage   # runs unit + delta with coverage; fails below thresholds
       - name: Server boot smoke (real entrypoint, dev profile)
         env:
-          RONIN_DELTA_SIDECAR_URL: http://127.0.0.1:8077
-          RONIN_DELTA_BASE: ./.delta-ci-smoke
+          FHIRENGINE_DELTA_SIDECAR_URL: http://127.0.0.1:8077
+          FHIRENGINE_DELTA_BASE: ./.delta-ci-smoke
         run: |
           npx tsx src/server.ts & SRV=$!
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:3000/ready >/dev/null && ok=1 && break; sleep 1; done

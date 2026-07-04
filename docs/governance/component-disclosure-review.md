@@ -20,10 +20,10 @@ Status legend: ✅ approved (explicit Chad decision or ratified ADR) · ⚠️ n
 > revocation** (ADR-0036): download + signature-verify a certificate's CRL. No native build; `npm audit`
 > clean.
 > **Optional, operator-installed (NOT in the dependency tree):** `ioredis` — lazy-imported only when
-> `RONIN_RATE_LIMIT_STORE=redis` for shared multi-node rate limiting (ADR-0033); single-node never loads
+> `FHIRENGINE_RATE_LIMIT_STORE=redis` for shared multi-node rate limiting (ADR-0033); single-node never loads
 > it. `@vitest/coverage-v8` — dev-only (coverage gate). All disclosed here.
 
-## Production server — `packages/ronin-server-ts`
+## Production server — `packages/server`
 
 | Component | Version | Role | Provenance | Status |
 |---|---|---|---|---|
@@ -35,10 +35,10 @@ Status legend: ✅ approved (explicit Chad decision or ratified ADR) · ⚠️ n
 | **fhirpath** | ^4.11.0 | L4 FHIRPath invariant validation | added session 032 (BSD; identified in research) for the shared TS ValidationSupportChain | ✅ approved (in use; 0 vulns) |
 | **jose** | ^5 | JWT/JWKS verification for the auth gate (ADR-0030) | session 032 — security best practice is to NOT hand-roll JWT/crypto; `jose` is the standard audited lib (MIT) | ✅ approved (Chad, session 032; ADR-0030 Accepted) |
 | **heritage `src/auth/` module** | — | SMART/UDAP auth-middleware, scope-enforcer, multi-version SMART, consent-gate (DS4P), data-filter, token-introspection, IdP abstraction | heritage fork; wired for the standalone in session 032 | ✅ **approved** — ratified by **ADR-0030**; the new `src/auth/oauth/` (SMART auth server + Backend Services) + `src/auth/udap/` (ADR-0036) build on it (jose only). Check `openid-client` before enabling the OIDC strategy. |
-| **@ronin/fhir-types** | file: | generated FHIR R4 types (first-party) | internal | ✅ first-party |
+| **@fhirengine/fhir-types** | file: | generated FHIR R4 types (first-party) | internal | ✅ first-party |
 | @types/node, **tsx**, typescript, **vitest** | dev | build/test tooling | heritage | ✅ approved (ADR-0029 toolchain) |
 
-## Types codegen — `packages/ronin-fhir-types`
+## Types codegen — `packages/fhir-types`
 
 | Component | Role | Status |
 |---|---|---|
@@ -68,9 +68,9 @@ Status legend: ✅ approved (explicit Chad decision or ratified ADR) · ⚠️ n
 
 1. **Ratify the runtime/stack** — write the never-written replacement for the
    rejected ADR-0002: explicitly approve (or replace) **TS/Node + Hono +
-   @hono/node-server + pino + the dev toolchain** as RoninStandAlone's stack. This
+   @hono/node-server + pino + the dev toolchain** as fhirEngine's stack. This
    closes the biggest gap (the foundational stack has no ratifying decision).
-2. **Remove `@databricks/sql`** from `packages/ronin-server-ts` (and standalone POCs)
+2. **Remove `@databricks/sql`** from `packages/server` (and standalone POCs)
    — it's the Databricks coupling the product sheds; keep it only in Ronin.
 3. **Ratify `@atomic-ehr/codegen`** (or pin/vendor) — it generates product types from
    a pre-1.0 single-source tool; provenance matters for a PHI product.

@@ -1,6 +1,6 @@
 # ADR-0024: Clean-Room R4 Columnar Schema Generator — Mapping Spec
 
-- Status: **Accepted** 2026-06-27 (POC-validated across all 146 R4 resource types). RoninStandAlone-specific.
+- Status: **Accepted** 2026-06-27 (POC-validated across all 146 R4 resource types). fhirEngine-specific.
 - Date: 2026-06-27
 - Decider(s): Chad
 - Session: 032 (standalone fork)

@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: packages/ronin-server-ts
+        working-directory: packages/server
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,11 +23,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: packages/ronin-server-ts/package-lock.json
+          cache-dependency-path: packages/server/package-lock.json
       - run: npm ci
       # Full tree so the SBOM resolves the file:-linked workspace.
       - run: npm ci --ignore-scripts --no-audit --no-fund
-        working-directory: packages/ronin-fhir-types
+        working-directory: packages/fhir-types
       - name: Generate CycloneDX SBOM
         run: npm sbom --sbom-format cyclonedx --omit dev > "sbom-${GITHUB_REF_NAME}.cdx.json"
       - name: Create release with auto-generated notes

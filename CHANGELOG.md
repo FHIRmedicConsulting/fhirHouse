@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to RoninStandAlone are documented here. Format based on
+All notable changes to fhirEngine are documented here. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this project uses
 [Semantic Versioning](https://semver.org/) and is **pre-alpha** (`0.x` — anything may change).
 
@@ -18,7 +18,7 @@ All notable changes to RoninStandAlone are documented here. Format based on
   IG install + operator-supplied SNOMED/LOINC/RxNorm loaders + VSAC pull-once.
 - **Security infrastructure** (ADR-0031..0036) — hardened TLS (NIST SP 800-52r2, cert hot-reload),
   fail-closed **production security profile**, HTTP hardening (security headers, enforced CORS,
-  pluggable rate limiting, body limits), **tamper-evident (hash-chained) audit** + `ronin-audit-verify`,
+  pluggable rate limiting, body limits), **tamper-evident (hash-chained) audit** + `fhirengine-audit-verify`,
   SMART auth server + Backend Services + **UDAP B2B trust foundation**, and SBOM + npm-audit +
   pip-audit + gitleaks + Trivy in CI.
 - **UDAP B2B trust (hardened)** — RFC 5280 cert-path validation (basic constraints, key usage,
@@ -47,4 +47,4 @@ All notable changes to RoninStandAlone are documented here. Format based on
   components pending a component-disclosure/ADR (see `docs/standalone/cms-0057-b2b-apis-plan.md`). CARIN
   BB / PDex **profile conformance** (validating against those profiles) still requires IG install (L5).
 
-[Unreleased]: https://github.com/419onscene/RoninStandAlone/commits/main
+[Unreleased]: https://github.com/419onscene/fhirEngine/commits/main

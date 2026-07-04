@@ -3,15 +3,15 @@
 FROM python:3.12-slim
 
 WORKDIR /app
-COPY packages/ronin-server-ts/sidecar/requirements.txt .
+COPY packages/server/sidecar/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-COPY packages/ronin-server-ts/sidecar/delta_sidecar.py .
+COPY packages/server/sidecar/delta_sidecar.py .
 
-# Default to a local-volume base; override RONIN_DELTA_BASE with an object-store
+# Default to a local-volume base; override FHIRENGINE_DELTA_BASE with an object-store
 # URI (s3://, gs://, az://) for cloud deployments.
-ENV RONIN_DELTA_SIDECAR_PORT=8077 \
-    RONIN_DELTA_SIDECAR_HOST=0.0.0.0 \
-    RONIN_DELTA_BASE=/data/delta
+ENV FHIRENGINE_DELTA_SIDECAR_PORT=8077 \
+    FHIRENGINE_DELTA_SIDECAR_HOST=0.0.0.0 \
+    FHIRENGINE_DELTA_BASE=/data/delta
 
 # Least privilege: non-root user. NOTE: the /data volume (single-writer Delta store) must be
 # writable by uid 1000 — set the volume/ownership accordingly in your deploy.

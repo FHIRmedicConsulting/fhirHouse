@@ -30,7 +30,7 @@ the API reads/writes here)**. Silver feeds an external **Enterprise Analytics** 
 ## Decisions captured
 
 - **Single store is the dev default**; medallion is an install-time option. Config
-  `RONIN_STORAGE_MODE = single | medallion` (switch still to wire).
+  `FHIRENGINE_STORAGE_MODE = single | medallion` (switch still to wire).
 - **Gold is the operational/transactional store in medallion** (confirmed by the diagram's
   `Ronin ↔ Gold` "API Data" edge).
 - **Flattening is topology-independent.** Per-resource search needs flattened, queryable
@@ -40,7 +40,7 @@ the API reads/writes here)**. Silver feeds an external **Enterprise Analytics** 
   search forces medallion.* (Corrects an earlier slip that said search "needs Silver
   columns" while we are on single store.)
 - **Out of scope:** "Enterprise Analytics Silver" is the **separate** governance/analytics
-  app. RoninStandAlone provides the Bronze/Silver/Gold plumbing only; data
+  app. fhirEngine provides the Bronze/Silver/Gold plumbing only; data
   governance/quality/promotion criteria live in that other app.
 
 ## Consistency decision (medallion) — PROPOSED, affects medallion only
@@ -56,7 +56,7 @@ medallion build. **Does not affect single store.**
 ## Open questions (unanswered — do not assume)
 
 1. Process-block label "Ronin" — shared server *engine* name, or should the standalone
-   diagram read "RoninStandAlone"? (distinct products)
+   diagram read "fhirEngine"? (distinct products)
 2. "Document" input (medallion only, via "API Calls") — FHIR Document Bundle /
    `DocumentReference`, or an external doc source? Intentionally absent from single store?
 3. "Enterprise Analytics Silver" — a separate copy fed from Silver, or a read of our Silver?

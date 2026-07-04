@@ -1,15 +1,15 @@
 # ADR-0022: Standalone Storage — Clean-Room Columnar Flattening on OSS Delta, Layering B, and the Catalog/Governance Seam
 
-- Status: **Accepted** 2026-06-27 (RoninStandAlone-specific; first divergence ADR from the Ronin heritage). Engine feasibility validated — see [feasibility review](../research/2026-06-27-standalone-engine-feasibility.md). The catalog/governance *binding* (§5) remains a deferred sub-decision (follow-up ADR); everything else is accepted.
+- Status: **Accepted** 2026-06-27 (fhirEngine-specific; first divergence ADR from the Ronin heritage). Engine feasibility validated — see [feasibility review](../research/2026-06-27-standalone-engine-feasibility.md). The catalog/governance *binding* (§5) remains a deferred sub-decision (follow-up ADR); everything else is accepted.
 - Date: 2026-06-27
 - Decider(s): Chad
 - Session: standalone fork (post session-031)
-- Supersedes (for RoninStandAlone only): the dbignite/Databricks/DLT specifics of [ADR-0010](0010-storage-shape.md) §1 + Amendment 4, and the Unity-Catalog assumptions of [ADR-0009](0009-databricks-partner-posture-and-adr-0008-corrections.md) / [ADR-0013](0013-deployment-posture.md). ADR-0010 stays in force for **Ronin** (the Databricks product).
+- Supersedes (for fhirEngine only): the dbignite/Databricks/DLT specifics of [ADR-0010](0010-storage-shape.md) §1 + Amendment 4, and the Unity-Catalog assumptions of [ADR-0009](0009-databricks-partner-posture-and-adr-0008-corrections.md) / [ADR-0013](0013-deployment-posture.md). ADR-0010 stays in force for **Ronin** (the Databricks product).
 - Related: [ADR-0010](0010-storage-shape.md), [ADR-0011](0011-write-contract.md), [ADR-0019](0019-storage-and-pipeline-operations.md), [docs/standalone/product-definition.md](../standalone/product-definition.md)
 
 ## Context
 
-RoninStandAlone runs the FHIR R4 server + medallion lakehouse on **open-source Delta Lake with no Databricks** — no Unity Catalog, no SQL Warehouse, no DLT, no per-schema table quota. The inherited storage shape (ADR-0010) is realized on three Databricks-specific mechanisms that cannot ship in an OSS product:
+fhirEngine runs the FHIR R4 server + medallion lakehouse on **open-source Delta Lake with no Databricks** — no Unity Catalog, no SQL Warehouse, no DLT, no per-schema table quota. The inherited storage shape (ADR-0010) is realized on three Databricks-specific mechanisms that cannot ship in an OSS product:
 
 1. **Flattening via dbignite.** ADR-0010 §1 + Amendment 4 store the resource body as dbignite's `from_json(body_json, <StructType>)` flattened columns, using **vendored dbignite r4 schemas** (`src/fhir-schema/dbignite/r4/*.json`). **dbignite is under the proprietary Databricks License** ("You may not use the Licensed Materials except in connection with your use of the Databricks Services"). The code *and the vendored schemas derived from it* are therefore unusable in a non-Databricks product. This is a hard licensing blocker, confirmed against the dbignite `LICENSE` and `setup.py` (`License :: Other/Proprietary License`).
 2. **Spark SQL dialect.** `from_json`, `exists(arr, lambda)`, `NAMED_STRUCT`, `ARRAY<STRUCT>` literals, `MERGE INTO`, and the ~300 KB inline-literal ceiling on the `from_json` schema (which forced 5 resources to "store-only" and required metadata-stripping of every schema).
@@ -50,17 +50,17 @@ On OSS Delta there is no Spark `from_json`. The flattener is a **TypeScript func
 
 This is the concrete `DeltaWarehouse` implementation of the existing `Warehouse` interface (`query`/`execute`/`close`). The FHIR/REST/repository layers are unchanged.
 
-**Feasibility-validated realization** (see [feasibility review 2026-06-27](../research/2026-06-27-standalone-engine-feasibility.md)): there is **no usable Node binding for delta-rs**, so the writer runs as a **long-lived Python sidecar** wrapping the mature `deltalake` PyPI package (≥1.6.1, Apache-2.0; `DeltaTable.merge`), single-writer, Arrow-IPC handoff (napi-rs binding is the fallback if a Python runtime is unacceptable). Flatten/Arrow assembly uses `apache-arrow` JS v21. **Consequence:** RoninStandAlone sheds Spark/JVM but carries a Python runtime (lighter than Spark; Python was already the heritage bulk tier per ADR-0011). **Read engine: see Amendment 1 — single-engine delta-rs/DataFusion (DuckDB dropped).**
+**Feasibility-validated realization** (see [feasibility review 2026-06-27](../research/2026-06-27-standalone-engine-feasibility.md)): there is **no usable Node binding for delta-rs**, so the writer runs as a **long-lived Python sidecar** wrapping the mature `deltalake` PyPI package (≥1.6.1, Apache-2.0; `DeltaTable.merge`), single-writer, Arrow-IPC handoff (napi-rs binding is the fallback if a Python runtime is unacceptable). Flatten/Arrow assembly uses `apache-arrow` JS v21. **Consequence:** fhirEngine sheds Spark/JVM but carries a Python runtime (lighter than Spark; Python was already the heritage bulk tier per ADR-0011). **Read engine: see Amendment 1 — single-engine delta-rs/DataFusion (DuckDB dropped).**
 
 ### 4. Medallion layering — Option B
 
-RoninStandAlone diverges from ADR-0010's "flatten at Bronze" to a cleaner medallion:
+fhirEngine diverges from ADR-0010's "flatten at Bronze" to a cleaner medallion:
 
 - **Bronze — raw JSON landing.** Append-only, immutable audit of exactly what was received (`body_json` + operational columns + `identifier_index`). **No flattening at ingest** → fast, schema-agnostic writes; Bronze is a true raw landing/audit tier.
 - **Silver — flattened + conformed + governed columnar.** The clean-room flattener (§1) runs **once at the Bronze→Silver boundary**. This is the clean, governed, enterprise-exposed analytics layer — "the power." Carries the governance/processing metadata already designed in ADR-0010 Amendment 3/4 (`silver_status`, `validation_state`, `audit_trail`, MPI output, etc.).
 - **Gold — current-version transactional serving base.** Unchanged in spirit from ADR-0010: per-`fhir_id` current version via delta-rs MERGE, soft-delete, the read/serving projection for the FHIR REST API.
 
-This supersedes ADR-0010 Amendment 4 change 1 ("Bronze resource tables ARE the dbignite flattened tables") **for RoninStandAlone**: here Bronze is raw, Silver is the flattened tier.
+This supersedes ADR-0010 Amendment 4 change 1 ("Bronze resource tables ARE the dbignite flattened tables") **for fhirEngine**: here Bronze is raw, Silver is the flattened tier.
 
 ### 5. Catalog/Governance seam (replaces Unity Catalog + DLT)
 
@@ -80,16 +80,16 @@ This seam is also where the commercial **Data Quality** and **Data Governance** 
 - `src/fhir-schema/dbignite/` (vendored schemas) and the `${DBIGNITE_COLUMNS}` template path must be **excised** and replaced by the generator. Until then, the standalone build cannot legally ship.
 - Two dbignite scars disappear: the 5 store-only resources flatten (depth-capped), and schema metadata-stripping is no longer needed (no SQL literal ceiling when flattening in TS).
 - New dependency footprint: `delta-rs` (write/MERGE) + DuckDB (read). Node integration for delta-rs (native binding vs thin sidecar) is an implementation choice for the spike.
-- Bronze no longer carries flattened columns (layering B); analytics consumers read Silver. Any heritage assumption that `SELECT birthDate FROM bronze.*` works no longer holds for RoninStandAlone.
+- Bronze no longer carries flattened columns (layering B); analytics consumers read Silver. Any heritage assumption that `SELECT birthDate FROM bronze.*` works no longer holds for fhirEngine.
 - Change-data-feed-driven promotion without DLT is new operational surface; orchestration shape is a follow-up.
 
 ## Alternatives considered
 
 - **SQL-on-FHIR v2 ViewDefinitions as the storage flattener.** Rejected — it's a query/view contract, not canonical storage; runners target Postgres/DuckDB at query time; one ViewDefinition per output table, lossy by design. Retained as a candidate for a future governed *view* layer, not storage.
 - **Keep dbignite schemas/code.** Rejected — proprietary Databricks License; not usable off-Databricks.
-- **Pathling / google fhir-data-pipes as the flattener.** Rejected — Apache-licensed but require Spark/Beam (JVM), the exact stack RoninStandAlone sheds; no TS binding.
+- **Pathling / google fhir-data-pipes as the flattener.** Rejected — Apache-licensed but require Spark/Beam (JVM), the exact stack fhirEngine sheds; no TS binding.
 - **MSFT FhirToDataLake schema generator directly.** Rejected as primary — lossy by default (depth>3 → strings), C#/.NET, Azure-packaged. Its *depth-cap policy* is borrowed; its implementation is not.
-- **Flatten at Bronze (ADR-0010 layout A).** Rejected for RoninStandAlone — couples ingest speed to flattening and makes Bronze less of a true raw landing; Option B matches the "governed Silver to the enterprise" goal.
+- **Flatten at Bronze (ADR-0010 layout A).** Rejected for fhirEngine — couples ingest speed to flattening and makes Bronze less of a true raw landing; Option B matches the "governed Silver to the enterprise" goal.
 - **DuckDB as the writer.** Rejected — append-only Delta write (no MERGE) breaks Gold upsert + soft-delete. DuckDB is the read engine; delta-rs is the writer.
 
 ## Follow-up ADRs queued
@@ -131,8 +131,8 @@ query-engine choice gate a working server. This amendment makes the engine
 - **Sequence / scope:** the priority is a **working FHIR server writing data** on
   delta-rs/DataFusion (Layering B) **before** picking or optimizing any
   query/data-management platform. The definitive analytical query/management-platform
-  selection is **out of RoninStandAlone's scope** ("we'll get there, but not through
-  RoninStandAlone"). The engine choice stays **reversible behind the `Warehouse`
+  selection is **out of fhirEngine's scope** ("we'll get there, but not through
+  fhirEngine"). The engine choice stays **reversible behind the `Warehouse`
   seam** — DuckDB/Polars/etc. can be revisited later if a concrete need forces it.
 
 ### Consequences

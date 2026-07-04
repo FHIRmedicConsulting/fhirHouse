@@ -5,7 +5,7 @@
 - Decider(s): Chad
 - Session: 002 (drafted), 003 (rejected)
 - Supersedes: —
-- Superseded by: **[ADR-0029](0029-runtime-and-stack.md)** (Runtime & Stack, Accepted 2026-06-28) — the long-queued replacement; ratifies TS/Node + Hono for RoninStandAlone.
+- Superseded by: **[ADR-0029](0029-runtime-and-stack.md)** (Runtime & Stack, Accepted 2026-06-28) — the long-queued replacement; ratifies TS/Node + Hono for fhirEngine.
 - Related: [ADR-0001](0001-vision-and-scope.md), [docs/reference/pathling-architecture.md](../reference/pathling-architecture.md), [docs/research/2026-06-17-pathling-deep-read.md](../research/2026-06-17-pathling-deep-read.md)
 
 ## Rejection rationale (2026-06-17)

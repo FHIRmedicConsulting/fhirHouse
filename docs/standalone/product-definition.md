@@ -1,11 +1,11 @@
-# RoninStandAlone — product definition
+# fhirEngine — product definition
 
-**RoninStandAlone is a distinct product** forked from Ronin (2026-06-27). Same FHIR
+**fhirEngine is a distinct product** forked from Ronin (2026-06-27). Same FHIR
 R4 server + medallion-lakehouse architecture, but it **runs on open-source Delta
 Lake with no Databricks dependency** — self-hostable, portable, no Unity Catalog,
 no SQL Warehouse, no per-schema table quota, no cloud lock-in or per-DBU cost.
 
-| | Ronin (origin) | RoninStandAlone |
+| | Ronin (origin) | fhirEngine |
 |---|---|---|
 | Storage engine | Databricks Delta + Unity Catalog | **Open-source Delta Lake** (filesystem / object store) |
 | Query/compute | Databricks SQL Warehouse (Spark) | Embeddable OSS engine (see below) |
@@ -18,7 +18,7 @@ no SQL Warehouse, no per-schema table quota, no cloud lock-in or per-DBU cost.
 
 ## Why this is a clean fork, not a rewrite
 The codebase already abstracts storage behind a **`Warehouse` interface**
-(`packages/ronin-server-ts/src/lib/warehouse.ts`) with two implementations today:
+(`packages/server/src/lib/warehouse.ts`) with two implementations today:
 `InMemoryWarehouse` and `DatabricksWarehouse`. The FHIR/REST/repository layers
 depend only on the interface. So "no Databricks" = **add a third implementation,
 `DeltaWarehouse` (OSS)** — the seam already exists.
@@ -32,7 +32,7 @@ What already helps:
 
 ## The work to make it standalone (roadmap)
 
-> **Decisions now made in [ADR-0022](../decisions/0022-standalone-storage-flattening-and-catalog-seam.md) (+ Amendment 1):** engine = **single delta-rs / DataFusion for both write+MERGE and read** + TS flattener (**DuckDB dropped** — was an inherited assumption, not a decision); medallion = **Layering B** (Bronze = raw JSON landing, Silver = flattened + governed columnar exposed to the enterprise, Gold = current-version transactional serving); a **pluggable Catalog/governance seam** replaces Unity Catalog + DLT. Priority is a **working server writing data first**; the analytical query/management-platform choice is out of RoninStandAlone scope. The options below are kept as the historical evaluation record.
+> **Decisions now made in [ADR-0022](../decisions/0022-standalone-storage-flattening-and-catalog-seam.md) (+ Amendment 1):** engine = **single delta-rs / DataFusion for both write+MERGE and read** + TS flattener (**DuckDB dropped** — was an inherited assumption, not a decision); medallion = **Layering B** (Bronze = raw JSON landing, Silver = flattened + governed columnar exposed to the enterprise, Gold = current-version transactional serving); a **pluggable Catalog/governance seam** replaces Unity Catalog + DLT. Priority is a **working server writing data first**; the analytical query/management-platform choice is out of fhirEngine scope. The options below are kept as the historical evaluation record.
 
 1. **Pick the OSS engine** (the one real decision — see options below).
 2. **`DeltaWarehouse`** implementing `Warehouse` (`query`/`execute`) against OSS Delta.
@@ -66,10 +66,11 @@ for the smallest standalone footprint — *pending* a spike to confirm Delta MER
 
 ## Relationship to Ronin
 Shared heritage: the ADRs, requirements, and architecture docs were forked verbatim
-and apply to both initially. They will **diverge** — RoninStandAlone-specific decisions
-get their own ADRs here. Ronin stays the Databricks-optimized product; RoninStandAlone
-is the portable OSS-Delta product. (Code identifiers like `@ronin/*` package names are
-unchanged for now; rename is optional future cleanup.)
+and apply to both initially. They will **diverge** — fhirEngine-specific decisions
+get their own ADRs here. Ronin stays the Databricks-optimized product; fhirEngine
+is the portable OSS-Delta product. (Code identifiers were rebranded to `@fhirengine/*`
+packages and the `FHIRENGINE_` env prefix for the alpha; heritage ADRs pre-0022 keep the
+Ronin names as historical record.)
 
 ## Status
 **Forked 2026-06-27.** Code + all architectural/requirement docs + memory copied. The

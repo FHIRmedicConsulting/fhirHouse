@@ -21,14 +21,14 @@ denials), using **Hono built-ins only (no new dependency)**:
    `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, a
    strict CSP for a JSON API (`default-src 'none'; frame-ancestors 'none'`), COOP/CORP, and
    `Cache-Control: no-store` so PHI is never cached (§164.312(e)).
-2. **CORS** (`hono/cors`) — actually enforced: allowlist from `RONIN_CORS_ORIGINS`. Production with
+2. **CORS** (`hono/cors`) — actually enforced: allowlist from `FHIRENGINE_CORS_ORIGINS`. Production with
    no allowlist emits **no** CORS headers (same-origin only); dev with none is permissive so
    conformance/test tooling is unaffected.
-3. **Body size limit** (`hono/body-limit`): default 10 MiB (`RONIN_MAX_BODY_BYTES`) → 413 when
+3. **Body size limit** (`hono/body-limit`): default 10 MiB (`FHIRENGINE_MAX_BODY_BYTES`) → 413 when
    exceeded.
 4. **Rate limiting** (`src/security/rate-limit.ts`): fixed-window, keyed by authenticated
    `client_id` else client IP; emits `RateLimit-*` + `Retry-After`; 429 on breach. **On** in the
-   production profile (default 600/client/min, `RONIN_RATE_LIMIT_RPM`), **off** in dev by default so
+   production profile (default 600/client/min, `FHIRENGINE_RATE_LIMIT_RPM`), **off** in dev by default so
    high-volume test runs aren't throttled.
 
 ## Consequences
@@ -37,7 +37,7 @@ denials), using **Hono built-ins only (no new dependency)**:
   rate-limit off in dev) — verified against the full unit + delta suites.
 - The default rate-limit store is **single-node** (per-process counters). A **shared Redis store** is
   now available (`RedisRateLimitStore`, atomic fixed-window Lua) for consistent limits across
-  instances — opt-in via `RONIN_RATE_LIMIT_STORE=redis` + `RONIN_REDIS_URL`. It carries **no forced
+  instances — opt-in via `FHIRENGINE_RATE_LIMIT_STORE=redis` + `FHIRENGINE_REDIS_URL`. It carries **no forced
   dependency**: `ioredis` is lazy-imported only when configured (single-node deploys never load it;
   the operator runs `npm i ioredis` to enable it). Falls back to the per-node store with a clear log
   if unset/unavailable.

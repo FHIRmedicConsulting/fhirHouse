@@ -28,20 +28,20 @@ Add a **hash chain** over the audit store (`src/audit/audit-integrity.ts`):
   only after a successful write.
 - **`verifyAuditChain(wh)`** re-derives every record's hash and checks the links — detecting (a)
   content edits (hash mismatch), (b) deleted records (dangling `prev_hash` / missing genesis), and
-  (c) forks/resets (>1 genesis). Exposed as the **`ronin-audit-verify`** operator CLI (read-only).
+  (c) forks/resets (>1 genesis). Exposed as the **`fhirengine-audit-verify`** operator CLI (read-only).
 - **Retention:** the audit store is **append-only and never rewritten** by the app; store maintenance
   (OPTIMIZE/VACUUM) only compacts files and reclaims tombstones of *superseded* versions — it does not
-  delete audit records. `RONIN_AUDIT_RETENTION_DAYS` (documented default 2190 = 6 years) is the
+  delete audit records. `FHIRENGINE_AUDIT_RETENTION_DAYS` (documented default 2190 = 6 years) is the
   operator-facing minimum-retention knob; enforcing hard WORM/object-lock is a deployment concern.
 
 ## Consequences
 
 - (+) Tamper-**evidence** with no new dependency (Node `crypto`); unit-tested (edit/delete/fork/restart).
   Gives the standalone its own §164.312(b)(c) integrity story independent of Databricks UC.
-- (+) Verifiable on demand (`ronin-audit-verify`) — supports incident response / audit review.
+- (+) Verifiable on demand (`fhirengine-audit-verify`) — supports incident response / audit review.
 - (+) **External anchoring implemented** (`src/audit/audit-anchor.ts`): an opt-in scheduler
-  (`RONIN_AUDIT_ANCHOR_INTERVAL_MIN`) publishes a **signed** chain-tip snapshot `{count, tip, at}`
-  (`RONIN_AUDIT_ANCHOR_KEY`) to an external append-only sink (`RONIN_AUDIT_ANCHOR_WEBHOOK`).
+  (`FHIRENGINE_AUDIT_ANCHOR_INTERVAL_MIN`) publishes a **signed** chain-tip snapshot `{count, tip, at}`
+  (`FHIRENGINE_AUDIT_ANCHOR_KEY`) to an external append-only sink (`FHIRENGINE_AUDIT_ANCHOR_WEBHOOK`).
   `verifyAgainstAnchor` then detects a chain that was **truncated** or **fully rewritten** — the case
   the hash chain alone cannot catch (a rewritten chain is internally consistent). This addresses the
   former "tamper-proof needs external anchoring" gap. Signing + external immutability mean forging past

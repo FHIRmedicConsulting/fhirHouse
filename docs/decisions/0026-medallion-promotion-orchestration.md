@@ -1,16 +1,16 @@
 # ADR-0026: Medallion Promotion Orchestration — Delta CDF, No DLT
 
-- Status: **Proposed** (design research-validated; ratify on implementation with `DeltaWarehouse`). RoninStandAlone-specific.
+- Status: **Proposed** (design research-validated; ratify on implementation with `DeltaWarehouse`). fhirEngine-specific.
 - Date: 2026-06-27
 - Decider(s): Chad
 - Session: 032 (standalone fork)
-- Supersedes (for RoninStandAlone): the **three-DLT-pipeline** promotion architecture of [ADR-0019 §7](0019-storage-and-pipeline-operations.md) (Databricks DLT). ADR-0019 stays in force for Ronin.
+- Supersedes (for fhirEngine): the **three-DLT-pipeline** promotion architecture of [ADR-0019 §7](0019-storage-and-pipeline-operations.md) (Databricks DLT). ADR-0019 stays in force for Ronin.
 - Related: [ADR-0022](0022-standalone-storage-flattening-and-catalog-seam.md), [ADR-0024](0024-clean-room-r4-columnar-schema-generator.md), [ADR-0010 A3/A4](0010-storage-shape.md), [feasibility review](../research/2026-06-27-standalone-engine-feasibility.md)
 
 ## Context
 
 ADR-0010/0019 (heritage) drive Bronze→Silver→Gold promotion with **Databricks DLT
-pipelines** on Spark + Delta CDF. RoninStandAlone has no Databricks, no Spark, no
+pipelines** on Spark + Delta CDF. fhirEngine has no Databricks, no Spark, no
 DLT. This ADR defines how the same medallion promotion runs over **OSS Delta with
 the single delta-rs / DataFusion engine** (per ADR-0022 Amendment 1; Layering B:
 Bronze raw → Silver flattened/governed → Gold transactional). Research-verified June

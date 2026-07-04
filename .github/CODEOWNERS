@@ -2,9 +2,9 @@
 * @419onscene
 
 # Security-sensitive areas warrant extra scrutiny:
-/packages/ronin-server-ts/src/auth/       @419onscene
-/packages/ronin-server-ts/src/security/   @419onscene
-/packages/ronin-server-ts/src/audit/      @419onscene
+/packages/server/src/auth/       @419onscene
+/packages/server/src/security/   @419onscene
+/packages/server/src/audit/      @419onscene
 /deploy/                                   @419onscene
 /docs/decisions/                           @419onscene
 /SECURITY.md                               @419onscene

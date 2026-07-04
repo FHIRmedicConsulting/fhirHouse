@@ -10,7 +10,7 @@
 
 Transmission security (45 CFR §164.312(e)(1)) and ONC (g)(10)(viii) require TLS 1.2+ with
 FIPS-validated crypto; NIST SP 800-52r2 pins versions and cipher suites. The prior `server.ts`
-started Node HTTPS from `RONIN_TLS_CERT/KEY` with **no** `minVersion`, cipher allow-list, or
+started Node HTTPS from `FHIRENGINE_TLS_CERT/KEY` with **no** `minVersion`, cipher allow-list, or
 protocol-downgrade protection — it shipped whatever Node negotiated.
 
 ## Decision
@@ -19,13 +19,13 @@ protocol-downgrade protection — it shipped whatever Node negotiated.
    `maxVersion=TLSv1.3`, `honorCipherOrder=true`, obsolete protocols disabled at the OpenSSL layer
    (`SSL_OP_NO_SSLv2/v3/TLSv1/TLSv1_1`), and an AEAD-only ECDHE cipher allow-list
    (`NIST_TLS12_CIPHERS`) that **excludes ChaCha20-Poly1305** (not FIPS 140-3 approved). Overridable
-   via `RONIN_TLS_CIPHERS`.
+   via `FHIRENGINE_TLS_CIPHERS`.
 2. **FIPS 140-3 is a platform property, not a code claim.** The server pins the *policy*; the
    operator supplies a FIPS-validated crypto module (OpenSSL FIPS provider / OS) and certificates.
    We **document, not claim** FIPS.
 3. **Two supported termination models:** (a) hardened in-process HTTPS (dev / single-node); (b) TLS
    terminated at a reverse proxy / load balancer — **the documented production default**. The
-   production profile (ADR-0032) requires one or the other (`RONIN_TLS_TERMINATED_AT_PROXY=true`
+   production profile (ADR-0032) requires one or the other (`FHIRENGINE_TLS_TERMINATED_AT_PROXY=true`
    attests the proxy case).
 4. **HSTS** is emitted by the HTTP hardening layer (ADR-0033).
 

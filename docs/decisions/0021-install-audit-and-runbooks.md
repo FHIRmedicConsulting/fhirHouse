@@ -38,11 +38,11 @@ Install runs in three modes:
 ```
 Welcome to Ronin install.
 
-Catalog          [ronin]:
+Catalog          [fhirengine]:
 Schema           [main]:
 Warehouse name   [ronin-warehouse]:
 Warehouse size   [Small]:
-App name         [ronin]:
+App name         [fhirengine]:
 Patient portal   [themed | headless]: themed
 Deployment profile [payer_baseline | provider_baseline | strict_federal]: payer_baseline
 
@@ -470,7 +470,7 @@ Per-version docs preserved alongside per-version bundle artifacts (per ADR-0020 
 
 - **Pure declarative install (no interactive mode)** — rejected per §1. First-install operators benefit from prompts; experienced operators use replay mode.
 - **Ronin-hosted paging infrastructure** (Ronin owns the alert routing) — rejected. Coupling Ronin to a SaaS paging surface increases the operational footprint and pulls Ronin into customer security-tooling decisions; customer-supplied webhook is the right boundary.
-- **Per-component CLIs** (`ronin-ig`, `ronin-terminology`, `ronin-mpi`...) — rejected. Operator learns one tool; one audit surface; one help text discovery flow.
+- **Per-component CLIs** (`ronin-ig`, `fhirengine-terminology`, `ronin-mpi`...) — rejected. Operator learns one tool; one audit surface; one help text discovery flow.
 - **`$everything` reject-on-any-consent-restriction** — rejected per §7. Per-resource degradation matches ADR-0018 §5; consistent with the rest of the gate.
 - **Mandatory English-only educational materials** — rejected per §8. Manifest supports per-language; customers in non-English jurisdictions need to ship localized content.
 - **Auto-update operator CLI** — rejected per §11. Operator-pull mirrors the rest of the activation pattern (ADR-0014 / ADR-0017 / ADR-0019 / ADR-0020).

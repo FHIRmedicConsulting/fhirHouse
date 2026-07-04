@@ -1,0 +1,48 @@
+{
+  "name": "@fhirengine/server",
+  "version": "0.1.0",
+  "description": "fhirEngine — open-source FHIR R4 REST server (TypeScript / Hono) on OSS Delta Lake (delta-rs / DataFusion). No Databricks.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build:deps": "tsc -p ../fhir-types/tsconfig.json",
+    "build": "tsc",
+    "prebuild": "npm run build:deps",
+    "pretypecheck": "npm run build:deps",
+    "start": "node dist/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "vitest run tests/integration",
+    "test:delta": "vitest run --no-file-parallelism tests/integration/delta-*.test.ts",
+    "test:unit": "vitest run tests/unit",
+    "test:coverage": "vitest run --no-file-parallelism --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --max-warnings 0",
+    "audit": "npm audit --omit=dev --audit-level=high",
+    "sbom": "npm sbom --sbom-format cyclonedx --omit dev"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.0",
+    "@fhirengine/fhir-types": "file:../fhir-types",
+    "asn1js": "^3.0.10",
+    "fhirpath": "^4.11.0",
+    "hono": "^4.6.0",
+    "jose": "^6.2.3",
+    "pino": "^9.5.0",
+    "pkijs": "^3.4.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@vitest/coverage-v8": "^4.1.9",
+    "eslint": "^9.39.4",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.62.1",
+    "vitest": "^4.1.9"
+  }
+}

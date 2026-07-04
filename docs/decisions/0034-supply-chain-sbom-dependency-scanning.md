@@ -20,7 +20,7 @@ Add CI security jobs (`.github/workflows/ci.yml`) — **no new runtime dependenc
 - **`npm audit --omit=dev --audit-level=high`** — fails the build on high/critical advisories in the
   server's production tree (`npm run audit`).
 - **CycloneDX SBOM** via npm's built-in `npm sbom --sbom-format cyclonedx --omit dev`, uploaded as a
-  build artifact. (The linked `file:` workspace `@ronin/fhir-types` needs its deps installed first —
+  build artifact. (The linked `file:` workspace `@fhirengine/fhir-types` needs its deps installed first —
   the job runs `npm ci` there so the SBOM tree is complete.)
 - **`pip-audit`** against the Python sidecar's `requirements.txt`.
 

@@ -1,10 +1,10 @@
 # ADR-0025: Catalog / Governance Binding Seam
 
-- Status: **Proposed** (research-validated; resolves the deferred catalog sub-decision of ADR-0022 §5). RoninStandAlone-specific.
+- Status: **Proposed** (research-validated; resolves the deferred catalog sub-decision of ADR-0022 §5). fhirEngine-specific.
 - Date: 2026-06-27
 - Decider(s): Chad
 - Session: 032 (standalone fork)
-- Supersedes (for RoninStandAlone): the **Unity Catalog (Databricks-managed)** assumption of [ADR-0009](0009-databricks-partner-posture-and-adr-0008-corrections.md) / the catalog choice collapsed into it. ADR-0009 stays in force for Ronin.
+- Supersedes (for fhirEngine): the **Unity Catalog (Databricks-managed)** assumption of [ADR-0009](0009-databricks-partner-posture-and-adr-0008-corrections.md) / the catalog choice collapsed into it. ADR-0009 stays in force for Ronin.
 - Related: [ADR-0022](0022-standalone-storage-flattening-and-catalog-seam.md) (parent; §5 deferred this), [ADR-0026](0026-medallion-promotion-orchestration.md), [ADR-0023](0023-open-source-licensing-and-open-core-model.md)
 
 ## Context

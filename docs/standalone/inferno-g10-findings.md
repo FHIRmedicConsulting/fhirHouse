@@ -7,7 +7,7 @@ Status: **harness operational; first conformance slice run.** Local-first per AD
 - **Kit:** ONC Certification (g)(10) Standardized API Test Kit (`inferno-framework/g10-certification-test-kit`),
   brought up via its docker-compose (inferno + worker + redis + nginx + `hl7_validator_service`).
   Bundles the SMART App Launch (STU1/2/2.2), US Core Server (v3.1.1–v6.1.0), and TLS suites.
-- **Server under test:** RoninStandAlone booted end-to-end (Python delta sidecar + TS/Hono server)
+- **Server under test:** fhirEngine booted end-to-end (Python delta sidecar + TS/Hono server)
   against a copy of the provisioned store (`.delta-prov` → US Core 6.1.0 profiles + terminology).
   Reachable from Inferno at `http://host.docker.internal:3000`.
 - **Driver:** `scratchpad/inferno/run.py` drives the Inferno JSON API headlessly
@@ -186,14 +186,14 @@ with the validation/must-support items gated only by external-tx + data-coverage
 
 **Gap found:** we built the terminology *store* + `validateCode` (used internally for L3 binding
 validation) but never exposed the FHIR terminology *operations*, so no external client — including
-the HL7 validator Inferno drives — could use RoninStandAlone as a terminology server. Validation
+the HL7 validator Inferno drives — could use fhirEngine as a terminology server. Validation
 therefore fell through to the external `tx.fhir.org`, which flakes (`cache not known`).
 
 **Fixed (committed):** `src/routes/terminology.ts` exposes `ValueSet/$validate-code`,
 `CodeSystem/$validate-code`, `ValueSet/$expand`, `CodeSystem/$lookup` (GET + POST/Parameters);
 CapabilityStatement advertises them. Verified directly against the provisioned store (**752k
 concepts**): RxNorm `$lookup`, `$validate-code` (valid/invalid/unknown → issue severity), `$expand`.
-RoninStandAlone **is now a FHIR terminology server.** Test: `delta-terminology-endpoints`.
+fhirEngine **is now a FHIR terminology server.** Test: `delta-terminology-endpoints`.
 
 **tx stabilization — how to wire it:**
 - The standalone `us_core_v610` suite defaults to `tx.fhir.org`; point its validator at us with a
@@ -302,7 +302,7 @@ First run with the HL7 validator **actually running** end-to-end. Two harness fi
 2. **Base-URL fix.** The server-under-test emitted self/next links as `http://localhost:3000/…`;
    Inferno runs *inside a container*, so following paginated / revinclude links hit
    `localhost:3000 connection refused`. Fix: launch the server with
-   **`RONIN_PUBLIC_URL=http://host.docker.internal:3000`** so emitted links are container-reachable.
+   **`FHIRENGINE_PUBLIC_URL=http://host.docker.internal:3000`** so emitted links are container-reachable.
    All `localhost:3000` connection errors disappeared.
 
 **Results with the validator live (patient `019f1c95…`):**
@@ -382,7 +382,7 @@ Error fetching the server's capability statement: Unsupported or unrecognized SS
   **plaintext HTTP** on 3000 → "Unsupported or unrecognized SSL message"; it can't read our
   CapabilityStatement, so it falls back to tx.fhir.org.
 - **To make A work** (bounded follow-up, not a config flip): (1) serve our tx endpoint over **TLS**
-  (we have `RONIN_TLS_CERT/KEY`) with a cert the validator will accept; (2) satisfy the validator's
+  (we have `FHIRENGINE_TLS_CERT/KEY`) with a cert the validator will accept; (2) satisfy the validator's
   tx **handshake** — it expects a **TerminologyCapabilities** resource at `/metadata?mode=terminology`
   (we currently return a CapabilityStatement) and issues **batched** `$validate-code`; (3) confirm our
   operations cover what it calls. This is the "cover the validator's batch/tx-resource calls"
@@ -462,7 +462,7 @@ core validator, not the wrapper.
 **Conclusion — Option A is not achievable for the Inferno/HL7-validator use case.** Not because of
 TLS or our handshake (both solved) but because HL7 deliberately gates which terminology servers the
 validator will trust. Clearing it = passing HL7's formal terminology-ecosystem conformance program —
-a large, external, HL7-owned process, **out of RoninStandAlone scope** and **not required for
+a large, external, HL7-owned process, **out of fhirEngine scope** and **not required for
 (g)(10)**: ONC's own hosted validator runs with the external tx **disabled/filtered** — i.e.
 **Option B**, which is already in place and gives clean validation runs.
 

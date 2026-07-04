@@ -1,10 +1,10 @@
 # TLS & CMS-Compliance Security Deep-Dive (gap analysis)
 
-_Author: research/architecture pass · Date: 2026-07-03 · Applies to: **RoninStandAlone** (OSS-Delta FHIR R4 server, TS/Hono + Python delta-rs/DataFusion sidecar)_
+_Author: research/architecture pass · Date: 2026-07-03 · Applies to: **fhirEngine** (OSS-Delta FHIR R4 server, TS/Hono + Python delta-rs/DataFusion sidecar)_
 
 > **Scope note.** This is a *gap analysis of the server software* against the regulatory
 > stack that governs a CMS-facing / ONC-certified FHIR R4 server. It grounds every control
-> in what RoninStandAlone already has (citing the ADR / file) and states the gap +
+> in what fhirEngine already has (citing the ADR / file) and states the gap +
 > recommendation. It creates **no** new ADRs and changes **no** code — where a decision is
 > implied, it is flagged as an **OPEN QUESTION** or a **recommended future ADR**, per the
 > project's ADR-driven convention.
@@ -19,7 +19,7 @@ _Author: research/architecture pass · Date: 2026-07-03 · Applies to: **RoninSt
 > **MUST** = required by cited regulation/standard for the certified/CMS use case ·
 > **REC** = recommended best practice, not strictly mandated ·
 > **OPER** = operator/deployment responsibility (server enables, doesn't own) ·
-> **OUT** = out of RoninStandAlone scope (another app / org process).
+> **OUT** = out of fhirEngine scope (another app / org process).
 
 ---
 
@@ -29,7 +29,7 @@ _Author: research/architecture pass · Date: 2026-07-03 · Applies to: **RoninSt
 |---|-----|----------|----------------|
 | 1 | **No FIPS/NIST-pinned TLS policy in-process** (Node defaults; no `minVersion`, no cipher list, no HSTS) | **High** | NIST SP 800-52r2 + ONC (g)(10)(viii) require TLS 1.2+ with FIPS-validated crypto; today the in-process HTTPS path ships whatever Node negotiates. |
 | 2 | **No UDAP/SSRAA** in the standalone auth server. (SMART Backend Services — `client_credentials` + `private_key_jwt` — **IS implemented**: see `oauth/oauth-routes.ts` client_credentials branch + `delta-backend-services.test.ts`.) | **Medium** | Backend Services already covers Provider Access / Payer-to-Payer / Prior Auth / Bulk `$export` system auth; the remaining gap is **UDAP** (X.509 software statements + dynamic client registration), the TEFCA trust path — a larger, later surface. |
-| 3 | **Security controls default OFF and enforcement is un-gated at deploy** (auth/audit/consent all opt-in) | **High** | Correct for synthetic dev, but there is no server-side *production deploy gate* that fails closed when PHI mode is on but `RONIN_AUTH_ENABLED` is false. |
+| 3 | **Security controls default OFF and enforcement is un-gated at deploy** (auth/audit/consent all opt-in) | **High** | Correct for synthetic dev, but there is no server-side *production deploy gate* that fails closed when PHI mode is on but `FHIRENGINE_AUTH_ENABLED` is false. |
 | 4 | **No HTTP-tier hardening: rate limiting / DoS, CORS policy, security headers** | **Medium-High** | (g)(10) + HIPAA availability/OWASP expect these; `smart-configuration` advertises `cors:true` but no CORS is actually enforced. |
 | 5 | **No SBOM / dependency-scan / supply-chain gate, and no ported standalone compliance mapping docs** | **Medium** | Component-disclosure policy + NIST SA family; the heritage `docs/compliance/*` are Databricks-worded and not carried into the standalone. |
 
@@ -77,9 +77,9 @@ Mutual TLS is a **client-authentication** mechanism, distinct from the transport
 
 **Bottom line:** channel-mTLS is an **operator/deployment option** (often terminated at the proxy for specific B2B partners), *not* a blanket server requirement. The server-side work that *is* on the critical path is **`private_key_jwt` client authentication + JWKS-based client key resolution** (see §2.2), which UDAP builds on.
 
-### 1.3 TLS — what RoninStandAlone has today
+### 1.3 TLS — what fhirEngine has today
 
-- **In-process HTTPS is supported but unopinionated.** `src/server.ts` reads `RONIN_TLS_CERT` / `RONIN_TLS_KEY` (PEM paths) and, if present, starts Node's `https` server via `@hono/node-server`; otherwise it serves plain HTTP and **logs a warning** referencing 45 CFR §164.312(e). It passes only `{cert, key}` — **no `minVersion`, no `ciphers`, no `honorCipherOrder`**, so the effective policy is **whatever the linked Node/OpenSSL negotiates** (modern Node defaults to TLS 1.2 floor, but the cipher list is not FIPS-restricted and TLS 1.0/1.1 posture depends on the build).
+- **In-process HTTPS is supported but unopinionated.** `src/server.ts` reads `FHIRENGINE_TLS_CERT` / `FHIRENGINE_TLS_KEY` (PEM paths) and, if present, starts Node's `https` server via `@hono/node-server`; otherwise it serves plain HTTP and **logs a warning** referencing 45 CFR §164.312(e). It passes only `{cert, key}` — **no `minVersion`, no `ciphers`, no `honorCipherOrder`**, so the effective policy is **whatever the linked Node/OpenSSL negotiates** (modern Node defaults to TLS 1.2 floor, but the cipher list is not FIPS-restricted and TLS 1.0/1.1 posture depends on the build).
 - **Proxy-termination is the documented default.** The server comment and Inferno findings both state TLS "terminates at the proxy in deployment"; the Inferno `standalone_auth_tls` test fails locally precisely because the local listener is plain HTTP (`docs/standalone/inferno-g10-findings.md`, Run 1 — flagged environmental).
 - **Heritage posture doc** (`docs/compliance/security-posture.md`, Databricks-worded, *not* ported to `Ronin/docs`) asserts "TLS 1.3 … platform terminates TLS" — true for the Databricks product, **not** self-evidently true for a self-hosted standalone install.
 - **No HSTS header, no security-header middleware** anywhere in `src/`.
@@ -131,10 +131,10 @@ tokens, and — for CMS-0057's system-to-system APIs — **SMART Backend Service
 UDAP/SSRAA adds DCR + X.509 client identity for TEFCA. Identity per NIST **SP 800-63**:
 CMS-0057 patient apps typically **IAL2 + AAL2**, proofing done by the IdP.
 
-**What RoninStandAlone has (ADR-0030, Accepted; heritage design ADR-0006):**
-- **Auth gate** (`src/auth/`): `authMiddleware` + **`scope-enforcer`** with multi-version SMART parsing (1.0–2.2), opt-in `RONIN_AUTH_ENABLED`, strategy `stub|jwks|oidc` (`RONIN_AUTH_STRATEGY`). Identity/scopes derived **only** from verified token claims, never headers.
-- **JWKS / local-JWT verification** (`src/auth/idp/jwks-auth.ts`, **jose**): verifies bearer JWT against `RONIN_JWKS_URI` (prod IdP) or `RONIN_JWT_PUBLIC_KEY` (dev SPKI/PEM); default alg ES256.
-- **An in-process SMART authorization server** (`src/auth/oauth/`, opt-in `RONIN_OAUTH_ENABLED`): `authorization_code` + **PKCE S256**, `/oauth/token`, `/.well-known/jwks.json`, issues access/id/refresh JWTs the gate then verifies — "this server issues, our gate enforces."
+**What fhirEngine has (ADR-0030, Accepted; heritage design ADR-0006):**
+- **Auth gate** (`src/auth/`): `authMiddleware` + **`scope-enforcer`** with multi-version SMART parsing (1.0–2.2), opt-in `FHIRENGINE_AUTH_ENABLED`, strategy `stub|jwks|oidc` (`FHIRENGINE_AUTH_STRATEGY`). Identity/scopes derived **only** from verified token claims, never headers.
+- **JWKS / local-JWT verification** (`src/auth/idp/jwks-auth.ts`, **jose**): verifies bearer JWT against `FHIRENGINE_JWKS_URI` (prod IdP) or `FHIRENGINE_JWT_PUBLIC_KEY` (dev SPKI/PEM); default alg ES256.
+- **An in-process SMART authorization server** (`src/auth/oauth/`, opt-in `FHIRENGINE_OAUTH_ENABLED`): `authorization_code` + **PKCE S256**, `/oauth/token`, `/.well-known/jwks.json`, issues access/id/refresh JWTs the gate then verifies — "this server issues, our gate enforces."
 - **Discovery**: `/.well-known/smart-configuration` + `/metadata` `rest.security` SMART service + `oauth-uris`; 401 + `WWW-Authenticate: Bearer` on protected routes; `/health` + `/metadata` public (`docs/standalone/inferno-g10-findings.md`).
 - **Token lifecycle defaults** exist in ADR-0006 (1h access / 90d refresh / 60s introspection cache).
 
@@ -157,7 +157,7 @@ evident, queryable per-patient, retained per mandate (HIPAA floor 6 yr).
 **Have (ADR-0030 Phase 2 + ADR-0016 heritage):** heritage AuditEvent builder + middleware
 adapted to an `AuditSink` interface; **`DeltaAuditSink`** (`src/audit/delta-audit-sink.ts`)
 does serialized single-writer-safe appends; mounted **before** the auth gate so 401/403 are
-also audited; `findByPatient` = accounting-of-disclosures. Opt-in `RONIN_AUDIT_ENABLED`.
+also audited; `findByPatient` = accounting-of-disclosures. Opt-in `FHIRENGINE_AUDIT_ENABLED`.
 
 | # | Requirement | Have | Gap | Recommendation (Owner) |
 |---|---|---|---|---|
@@ -224,7 +224,7 @@ rest with FIPS-validated crypto; secrets never in repo/logs.
 
 ## PART 3 — HIPAA §164.312 technical-safeguards crosswalk
 
-| §164.312 safeguard | Requirement | RoninStandAlone status | Gap / Owner |
+| §164.312 safeguard | Requirement | fhirEngine status | Gap / Owner |
 |---|---|---|---|
 | (a)(1) **Access control** — unique user ID, emergency access, auto-logoff, encryption | Scope+consent+compartment enforcement | Five-point gate (ADR-0006/0018/0030) ✅ (opt-in) | Deploy-gate to force-on in PHI mode (**High**, §7) |
 | (b) **Audit controls** | Hardware/software audit mechanisms | DeltaAuditSink ✅ | Tamper evidence in OSS Delta (B3) |
@@ -243,7 +243,7 @@ rest with FIPS-validated crypto; secrets never in repo/logs.
 - **SP 800-53** control families most load-bearing here: **AC** (access control → §2.2/2.4),
   **AU** (audit → §2.3), **IA** (identification/authentication → §2.2), **SC** (system &
   comms protection → TLS/at-rest, Part 1/§2.6), **SI** (system integrity → §2.5/B3),
-  **SA/SR** (supply chain → §6 X4). RoninStandAlone touches AC/AU/IA/SC; SA/SR is the
+  **SA/SR** (supply chain → §6 X4). fhirEngine touches AC/AU/IA/SC; SA/SR is the
   weakest (no SBOM gate).
 - **SP 800-63** (IAL/AAL/FAL): IdP-owned; server trusts asserted assurance (A6). CMS-0057
   patient apps → IAL2/AAL2 typical.
@@ -323,10 +323,10 @@ These are **decisions to make now**, framed as options — not decisions taken h
      rate-limiting most naturally live. **OPEN QUESTION:** is a hardened in-process TLS a
      supported *production* mode, or dev-only?
 2. **Cert strategy: local/dev vs. prod.**
-   - *Dev:* self-signed / `mkcert` local CA (so `RONIN_TLS_CERT/KEY` works and Inferno's TLS
+   - *Dev:* self-signed / `mkcert` local CA (so `FHIRENGINE_TLS_CERT/KEY` works and Inferno's TLS
      check passes locally). *Prod:* **ACME / short-lived certs** (or operator-supplied from
      their PKI) terminated at the proxy. Server needs, at most, **cert hot-reload** support.
-     **OPEN QUESTION:** does RoninStandAlone ship any cert tooling, or is it 100% operator-
+     **OPEN QUESTION:** does fhirEngine ship any cert tooling, or is it 100% operator-
      supplied with docs only? (Leaning: docs + example configs only, to stay unopinionated.)
 3. **FIPS 140-3 posture.**
    - *Decision needed:* the server should **document, not claim** FIPS — validated crypto is
@@ -362,6 +362,6 @@ These are **decisions to make now**, framed as options — not decisions taken h
 ### Internal grounding (this repo)
 
 - ADR-0030 (standalone security/privacy/consent enforcement — Accepted) · ADR-0006 (SMART/UDAP) · ADR-0016 (audit) · ADR-0018 (consent) · ADR-0010 (integrity) · ADR-0029 (runtime/stack)
-- `packages/ronin-server-ts/src/server.ts` (TLS), `src/auth/` (gate, scope-enforcer, jwks-auth, oauth/, consent-enforce, redact), `src/audit/delta-audit-sink.ts`
+- `packages/server/src/server.ts` (TLS), `src/auth/` (gate, scope-enforcer, jwks-auth, oauth/, consent-enforce, redact), `src/audit/delta-audit-sink.ts`
 - `docs/standalone/inferno-g10-findings.md` · `docs/security/secrets.md` · root `docs/compliance/*` (heritage, Databricks-worded — not yet ported)
 - `Research_report_FHIR_Privacy_Security_and_Consent.md` · `CLAUDE.md` · project memory `MEMORY.md`

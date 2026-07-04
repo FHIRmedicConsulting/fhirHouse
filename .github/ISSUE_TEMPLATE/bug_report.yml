@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a defect in RoninStandAlone
+description: Report a defect in fhirEngine
 labels: ["bug"]
 body:
   - type: markdown
@@ -20,7 +20,7 @@ body:
       label: Steps to reproduce
       description: Minimal steps / request (synthetic data only).
       placeholder: |
-        1. Start server with RONIN_SECURITY_PROFILE=dev …
+        1. Start server with FHIRENGINE_SECURITY_PROFILE=dev …
         2. POST /Patient …
         3. GET /Patient?… → …
     validations:

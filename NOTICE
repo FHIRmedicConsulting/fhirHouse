@@ -1,5 +1,5 @@
-RoninStandAlone
-Copyright 2026 The RoninStandAlone Authors
+fhirEngine
+Copyright 2026 The fhirEngine Authors
 
 This product is licensed under the Apache License, Version 2.0 (see LICENSE).
 
@@ -13,7 +13,7 @@ Attributions
 
 - Terminology content (SNOMED CT, LOINC, RxNorm, ICD, VSAC value sets) is NOT
   distributed with this software. Operators supply licensed release files themselves;
-  RoninStandAlone loads them locally and never redistributes them. Respect each code
+  fhirEngine loads them locally and never redistributes them. Respect each code
   system's license (e.g. SNOMED CT via a member/affiliate license; LOINC terms of use;
   UMLS Metathesaurus License).
 

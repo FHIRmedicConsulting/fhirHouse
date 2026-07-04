@@ -1,4 +1,4 @@
-# RoninStandAlone — self / cloud-hosted deployment
+# fhirEngine — self / cloud-hosted deployment
 
 The non-Databricks deployment mode (ADR-0028): the **TS/Hono FHIR server** + the
 **delta-rs / DataFusion storage sidecar** (ADR-0029, ADR-0022 A1), with Delta on a
@@ -35,7 +35,7 @@ curl -s http://localhost:3000/metadata
 
 Set the base to an object-store URI + creds in `.env` — no volume needed:
 ```bash
-RONIN_DELTA_BASE=s3://my-bucket/ronin
+FHIRENGINE_DELTA_BASE=s3://my-bucket/ronin
 AWS_ACCESS_KEY_ID=…  AWS_SECRET_ACCESS_KEY=…  AWS_REGION=…
 AWS_S3_ALLOW_UNSAFE_RENAME=true   # native AWS S3, single-writer (omit for R2/MinIO/GCS)
 ```
@@ -52,16 +52,16 @@ PHI-capable deployment, add the production overlay:
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
 ```
 
-This sets `RONIN_SECURITY_PROFILE=production`, which **refuses to boot** (ADR-0032) unless
+This sets `FHIRENGINE_SECURITY_PROFILE=production`, which **refuses to boot** (ADR-0032) unless
 authentication + audit + transport security are configured. The security controls that ship
 (hardened TLS, HTTP hardening, tamper-evident audit, SMART/Backend-Services/UDAP auth) are real —
 you supply the deployment specifics:
 
-- **TLS** — terminate at a proxy/LB in front (default; `RONIN_TLS_TERMINATED_AT_PROXY=true`) or run
-  in-process HTTPS (`RONIN_TLS_CERT/KEY`, NIST SP 800-52r2 hardened).
-- **Auth** — point `RONIN_AUTH_STRATEGY=jwks` at your IdP's JWKS, or run our OAuth server with
-  **static** signing keys (`RONIN_OAUTH_PRIVATE_KEY/PUBLIC_KEY`).
-- **Audit + consent** — on by the overlay; verify with `scripts/ronin-audit-verify.ts`.
+- **TLS** — terminate at a proxy/LB in front (default; `FHIRENGINE_TLS_TERMINATED_AT_PROXY=true`) or run
+  in-process HTTPS (`FHIRENGINE_TLS_CERT/KEY`, NIST SP 800-52r2 hardened).
+- **Auth** — point `FHIRENGINE_AUTH_STRATEGY=jwks` at your IdP's JWKS, or run our OAuth server with
+  **static** signing keys (`FHIRENGINE_OAUTH_PRIVATE_KEY/PUBLIC_KEY`).
+- **Audit + consent** — on by the overlay; verify with `scripts/fhirengine-audit-verify.ts`.
 - **Encryption at rest** — object-store SSE/KMS (operator/platform responsibility).
 
 Full config: `deploy/.env.example` + `docs/standalone/configuration.md`. Security detail + pre-Alpha
@@ -73,7 +73,7 @@ checklist: `docs/standalone/security-hardening-and-deployment.md`.
   images aren't built in CI here; build them on a Docker host before relying on them.
 - Server currently runs via **tsx** (no compile step) — a follow-up compiles to `dist` for a leaner
   production image.
-- **Storage serving is single-store** (Bronze current-version); `RONIN_STORAGE_MODE=medallion`
+- **Storage serving is single-store** (Bronze current-version); `FHIRENGINE_STORAGE_MODE=medallion`
   Gold-read-path is not yet wired for serving. **Object-store restart-registration is local-FS only**
   today (a restarted server on S3 sees prior data after the first write). Exercise S3/GCS/Azure on a
   real bucket before production.

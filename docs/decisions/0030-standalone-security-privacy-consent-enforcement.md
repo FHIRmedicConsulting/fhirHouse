@@ -51,8 +51,8 @@ purpose-of-use + clearance/role + patient) — never from request-asserted heade
 a local signing key + JWKS; production points JWKS at the real IdP. No IdP is stood up by
 this ADR.
 
-**Enablement:** enforcement is **opt-in by config** (e.g. `RONIN_AUTH_ENABLED`,
-`RONIN_CONSENT_ENFORCEMENT`), default **off**, so synthetic-data dev + the existing test
+**Enablement:** enforcement is **opt-in by config** (e.g. `FHIRENGINE_AUTH_ENABLED`,
+`FHIRENGINE_CONSENT_ENFORCEMENT`), default **off**, so synthetic-data dev + the existing test
 suite are unaffected until a deployment turns it on. (Production PHII deployments MUST
 enable them — recorded as a deploy-gate, not a code default.)
 
@@ -87,7 +87,7 @@ strategy** (this ADR's chosen authN model, explicitly noted as unimplemented in
 ADR-0006 covers its design).
 
 **Phase 1 DONE:** heritage `authMiddleware` wired into the delta app via `auth/configure.ts`
-(opt-in `RONIN_AUTH_ENABLED`; strategy `stub|jwks|oidc` via `RONIN_AUTH_STRATEGY`); /health
+(opt-in `FHIRENGINE_AUTH_ENABLED`; strategy `stub|jwks|oidc` via `FHIRENGINE_AUTH_STRATEGY`); /health
 + /metadata public; verified `AuthContext` on `c.var.auth`. Tests `delta-auth` (8).
 
 ## Phased plan
@@ -96,13 +96,13 @@ ADR-0006 covers its design).
 2. **AuditEvent** — emit on every interaction. ✅ **Phase 2 DONE:** reused the heritage
    audit **builder + middleware** (loosened its dep to an `AuditSink` interface); new
    **delta-native `DeltaAuditSink`** (serialized appends — single-writer-safe; empty-string
-   columns for Utf8 stability) + `audit/configure.ts` (opt-in `RONIN_AUDIT_ENABLED`, mounted
+   columns for Utf8 stability) + `audit/configure.ts` (opt-in `FHIRENGINE_AUDIT_ENABLED`, mounted
    BEFORE the auth gate so 401/403 are audited). `findByPatient` = accounting-of-disclosures.
    Tests `delta-audit` (3).
 3. **Consent + security-label read-time engine** — permit/deny/redact. ✅ **Phase 3 DONE
    (label/scope-context policy):** reused heritage `consent-gate` (HCS confidentiality
    U/L/M/N/R/V + sensitivity ETH/PSY/HIV/SUD… + scope-context policy) via
-   `auth/consent-enforce.ts` (opt-in `RONIN_CONSENT_ENFORCEMENT`; standalone compartment
+   `auth/consent-enforce.ts` (opt-in `FHIRENGINE_CONSENT_ENFORCEMENT`; standalone compartment
    resolver for all types). Wired into read/vread (403) + search/$everything (filter the
    page; total = visible count so it doesn't leak hidden records). Tests `delta-consent` (4):
    system allowed · user blocked on R/sensitive · search filters sensitive · patient
@@ -122,7 +122,7 @@ ADR-0006 covers its design).
 ## Consequences
 
 - Closes the standalone's nascent-enforcement gap on the record; keeps Ronin and
-  RoninStandAlone aligned (ADR-0028) since both enforce the same controls.
+  fhirEngine aligned (ADR-0028) since both enforce the same controls.
 - The enforce-not-tag boundary keeps the server simple and makes the *label producer* the
   trust root — labels must be integrity-protected upstream (NIST SA; [[phi-security-standards]]).
 - Opt-in default avoids breaking dev/tests but means **production enablement is a deploy

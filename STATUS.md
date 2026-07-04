@@ -1,4 +1,4 @@
-# RoninStandAlone — STATUS
+# fhirEngine — STATUS
 
 _Living snapshot of where the project is. Point-in-time narrative + resume runbook live in
 `docs/status/latest.md` (currently → session-033, 2026-07-02)._
@@ -25,11 +25,11 @@ sidecar tests).
 | Operations | ✅ `$everything`, `$export` (dev), `$validate`, **`Patient/$member-match`** (HRex, CMS-0057 Payer-to-Payer) |
 | Validation (pre-Bronze) | ✅ structural + cardinality + **choice-type `[x]`** + terminology bindings (3-state) + **L4 FHIRPath invariants (top-level/one-level, R4-model-aware; deeper contexts deferred)** + installed-profile **required-elements + required bindings + required (value/pattern) slices** (NOT full L5 IG conformance — no closed/max slices, discriminators, or must-support; the authoritative profile verdict is the external HL7 validator) + slicing (first cut) |
 | Transactions | ✅ urn:uuid resolution + **conditional references** (`Type?identifier=…` → literal) + **`ifNoneExist`** conditional create |
-| Storage (Delta) | ✅ OPTIMIZE + VACUUM (all tables), **Z-order by `id`**, **current-version `is_current`** (atomic demote), **single-writer serialization + sidecar retry**, **startup table discovery** (⚠️ **single-store serving only**: `RONIN_STORAGE_MODE=medallion` Gold-read-path not wired; startup discovery is **local-FS only** — object-store restart-registration WIP) |
+| Storage (Delta) | ✅ OPTIMIZE + VACUUM (all tables), **Z-order by `id`**, **current-version `is_current`** (atomic demote), **single-writer serialization + sidecar retry**, **startup table discovery** (⚠️ **single-store serving only**: `FHIRENGINE_STORAGE_MODE=medallion` Gold-read-path not wired; startup discovery is **local-FS only** — object-store restart-registration WIP) |
 | Terminology | ✅ local store (752k concepts loadable) + **tx-server endpoints**: `ValueSet/$validate-code`, `CodeSystem/$validate-code`, `ValueSet/$expand`, `CodeSystem/$lookup` |
 | Provisioning | ✅ IG install, operator file loaders (LOINC/SNOMED/RxNorm), VSAC `$expand`, quarantine-reconcile |
 | Security (enforcement) | ✅ SMART scopes + JWKS auth, **Backend Services** (client_credentials+private_key_jwt), **UDAP B2B trust** (cert-chain software statements + **revocation: static list + live signature-verified CRL + OCSP** + **trusted DCR w/ durable registry** + **signed_metadata** + **tiered OAuth/RFC 9101 signed request** + **RFC 5280 path validation** (basic constraints / key usage / name constraints), opt-in), AuditEvent + accounting, consent + DS4P labels, obligations; ✅ **SMART discovery** + 401/WWW-Authenticate |
-| Security (infrastructure) | ✅ **hardened TLS** (SP 800-52r2, TLS1.2+, **cert hot-reload**), **production fail-closed profile**, **HTTP hardening** (headers, enforced CORS, rate limiting — **pluggable + Redis shared store**, body limits), **audit hash-chain tamper-evidence** (`ronin-audit-verify`) + **external anchoring** (rewrite/truncation detection), **UDAP B2B trust** + **cert revocation**, **SBOM + npm-audit + pip-audit + gitleaks + Trivy CI** + coverage gate — `docs/standalone/security-hardening-and-deployment.md` (ADR-0031..0036, Accepted) |
+| Security (infrastructure) | ✅ **hardened TLS** (SP 800-52r2, TLS1.2+, **cert hot-reload**), **production fail-closed profile**, **HTTP hardening** (headers, enforced CORS, rate limiting — **pluggable + Redis shared store**, body limits), **audit hash-chain tamper-evidence** (`fhirengine-audit-verify`) + **external anchoring** (rewrite/truncation detection), **UDAP B2B trust** + **cert revocation**, **SBOM + npm-audit + pip-audit + gitleaks + Trivy CI** + coverage gate — `docs/standalone/security-hardening-and-deployment.md` (ADR-0031..0036, Accepted) |
 | CapabilityStatement | ✅ US Core `supportedProfile` + `instantiates`, JSON-only `format`, SMART `oauth-uris`, terminology ops, `TerminologyCapabilities` (`?mode=terminology`) |
 
 ## Conformance — Inferno (g)(10)
@@ -41,7 +41,7 @@ sidecar tests).
 
 Harness stood up (docker g10 kit); server driven headlessly. **Run 9 (2026-07-03) — validator LIVE:**
 fixed the OOM (Docker VM → **12 GB** + validator **`-Xmx8g`**) and the base-URL mismatch (server
-launched with **`RONIN_PUBLIC_URL=http://host.docker.internal:3000`** so paginated/revinclude links
+launched with **`FHIRENGINE_PUBLIC_URL=http://host.docker.internal:3000`** so paginated/revinclude links
 are container-reachable). **Profile validation now executes** — `validation_test` **PASS** for Patient
 + Observation-lab (first time (g)(10) validation ran at all). The Encounter/DiagnosticReport
 `validation_test` fails are **external `tx.fhir.org` terminology errors, not structural
@@ -90,14 +90,14 @@ sidecar+server, reload Synthea, drive Inferno). Tests: `npm run test:delta` (nee
 ## Security infrastructure (2026-07-04, ADR-0031..0036 Accepted)
 Alpha security baseline built + the ranked deferred items: **#1** TLS hardening (SP 800-52r2 + cert
 hot-reload) · prod fail-closed profile · HTTP hardening (headers/CORS/rate-limit/body-limit, pluggable
-store) · SBOM+audit+gitleaks+Trivy CI. **#2** audit hash-chain tamper-evidence (`ronin-audit-verify`).
+store) · SBOM+audit+gitleaks+Trivy CI. **#2** audit hash-chain tamper-evidence (`fhirengine-audit-verify`).
 **#3** UDAP B2B trust foundation (cert-chain software statements + trusted DCR + `.well-known/udap`).
 **#4** CMS-0057 B2B APIs = **plan** (`docs/standalone/cms-0057-b2b-apis-plan.md`) — multi-week program,
 not built. Runbook: `docs/standalone/security-hardening-and-deployment.md`. Gap analysis:
 `docs/research/2026-07-03-tls-and-cms-compliance-security-deep-dive.md`.
 
 ## Not yet ratified / known debt
-TS/Hono stack (ADR pending) · storage-topology ADR · `@ronin/fhir-types` codegen review · heritage
+TS/Hono stack (ADR pending) · storage-topology ADR · `@fhirengine/fhir-types` codegen review · heritage
 Databricks ADRs still in `docs/decisions/` for context. UDAP follow-ups (revocation/CRL-OCSP, tiered
 OAuth, persistent registry) before real-partner B2B; shared-store rate limiter + external audit
 anchoring post-Alpha.

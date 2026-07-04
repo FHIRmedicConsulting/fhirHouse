@@ -1,6 +1,6 @@
-# RoninStandAlone — Security Hardening & Deployment Runbook
+# fhirEngine — Security Hardening & Deployment Runbook
 
-_Operator guide for running RoninStandAlone securely. Pairs with ADR-0030 (enforcement),
+_Operator guide for running fhirEngine securely. Pairs with ADR-0030 (enforcement),
 ADR-0031 (TLS), ADR-0032 (production profile), ADR-0033 (HTTP hardening), ADR-0034 (supply chain),
 and `docs/research/2026-07-03-tls-and-cms-compliance-security-deep-dive.md` (the full gap analysis)._
 
@@ -10,7 +10,7 @@ and `docs/research/2026-07-03-tls-and-cms-compliance-security-deep-dive.md` (the
 
 ## 1. Profiles: dev vs production
 
-`RONIN_SECURITY_PROFILE = dev` (default) | `production`.
+`FHIRENGINE_SECURITY_PROFILE = dev` (default) | `production`.
 
 - **dev** — controls are opt-in and off; the server only *warns* about gaps. For **synthetic data
   only** (Synthea). Never point dev at PHI.
@@ -23,25 +23,25 @@ Run under 1Password (`op run --env-file=…`) so secrets are never written to di
 `production` boot:
 
 ```bash
-RONIN_SECURITY_PROFILE=production   # fail-closed gate
-RONIN_AUTH_ENABLED=true             # SMART/JWT auth gate (ADR-0030 #1)
-RONIN_AUTH_STRATEGY=jwks            # or 'local' (verify our own OAuth server) / 'oidc'
-RONIN_AUDIT_ENABLED=true            # AuditEvent capture + accounting (ADR-0030 #2)
+FHIRENGINE_SECURITY_PROFILE=production   # fail-closed gate
+FHIRENGINE_AUTH_ENABLED=true             # SMART/JWT auth gate (ADR-0030 #1)
+FHIRENGINE_AUTH_STRATEGY=jwks            # or 'local' (verify our own OAuth server) / 'oidc'
+FHIRENGINE_AUDIT_ENABLED=true            # AuditEvent capture + accounting (ADR-0030 #2)
 
 # Transport security — pick ONE:
 #  (a) in-process TLS (single-node / dev-like):
-RONIN_TLS_CERT=/path/fullchain.pem
-RONIN_TLS_KEY=/path/privkey.pem
+FHIRENGINE_TLS_CERT=/path/fullchain.pem
+FHIRENGINE_TLS_KEY=/path/privkey.pem
 #  (b) TLS terminated upstream at a proxy/LB (recommended production default):
-RONIN_TLS_TERMINATED_AT_PROXY=true
+FHIRENGINE_TLS_TERMINATED_AT_PROXY=true
 
 # If the SMART authorization server is enabled, keys MUST be static (not ephemeral):
-RONIN_OAUTH_ENABLED=true
-RONIN_OAUTH_PRIVATE_KEY=...   # PEM (via op run)
-RONIN_OAUTH_PUBLIC_KEY=...
+FHIRENGINE_OAUTH_ENABLED=true
+FHIRENGINE_OAUTH_PRIVATE_KEY=...   # PEM (via op run)
+FHIRENGINE_OAUTH_PUBLIC_KEY=...
 
 # Strongly recommended when serving consent/DS4P/42 CFR Part 2 data (advisory, not gated):
-RONIN_CONSENT_ENFORCEMENT=true
+FHIRENGINE_CONSENT_ENFORCEMENT=true
 ```
 
 If any required control is missing, boot aborts with a `security` log line naming the unmet control.
@@ -49,11 +49,11 @@ If any required control is missing, boot aborts with a `security` log line namin
 ## 3. Transport security (ADR-0031)
 
 - **Production default: terminate TLS at a reverse proxy / load balancer** and set
-  `RONIN_TLS_TERMINATED_AT_PROXY=true`. The proxy owns cert lifecycle (ACME/short-lived) and can
+  `FHIRENGINE_TLS_TERMINATED_AT_PROXY=true`. The proxy owns cert lifecycle (ACME/short-lived) and can
   provide FIPS-validated crypto.
-- **In-process HTTPS** (`RONIN_TLS_CERT/KEY`) is hardened automatically: TLS 1.2 min / 1.3 max,
+- **In-process HTTPS** (`FHIRENGINE_TLS_CERT/KEY`) is hardened automatically: TLS 1.2 min / 1.3 max,
   server-honored AEAD-only ECDHE ciphers (SP 800-52r2), obsolete protocols disabled. Override the
-  cipher list with `RONIN_TLS_CIPHERS` only if you know why.
+  cipher list with `FHIRENGINE_TLS_CIPHERS` only if you know why.
 - **FIPS 140-3** is a *platform* property: run on a FIPS-validated OpenSSL/OS module. The server pins
   the policy but does not itself certify FIPS.
 - **dev certs:** self-signed / mkcert with `subjectAltName` = your hostname.
@@ -65,9 +65,9 @@ Applied to every response. Defaults are safe; tune via env:
 | Concern | Default | Env |
 |---|---|---|
 | Security headers (HSTS, nosniff, frame-deny, CSP `default-src 'none'`, no-store) | always on | — |
-| CORS | dev: permissive · prod: allowlist-only (none ⇒ same-origin) | `RONIN_CORS_ORIGINS` (comma list) |
-| Body size limit | 10 MiB → 413 | `RONIN_MAX_BODY_BYTES` |
-| Rate limiting | prod: on (600/client/min) · dev: off | `RONIN_RATE_LIMIT_ENABLED`, `RONIN_RATE_LIMIT_RPM` |
+| CORS | dev: permissive · prod: allowlist-only (none ⇒ same-origin) | `FHIRENGINE_CORS_ORIGINS` (comma list) |
+| Body size limit | 10 MiB → 413 | `FHIRENGINE_MAX_BODY_BYTES` |
+| Rate limiting | prod: on (600/client/min) · dev: off | `FHIRENGINE_RATE_LIMIT_ENABLED`, `FHIRENGINE_RATE_LIMIT_RPM` |
 
 > Rate limiting is **per-process** (single-node). Behind multiple instances, also limit at the
 > ingress/LB; a shared-store limiter is a post-Alpha follow-up.
@@ -85,10 +85,10 @@ AuditEvents are written as a **hash chain** (`prev_hash` + `hash`) so any edit, 
 the audit trail is **detectable** (§164.312(b)(c)). Verify on demand — read-only:
 
 ```bash
-op run --env-file=deploy/.env.op -- npx tsx scripts/ronin-audit-verify.ts   # exit 0 = intact
+op run --env-file=deploy/.env.op -- npx tsx scripts/fhirengine-audit-verify.ts   # exit 0 = intact
 ```
 
-Retention: the audit store is append-only and never rewritten; `RONIN_AUDIT_RETENTION_DAYS` (default
+Retention: the audit store is append-only and never rewritten; `FHIRENGINE_AUDIT_RETENTION_DAYS` (default
 2190 = 6 years) is the minimum-retention knob. Hard WORM/object-lock + external tip-anchoring are
 post-Alpha follow-ups. The server makes tampering *detectable*, not *impossible*.
 
@@ -101,10 +101,10 @@ HIGH/CRITICAL). Locally: `npm run audit`.
 
 ## 7. Pre-Alpha security checklist
 
-- [ ] `RONIN_SECURITY_PROFILE=production` and the server boots (fail-closed gate passes).
+- [ ] `FHIRENGINE_SECURITY_PROFILE=production` and the server boots (fail-closed gate passes).
 - [ ] TLS terminated (proxy or in-process); HTTP redirected to HTTPS at the edge.
 - [ ] Auth on, tested against a real IdP/JWKS (or our OAuth server with static keys).
-- [ ] Audit on; AuditEvents landing; accounting-of-disclosures query verified; `ronin-audit-verify` clean.
+- [ ] Audit on; AuditEvents landing; accounting-of-disclosures query verified; `fhirengine-audit-verify` clean.
 - [ ] CORS allowlist set to the real client origins; rate limits sized for expected load.
 - [ ] `npm audit` / `pip-audit` clean; SBOM archived for the release.
 - [ ] Secrets only via `op run`; none in env files committed to git.

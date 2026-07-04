@@ -1,4 +1,4 @@
-# ADR-0028: Cross-Product Platform Alignment — One Engine + One Protocol Tier Across Ronin and RoninStandAlone
+# ADR-0028: Cross-Product Platform Alignment — One Engine + One Protocol Tier Across Ronin and fhirEngine
 
 - Status: **Accepted** 2026-06-28 — platform **direction ratified** by Chad (converge both products on TS/Hono + delta-rs/DataFusion). **Implementation gate:** the Ronin interactive-path migration off `@databricks/sql` stays blocked on the delta-rs-vs-Databricks-UC validation spike (see "Validation required") before it ships. Affects the Ronin product.
 - Date: 2026-06-28
@@ -9,14 +9,14 @@
 ## Context
 
 Two sister products share a heritage codebase: **Ronin** (Databricks-native,
-marketplace-deployable) and **RoninStandAlone** (self-hostable, OSS Delta). The goal
+marketplace-deployable) and **fhirEngine** (self-hostable, OSS Delta). The goal
 is maximum alignment and **avoiding a "corner of different platforms"** — divergent
 technology stacks that fragment development and double maintenance.
 
 Alignment today: both share the **TS/Hono protocol tier** (FHIR REST, validation,
 SMART/UDAP, MPI, operations, audit, consent) behind the `Warehouse` + `Catalog` seams,
 and both store data as **Delta**. The remaining divergence is the **interactive
-engine**: Ronin uses Databricks SQL (`@databricks/sql`, Spark) while RoninStandAlone
+engine**: Ronin uses Databricks SQL (`@databricks/sql`, Spark) while fhirEngine
 uses **delta-rs / DataFusion** (ADR-0022 A1). Two engines = two SQL dialects, two
 `Warehouse` implementations, every storage feature/bug done twice — the fragmentation
 to avoid.
@@ -37,8 +37,8 @@ Ronin can run delta-rs/DataFusion over its Databricks-managed UC Delta.
    **(a) Databricks** (App / marketplace, paired with the Unity Catalog binding) **OR
    (b) Self / cloud-hosted** (container on any VM / cloud / on-prem, paired with the
    UC-OSS or path-based binding). One build, deployment mode is a config/binding switch
-   (e.g. `RONIN_DEPLOY_MODE = databricks | self-hosted`). Heritage ADR-0013 is the
-   Databricks mode; the self/cloud-hosted mode is RoninStandAlone's addition.
+   (e.g. `FHIRENGINE_DEPLOY_MODE = databricks | self-hosted`). Heritage ADR-0013 is the
+   Databricks mode; the self/cloud-hosted mode is fhirEngine's addition.
 3. **Optional heavy bulk/analytics tier** — Spark on Databricks (Ronin's value-add)
    vs delta-rs/Python (Standalone). This is the *non-interactive* tier only.
 
@@ -49,7 +49,7 @@ Consequences for the stack:
   lakehouse + **Unity Catalog governance** + **marketplace** + **Spark bulk/analytics**
   plane for Ronin; it stops being the interactive FHIR query engine (which never needed
   Spark — delta-rs/DataFusion serves reads in ~4 ms, see the benchmark).
-- RoninStandAlone is **already on the target platform**; this ADR is mostly a
+- fhirEngine is **already on the target platform**; this ADR is mostly a
   **migration direction for Ronin's interactive path** onto the shared engine.
 
 ## Why this is the best option (vs the alternatives)
@@ -79,7 +79,7 @@ explicitly the lesser outcome.
 
 - Cross-product: Ronin migrates its interactive path off `@databricks/sql`; both
   products track one engine going forward. Needs a coordinated decision across the two
-  repos (this ADR is the RoninStandAlone-side record + recommendation).
+  repos (this ADR is the fhirEngine-side record + recommendation).
 - The `Catalog` seam (ADR-0025) becomes the **primary product-differentiation point**
   (Databricks UC vs UC-OSS/path) — worth hardening first.
 - Component hygiene: `@databricks/sql` is already flagged for removal from Standalone

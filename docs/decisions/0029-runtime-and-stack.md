@@ -17,27 +17,27 @@ with the cross-product platform alignment of ADR-0028.
 
 ## Decision — the ratified stack
 
-**Server runtime:** **TypeScript on Node (≥20)**. Chosen so RoninStandAlone is a
+**Server runtime:** **TypeScript on Node (≥20)**. Chosen so fhirEngine is a
 **sister codebase of Ronin** and both products share one protocol tier (ADR-0028); the
 Python-native and Rust-native alternatives were POC'd + benchmarked and rejected for
 forking the codebase (sidecar overhead is single-digit-ms, write-path-only — see
 `docs/research/2026-06-27-python-vs-ts-hono-server.md`).
 
-**Approved components (production, `packages/ronin-server-ts`):**
+**Approved components (production, `packages/server`):**
 
 | Component | Role | Basis |
 |---|---|---|
 | **hono** + **@hono/node-server** | web framework + Node adapter | ratified here (was un-ratified) |
 | **zod** | REST-boundary validation | Chad-endorsed (session 032) |
 | **pino** | structured logging | ratified here |
-| **@ronin/fhir-types** (+ **@atomic-ehr/codegen** to generate it) | FHIR R4 types | ratified here; codegen is pre-1.0 — pin/vendor (follow-up) |
+| **@fhirengine/fhir-types** (+ **@atomic-ehr/codegen** to generate it) | FHIR R4 types | ratified here; codegen is pre-1.0 — pin/vendor (follow-up) |
 | **delta-rs / DataFusion** (Python sidecar) + **pyarrow** | storage engine | ADR-0022 A1 / ADR-0028 |
 | dev: **typescript**, **tsx**, **vitest**, @types/node | build/test | ratified here |
 
 **Explicitly NOT in the standalone stack:** **`@databricks/sql`** — Databricks-only
 (the coupling the product sheds), legacy under ADR-0028, and the **source of the
 high-severity `thrift` vulnerabilities** (no upstream fix; npm audit session 032).
-Remove from `packages/ronin-server-ts` (its `DatabricksWarehouse` is heritage; gate it
+Remove from `packages/server` (its `DatabricksWarehouse` is heritage; gate it
 behind an optional/lazy module so the shared codebase doesn't hard-depend on it).
 
 ## Consequences

@@ -1,6 +1,6 @@
-# Contributing to RoninStandAlone
+# Contributing to fhirEngine
 
-Thanks for your interest! RoninStandAlone is an open-source (Apache-2.0) FHIR R4 server. It is
+Thanks for your interest! fhirEngine is an open-source (Apache-2.0) FHIR R4 server. It is
 **pre-alpha** — expect churn. This guide gets you productive fast.
 
 ## Ground rules (important — health data)
@@ -13,7 +13,7 @@ Thanks for your interest! RoninStandAlone is an open-source (Apache-2.0) FHIR R4
 
 ## Project layout
 
-- `packages/ronin-server-ts/` — the TypeScript/Hono FHIR server (+ `sidecar/` = the Python
+- `packages/server/` — the TypeScript/Hono FHIR server (+ `sidecar/` = the Python
   delta-rs/DataFusion storage sidecar).
 - `docs/decisions/` — ADRs (architecture decisions). Significant changes need an ADR.
 - `docs/standalone/` — product/deployment/config/security docs. `deploy/` — Docker artifacts.
@@ -23,7 +23,7 @@ Thanks for your interest! RoninStandAlone is an open-source (Apache-2.0) FHIR R4
 Prereqs: Node ≥ 20 (CI uses 22), Python 3.12.
 
 ```bash
-cd packages/ronin-server-ts
+cd packages/server
 npm ci
 
 # Start the storage sidecar (needed for integration + running the server)
@@ -32,19 +32,19 @@ python delta_sidecar.py --port 8077 --base ./.delta &
 cd ..
 
 # Run the server
-RONIN_DELTA_SIDECAR_URL=http://127.0.0.1:8077 RONIN_DELTA_BASE=./.delta npx tsx src/server.ts
+FHIRENGINE_DELTA_SIDECAR_URL=http://127.0.0.1:8077 FHIRENGINE_DELTA_BASE=./.delta npx tsx src/server.ts
 ```
 
 ## Tests & checks (run before opening a PR)
 
 ```bash
-# From packages/ronin-server-ts:
+# From packages/server:
 npm run typecheck
 npm run lint            # eslint --max-warnings 0
 npm run test:unit       # fast, no sidecar
-npm run test:delta      # integration — needs the sidecar running (RONIN_DELTA_SIDECAR_URL)
+npm run test:delta      # integration — needs the sidecar running (FHIRENGINE_DELTA_SIDECAR_URL)
 
-# Sidecar (from packages/ronin-server-ts/sidecar):
+# Sidecar (from packages/server/sidecar):
 pytest tests/
 ```
 

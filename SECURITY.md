@@ -1,6 +1,6 @@
 # Security Policy
 
-RoninStandAlone is a FHIR R4 server intended to handle **Protected Health Information (PHI)** in
+fhirEngine is a FHIR R4 server intended to handle **Protected Health Information (PHI)** in
 production. We take security seriously and appreciate responsible disclosure.
 
 > ⚠️ **Maintainers:** enable **GitHub Private Vulnerability Reporting** (repo Settings → Code security
@@ -11,7 +11,7 @@ production. We take security seriously and appreciate responsible disclosure.
 **Please do NOT open a public issue for security vulnerabilities.**
 
 Report privately via **GitHub Private Vulnerability Reporting** — open the repository's
-**Security → [Report a vulnerability](https://github.com/419onscene/RoninStandAlone/security/advisories/new)**
+**Security → [Report a vulnerability](https://github.com/419onscene/fhirEngine/security/advisories/new)**
 tab. This keeps the report private to the maintainers until a fix is released.
 
 Please include:
@@ -32,8 +32,8 @@ Please include:
 
 ## Scope
 
-In scope: the FHIR server (`packages/ronin-server-ts`), the delta-rs sidecar
-(`packages/ronin-server-ts/sidecar`), the deploy artifacts (`deploy/`), and the security controls
+In scope: the FHIR server (`packages/server`), the delta-rs sidecar
+(`packages/server/sidecar`), the deploy artifacts (`deploy/`), and the security controls
 (auth/audit/consent/TLS/hardening/UDAP — ADR-0030..0036).
 
 Out of scope: issues requiring a compromised host/operator, third-party dependencies (report those
@@ -43,7 +43,7 @@ misconfiguration, not a server vulnerability).
 
 ## Supported versions
 
-RoninStandAlone is **pre-alpha** (`0.x`). Security fixes land on the latest `main`; there is no LTS
+fhirEngine is **pre-alpha** (`0.x`). Security fixes land on the latest `main`; there is no LTS
 branch yet. Pin to a commit and watch releases.
 
 ## Deploying securely

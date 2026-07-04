@@ -1,6 +1,6 @@
 # ADR-0027: Governed View Layer — SQL-on-FHIR v2 ViewDefinitions (Future / Optional)
 
-- Status: **Proposed** (future / demand-gated; not in the first standalone slice). RoninStandAlone-specific.
+- Status: **Proposed** (future / demand-gated; not in the first standalone slice). fhirEngine-specific.
 - Date: 2026-06-27
 - Decider(s): Chad
 - Session: 032 (standalone fork)

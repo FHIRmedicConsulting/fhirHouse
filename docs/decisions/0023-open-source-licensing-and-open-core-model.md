@@ -1,6 +1,6 @@
 # ADR-0023: Open-Source Licensing — Apache-2.0 Core + Open-Core Proprietary Modules
 
-- Status: **Accepted** 2026-07-04 (Chad — Apache-2.0 ratified for the OSS alpha; `LICENSE` + `NOTICE` in place). Follow-ups (not blocking the license basis): **CLA** text and a one-time **IP-attorney review** of the open-core boundary + any USCO registration. RoninStandAlone-specific.
+- Status: **Accepted** 2026-07-04 (Chad — Apache-2.0 ratified for the OSS alpha; `LICENSE` + `NOTICE` in place). Follow-ups (not blocking the license basis): **CLA** text and a one-time **IP-attorney review** of the open-core boundary + any USCO registration. fhirEngine-specific.
 - Date: 2026-06-27
 - Decider(s): Chad
 - Session: 032 (standalone fork)
@@ -8,7 +8,7 @@
 
 ## Context
 
-RoninStandAlone is the open, self-hostable FHIR server that drives **FHIRmedic
+fhirEngine is the open, self-hostable FHIR server that drives **FHIRmedic
 Consulting** revenue (consulting + custom implementation) and is the platform for
 **paid add-on modules** (a turnkey Data Quality module, a Data Governance module).
 We need a license for the OSS core that (a) maximizes adoption/credibility with

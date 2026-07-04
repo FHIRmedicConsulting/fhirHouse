@@ -93,8 +93,8 @@ the existing substrate. Every one is honest about where a deferred engine takes 
 | PAS | `Claim/$submit`, `Claim/$inquire` | parse Bundle, record/return `ClaimResponse` (preAuthRef) | **UM adjudication + FHIR⇄X12 278** |
 | CRD | `GET /cds-services`, `POST /cds-services/coverage-requirements` | CDS Hooks discovery + coverage card → DTR/PAS | **CQL coverage-rule evaluation** |
 | DTR | `Questionnaire/$questionnaire-package` | resolve Questionnaire + package cqf-library Libraries + answerValueSet ValueSets | **CQL auto-population** |
-| Payer-to-Payer | `$member-match` opt-in gate | active-permit `Consent` required (`RONIN_P2P_CONSENT_REQUIRED`) | — |
-| Provider Access | `Group/$export` opt-out filter | drop opted-out patients (`RONIN_PROVIDER_ACCESS_OPTOUT`) | — |
+| Payer-to-Payer | `$member-match` opt-in gate | active-permit `Consent` required (`FHIRENGINE_P2P_CONSENT_REQUIRED`) | — |
+| Provider Access | `Group/$export` opt-out filter | drop opted-out patients (`FHIRENGINE_PROVIDER_ACCESS_OPTOUT`) | — |
 | Patient Access (CARIN BB/PDex) | `ExplanationOfBenefit` search / `_include` / `$everything` / `$export` | R4-served, compartment-linked; CARIN `type` + `service-date` search added | CARIN/PDex profile *conformance* (IG install, L5) |
 
 Advertised in the CapabilityStatement (Claim submit/inquire, Patient member-match, Questionnaire
@@ -118,7 +118,7 @@ DTR packages forms/dependencies but does not populate. All three are labelled as
 
 ## Still open (unchanged)
 
-- Which APIs are in scope for RoninStandAlone vs. the separate governance/ELT app? (Payer-specific
+- Which APIs are in scope for fhirEngine vs. the separate governance/ELT app? (Payer-specific
   APIs may not belong in a self-hostable FHIR server.)
-- Confirm the CMS-0057 compliance dates and which **actor** RoninStandAlone plays (provider-side vs.
+- Confirm the CMS-0057 compliance dates and which **actor** fhirEngine plays (provider-side vs.
   payer-side changes the API set).

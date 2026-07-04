@@ -87,7 +87,7 @@ databricks bundle deploy --target prod
 
 # 2. The one out-of-band catalog grant (script does this; customer doesn't)
 APP_SP=$(databricks apps get ronin | jq -r '.service_principal_client_id')
-databricks grants update CATALOG "$RONIN_CATALOG" \
+databricks grants update CATALOG "$FHIRENGINE_CATALOG" \
   --json '{"changes":[{"principal":"'"$APP_SP"'","add":["USE CATALOG"]}]}'
 
 # 3. Start App compute (must be ACTIVE before run)
@@ -97,7 +97,7 @@ databricks apps start ronin
 databricks bundle run ronin --target prod
 ```
 
-Five commands. The script (`scripts/ronin-install.sh`) wraps them with prompts for `DATABRICKS_HOST` and `RONIN_CATALOG`, plus error handling. The customer runs **one command** (`./scripts/ronin-install.sh`) after cloning the bundle from Marketplace or Git.
+Five commands. The script (`scripts/ronin-install.sh`) wraps them with prompts for `DATABRICKS_HOST` and `FHIRENGINE_CATALOG`, plus error handling. The customer runs **one command** (`./scripts/ronin-install.sh`) after cloning the bundle from Marketplace or Git.
 
 POC finding 7: `databricks bundle deploy` alone does not start the App with source deployed. The three-step `deploy → apps start → bundle run` sequence is mandatory and the install script encodes it.
 
