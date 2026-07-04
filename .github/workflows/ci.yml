@@ -139,6 +139,9 @@ jobs:
   docker:
     name: docker images build + boot smoke
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .   # image builds need the repo root (workflow default is packages/server)
     steps:
       - uses: actions/checkout@v4
       - name: Build server image
