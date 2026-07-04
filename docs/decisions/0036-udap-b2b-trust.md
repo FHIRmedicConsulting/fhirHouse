@@ -36,8 +36,10 @@ Add a UDAP **foundation** (opt-in `RONIN_UDAP_ENABLED`, `RONIN_UDAP_TRUST_ANCHOR
   `RONIN_UDAP_REVOKED_CERTS_FILE` (cert SHA-256 fingerprints and/or serials). A revoked cert anywhere
   in a presented chain rejects the whole chain — so a compromised partner cert can be revoked
   immediately, without waiting for expiry. No new dependency.
-- (−) **Foundation, not complete SSRAA.** Deferred (**OPEN QUESTIONS / follow-ups**): **live CRL/OCSP**
-  fetching (the current revocation is a static operator-managed list, not automated CRL/OCSP); full
-  RFC 5280 path validation + name-constraints; **tiered OAuth** (signed `authorize` requests); UDAP
-  **certifications/endorsements**; a **persistent** client registry (survives restart / fleet) instead
-  of in-memory; and community/trust-bundle management. Required before production TEFCA use.
+- (+) **Persistent client registry** — DCR registrations are written through to a durable `udap_client`
+  Delta table (`registered-clients.ts` + catalog/warehouse), loaded into the in-memory cache on
+  startup, so registrations survive restarts and repopulate a fleet (latest-per-client_id wins).
+- (−) **Not complete SSRAA yet.** Deferred (**OPEN QUESTIONS / follow-ups**): **live CRL/OCSP** fetching
+  (current revocation is a static operator-managed list); full RFC 5280 path validation +
+  name-constraints; UDAP **certifications/endorsements**; and community/trust-bundle management.
+  Required before production TEFCA use.

@@ -75,7 +75,7 @@ export function createDeltaApp(deps: DeltaAppDeps): Hono {
 
   // UDAP B2B trust (opt-in RONIN_UDAP_ENABLED) — .well-known/udap + trusted DCR (/udap/register).
   // Public (pre-auth-gate); registered clients then authenticate at /oauth/token (ADR-0036).
-  if (udapEnabled()) app.route("/", udapRoutes(deps.baseUrl));
+  if (udapEnabled()) app.route("/", udapRoutes(deps.baseUrl, deps.warehouse));
 
   // Audit (ADR-0030, control #2) — opt-in (RONIN_AUDIT_ENABLED). Mounted BEFORE the auth
   // gate so 401/403 denials are audited too; identity is read post-handler from c.var.auth.

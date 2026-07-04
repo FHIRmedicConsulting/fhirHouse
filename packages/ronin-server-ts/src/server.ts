@@ -17,6 +17,8 @@ import type { Server as HttpsServer } from "node:https";
 import { buildTlsConfig, watchTlsCert } from "./security/tls.js";
 import { evaluateSecurityPosture } from "./security/profile.js";
 import { startAuditAnchorScheduler } from "./audit/audit-anchor.js";
+import { udapEnabled } from "./auth/udap/udap-routes.js";
+import { loadRegisteredClients } from "./auth/udap/registered-clients.js";
 import type { RateLimitStore } from "./security/rate-limit.js";
 import { RedisRateLimitStore, type RedisEvalClient } from "./security/redis-rate-limit-store.js";
 
@@ -53,6 +55,12 @@ async function main(): Promise<void> {
   // is otherwise in-memory, populated only on write).
   const existing = await warehouse.registerExistingTables();
   if (existing.length) log.info({ tables: existing.length }, "registered existing Delta tables on startup");
+
+  // UDAP: repopulate the DCR client registry from its durable Delta store (ADR-0036).
+  if (udapEnabled()) {
+    const n = await loadRegisteredClients(warehouse);
+    if (n) log.info({ clients: n }, "loaded UDAP registered clients");
+  }
 
   // Opt-in one-time migration: backfill is_current on Bronze tables populated before it existed
   // (fresh stores don't need it). Set RONIN_MIGRATE_IS_CURRENT=true once when upgrading.

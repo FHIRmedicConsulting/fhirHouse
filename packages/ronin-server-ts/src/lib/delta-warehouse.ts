@@ -338,6 +338,20 @@ export class DeltaWarehouse implements Warehouse {
     this.registerTable("audit_event", path);
   }
 
+  /** Register the UDAP client registry for querying (ADR-0036). */
+  registerUdapClients(): string {
+    const path = this.catalog.udapClientPath();
+    this.registerTable("udap_client", path);
+    return path;
+  }
+
+  /** Append a UDAP client registration (append-only; latest-per-client_id wins on read). */
+  async writeUdapClient(row: Record<string, unknown>): Promise<void> {
+    const path = this.catalog.udapClientPath();
+    await this.postWrite(path, "/write", { table_path: path, rows: [row], mode: "append", schema: "infer" });
+    this.registerTable("udap_client", path);
+  }
+
   /** Register the pending-terminology quarantine queue for querying. */
   registerPendingTerminology(): string {
     const path = this.catalog.pendingTerminologyPath();

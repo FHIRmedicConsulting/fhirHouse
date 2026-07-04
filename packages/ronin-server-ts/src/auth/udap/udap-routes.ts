@@ -12,7 +12,7 @@
  */
 import { Hono } from "hono";
 import { verifySoftwareStatement, UdapError } from "./software-statement.js";
-import { registerUdapClient } from "./registered-clients.js";
+import { registerUdapClient, persistUdapClient, type UdapClientBackend } from "./registered-clients.js";
 import { loadTrustAnchors } from "./trust.js";
 import type { OAuthClient } from "../oauth/clients.js";
 
@@ -20,7 +20,7 @@ export const udapEnabled = (): boolean => process.env.RONIN_UDAP_ENABLED === "tr
 
 const SUPPORTED_SCOPES = ["system/*.rs", "system/*.read", "openid", "fhirUser", "offline_access"];
 
-export function udapRoutes(baseUrl: string): Hono {
+export function udapRoutes(baseUrl: string, wh?: UdapClientBackend): Hono {
   const app = new Hono();
   const registrationEndpoint = `${baseUrl}/udap/register`;
 
@@ -67,7 +67,8 @@ export function udapRoutes(baseUrl: string): Hono {
       jwks: ss.jwks,
       redirectUris: ss.redirectUris,
     };
-    registerUdapClient(client);
+    registerUdapClient(client);                       // hot cache (immediate)
+    if (wh) await persistUdapClient(wh, client, new Date().toISOString()); // durable (survives restart)
 
     return c.json(
       {

@@ -26,6 +26,8 @@ export interface Catalog {
   pendingTerminologyPath(): string;
   /** Audit-event store location (AuditEvent per PHI access; accounting of disclosures). */
   auditPath(): string;
+  /** UDAP dynamically-registered clients store (ADR-0036 — durable DCR registry). */
+  udapClientPath(): string;
 }
 
 /**
@@ -72,5 +74,9 @@ export class PathCatalog implements Catalog {
 
   auditPath(): string {
     return `${this.base}/audit/audit_event`;
+  }
+
+  udapClientPath(): string {
+    return `${this.base}/security/udap_client`;
   }
 }

@@ -13,7 +13,7 @@ import { Hono } from "hono";
 import { SignJWT, importPKCS8 } from "jose";
 import { verifySoftwareStatement, UdapError } from "../../src/auth/udap/software-statement.js";
 import { udapRoutes } from "../../src/auth/udap/udap-routes.js";
-import { getRegisteredClient, resetRegisteredClients } from "../../src/auth/udap/registered-clients.js";
+import { getRegisteredClient, resetRegisteredClients, loadRegisteredClients, type UdapClientBackend } from "../../src/auth/udap/registered-clients.js";
 import { resolveClient } from "../../src/auth/oauth/clients.js";
 
 const BASE = "http://ronin.test";
@@ -117,6 +117,31 @@ describe.skipIf(!opensslOk)("UDAP software statement + DCR", () => {
     expect(body.client_id).toBe(CLIENT_URI);
     expect(getRegisteredClient(CLIENT_URI)).toBeTruthy();
     expect(resolveClient(CLIENT_URI)?.jwks?.keys).toHaveLength(1); // usable by private_key_jwt
+  });
+
+  it("persists DCR registrations durably + reloads them across a restart", async () => {
+    const store: Record<string, unknown>[] = [];
+    const wh: UdapClientBackend = {
+      async writeUdapClient(row) { store.push(row); },
+      registerUdapClients() { /* no-op */ },
+      async query() { return store as never; },
+    };
+    resetRegisteredClients();
+    const app = new Hono();
+    app.route("/", udapRoutes(BASE, wh)); // warehouse-backed
+    const jwt = await softwareStatement(trusted.leafKeyPem, [trusted.leafDerB64]);
+    const res = await app.request("/udap/register", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ software_statement: jwt, udap: "1" }),
+    });
+    expect(res.status).toBe(201);
+    expect(store).toHaveLength(1);                       // written to the durable store
+
+    // simulate a restart: hot cache cleared → not resolvable until reloaded
+    resetRegisteredClients();
+    expect(getRegisteredClient(CLIENT_URI)).toBeNull();
+    expect(await loadRegisteredClients(wh)).toBe(1);     // reload from Delta
+    expect(resolveClient(CLIENT_URI)?.jwks?.keys).toHaveLength(1); // restored + usable at /oauth/token
   });
 
   it("DCR rejects an untrusted software statement with 400", async () => {
