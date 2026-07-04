@@ -19,6 +19,7 @@ import { deltaResourceRoutes } from "./routes/delta-resource.js";
 import { terminologyRoutes } from "./routes/terminology.js";
 import { mountTransaction } from "./routes/transaction.js";
 import { mountMemberMatch } from "./routes/member-match.js";
+import { mountPriorAuth } from "./routes/prior-auth.js";
 import { authEnabled, buildAuthMiddleware } from "./auth/configure.js";
 import { auditEnabled, buildAuditMiddleware } from "./audit/configure.js";
 import { buildCapabilityStatement } from "./conformance/capability-statement.js";
@@ -90,6 +91,8 @@ export function createDeltaApp(deps: DeltaAppDeps): Hono {
   mountTransaction(app, deps.warehouse, deps.baseUrl);
   // Da Vinci HRex Patient/$member-match (CMS-0057 Payer-to-Payer) — before the generic routes.
   mountMemberMatch(app, deps.warehouse);
+  // Da Vinci PAS Claim/$submit + $inquire (CMS-0057 Prior Authorization API).
+  mountPriorAuth(app, deps.warehouse, deps.baseUrl);
   // Terminology operations ($validate-code/$expand/$lookup) — BEFORE the generic /:resourceType/:id
   // routes so `/ValueSet/$validate-code` isn't captured as a resource read.
   app.route("/", terminologyRoutes(deps.warehouse));

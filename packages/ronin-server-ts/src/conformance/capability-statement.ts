@@ -54,6 +54,10 @@ export async function buildCapabilityStatement(wh: DeltaWarehouse, baseUrl: stri
       { name: "member-match", definition: "http://hl7.org/fhir/us/davinci-hrex/OperationDefinition/member-match" },
     );
     if (rt === "Group") ops.push({ name: "export", definition: "http://hl7.org/fhir/uv/bulkdata/OperationDefinition/group-export" });
+    if (rt === "Claim") ops.push(
+      { name: "submit", definition: "http://hl7.org/fhir/us/davinci-pas/OperationDefinition/Claim-submit" },
+      { name: "inquire", definition: "http://hl7.org/fhir/us/davinci-pas/OperationDefinition/Claim-inquire" },
+    );
     if (TERMINOLOGY_OPS[rt]) ops.push(...TERMINOLOGY_OPS[rt]);
     return ops;
   };
