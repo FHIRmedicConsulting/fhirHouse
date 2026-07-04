@@ -93,6 +93,27 @@ function buildConds(rt: string, queries: Record<string, string[]>): SearchCondit
   return conds;
 }
 
+/** Search-param types this engine can actually apply as a filter. */
+const HANDLEABLE_PARAM_TYPES = new Set(["token", "string", "date", "number", "quantity", "uri", "reference"]);
+
+/**
+ * Params the engine cannot apply as a filter → must NOT be silently ignored (that returns a wrong,
+ * broader result set). Always flags **known** params of an unsupported type (composite/special);
+ * additionally flags **unknown** params only under `Prefer: handling=strict` (FHIR default is lenient
+ * — ignore unknown params). Control (`_*`) and chained (`a.b`) params are handled elsewhere.
+ */
+function unsupportedSearchParams(rt: string, queries: Record<string, string[]>, strict: boolean): string[] {
+  const bad: string[] = [];
+  for (const key of Object.keys(queries)) {
+    if (key.startsWith("_") || key.includes(".")) continue;
+    const code = key.split(":")[0]!;
+    const def = searchParam(rt, code);
+    if (!def) { if (strict) bad.push(code); continue; }
+    if (!HANDLEABLE_PARAM_TYPES.has(def.type)) bad.push(`${code} (${def.type})`);
+  }
+  return bad;
+}
+
 function condFor(code: string, type: string, modifier: string | undefined, v: string): SearchCondition | null {
   if (modifier === "missing") return { code, type: "missing", value: v === "true" ? "true" : "false", modifier: "missing" };
   switch (type) {
@@ -534,8 +555,8 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
   const runSearch = async (c: any, rt: string, sp: URLSearchParams) => {
     const count = clampInt(sp.get("_count") ?? undefined, 50);
     const offset = clampInt(sp.get("_getpagesoffset") ?? undefined, 0);
-    // _sort: first field honored (multi-field is a documented follow-up). Numeric/quantity sorts
-    // cast so 10 > 9 (string min would order "10" < "9").
+    // _sort: only the first field is applied. Numeric/quantity sorts cast so 10 > 9.
+    const sortFields = (sp.get("_sort") ?? "").split(",").filter(Boolean);
     const sortRaw = (sp.get("_sort") ?? "-_lastUpdated").split(",")[0]!;
     const sortDesc = sortRaw.startsWith("-");
     const sortField = sortRaw.replace(/^-/, "");
@@ -545,6 +566,14 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
 
     // Unified search: per-resource conditions + chaining/_has + base-column filters.
     const queries = recordOf(sp);
+
+    // Reject search params we cannot apply rather than silently returning a broader (wrong) set:
+    // composite/special params always; unknown params + multi-field _sort under Prefer:handling=strict.
+    const strict = /(^|[,\s])handling=strict/.test(c.req.header("Prefer") ?? "");
+    const unsupported = unsupportedSearchParams(rt, queries, strict);
+    if (strict && sortFields.length > 1) unsupported.push("_sort (only the first field is applied)");
+    if (unsupported.length) throw badRequest(`Unsupported search parameter(s): ${unsupported.join(", ")}`, unsupported);
+
     const { conds: chainConds, idIn } = await resolveChainsAndHas(rt, queries);
     const conds = [...buildConds(rt, queries), ...chainConds];
     const lastUpdated = sp.getAll("_lastUpdated").map(parseRangeParam).filter((x): x is { op: string; value: string } => x !== null);

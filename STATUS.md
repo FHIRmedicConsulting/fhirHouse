@@ -17,7 +17,7 @@ All 10 deep-review priorities (2026-07-02) are addressed — see `docs/status/20
 | Area | Status |
 |---|---|
 | FHIR R4 REST surface | ✅ CRUD, history (instance/type/system), vread, CapabilityStatement, `$validate`, batch/transaction, conditional create/update/delete |
-| Search | ✅ token/string/date/number/quantity/uri/**reference (bare-id + full)**, modifiers, chaining, `_has`, `_include`/`_revinclude`, `_sort`/`_summary`/`_elements`, paging, **GET + POST `_search`** |
+| Search | ✅ token/string/date/number/quantity/uri/**reference (bare-id + full)**, modifiers, chaining, `_has`, `_include`/`_revinclude`, `_sort` (first field)/`_summary`/`_elements`, paging, **GET + POST `_search`**. **Composite/special + multi-field `_sort` are NOT silently ignored** — rejected under `Prefer: handling=strict` (unknown params lenient-ignored by default per FHIR); composite/special search **not** implemented |
 | Operations | ✅ `$everything`, `$export` (dev), `$validate` |
 | Validation (pre-Bronze) | ✅ structural + cardinality + **choice-type `[x]`** + terminology bindings (3-state) + **L4 FHIRPath invariants (top-level/one-level, R4-model-aware; deeper contexts deferred)** + installed-profile **required-elements + required bindings + required (value/pattern) slices** (NOT full L5 IG conformance — no closed/max slices, discriminators, or must-support; the authoritative profile verdict is the external HL7 validator) + slicing (first cut) |
 | Transactions | ✅ urn:uuid resolution + **conditional references** (`Type?identifier=…` → literal) + **`ifNoneExist`** conditional create |

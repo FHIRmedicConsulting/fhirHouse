@@ -53,4 +53,19 @@ describe.skipIf(!SIDECAR)("search completeness", () => {
     expect(r.status).toBe(200);
     expect((await r.json()).total).toBe(1); // just the match, no crash
   });
+
+  it("unsupported params (composite/unknown) are lenient-ignored by default, 400 under Prefer: handling=strict", async () => {
+    const strictHdr = { headers: { Prefer: "handling=strict" } };
+    // Composite param (not applied by this engine): lenient ignores it, strict rejects it.
+    const compLenient = await get(`/Observation?_id=${O}&code-value-quantity=${encodeURIComponent("http://ex|c$5")}`);
+    expect(compLenient.status).toBe(200); // FHIR default lenient: ignore, don't silently mislead-then-500
+    const compStrict = await app.fetch(new Request(`http://test/Observation?_id=${O}&code-value-quantity=x`, strictHdr));
+    expect(compStrict.status).toBe(400);
+    const oo = await compStrict.json();
+    expect(oo.resourceType).toBe("OperationOutcome");
+    expect(JSON.stringify(oo)).toMatch(/code-value-quantity/);
+    // Multi-field _sort: only the first field is applied → 400 under strict so the client knows.
+    const sortStrict = await app.fetch(new Request(`http://test/Observation?_id=${O}&_sort=status,value-quantity`, strictHdr));
+    expect(sortStrict.status).toBe(400);
+  });
 });

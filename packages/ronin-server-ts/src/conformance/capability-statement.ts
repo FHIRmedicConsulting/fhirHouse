@@ -59,11 +59,17 @@ export async function buildCapabilityStatement(wh: DeltaWarehouse, baseUrl: stri
 
   // Real search params for the type (the generic engine indexes every registry param) + the
   // common base params we support. Deduped by name.
+  // Only advertise params the engine actually applies (token/string/date/number/quantity/uri/
+  // reference). Composite/special params are rejected at search time (not silently ignored), so
+  // advertising them would be dishonest.
+  const HANDLEABLE = new Set(["token", "string", "date", "number", "quantity", "uri", "reference"]);
   const searchParamsAdvertised = (rt: string) => {
     const out = new Map<string, { name: string; type: string }>();
     out.set("_id", { name: "_id", type: "token" });
     out.set("_lastUpdated", { name: "_lastUpdated", type: "date" });
-    for (const [name, def] of Object.entries(searchParamsFor(rt))) out.set(name, { name, type: def.type });
+    for (const [name, def] of Object.entries(searchParamsFor(rt))) {
+      if (HANDLEABLE.has(def.type)) out.set(name, { name, type: def.type });
+    }
     return [...out.values()];
   };
 
