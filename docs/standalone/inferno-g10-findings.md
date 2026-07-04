@@ -332,3 +332,93 @@ First run with the HL7 validator **actually running** end-to-end. Two harness fi
 **Net:** the validator blocker is gone — (g)(10) profile validation is operational and green where
 terminology resolves locally. The remaining gap to clean validation runs is **terminology config**
 (local tx for the validator), not FHIR-surface defects.
+
+---
+
+## Run 10 (2026-07-03) — terminology config: Option A (use our tx endpoint) vs Option B (suppress external tx)
+
+Goal: stop the `tx.fhir.org` "cache not known" errors that fail Encounter/DiagnosticReport
+`validation_test` (Run 9). Two approaches were requested: **A** — point the validator at our own
+terminology endpoint; **B** — the ONC-aligned approach of not using a live external tx server.
+
+### Structural gotchas discovered (these cost most of the effort — document them)
+
+1. **Two suites, two validator configs.** The headless driver (`inferno/batch.py`) runs the
+   **standalone `us_core_v610` suite** (from the `us_core_test_kit` gem), NOT the G10 suite. Each has
+   its **own** `fhir_resource_validator` block. The US Core suite validates against **tx.fhir.org by
+   default** and its `exclude_message` uses only `VALIDATION_MESSAGE_FILTERS`; the G10 suite uses
+   `txServer nil` + `ERROR_FILTERS`. The suite's own docs say results "may not be consistent" between
+   them. → Edit the suite you actually run. For real (g)(10) cert that's the **G10 suite**; for the
+   per-group headless harness it's the **US Core suite**.
+2. **Two containers.** `inferno` (API) and `worker` (executes tests + applies `exclude_message`) are
+   **separate containers with separate filesystems**. `docker cp` into one does not affect the other.
+   The g10 kit's `lib/` is **baked into the image**, not the `./data`-only volume mount — host edits
+   are ignored; edit inside the container(s). Config changes must go to **both** `inferno` and
+   `worker`. Helper: `inferno/reload.sh` copies a suite file to both, clears `validator_sessions`,
+   optionally recreates the validator, and restarts in the right order.
+3. **Caching hides changes.** (a) Inferno persists validator **session ids**
+   (`validator_sessions` table in `data/inferno_production.db`) and reuses them — clear the table to
+   force a new session. (b) The validator keeps an **on-disk tx cache** (`/tmp/default-tx-cache`)
+   that survives `restart`; only `up -d --force-recreate hl7_validator_service` truly clears it
+   (same identical cache-id across runs = stale cache tell).
+4. **nginx upstream pinning.** Restarting `inferno` gives it a new container IP; nginx caches the old
+   one → `502`. And restarting nginx *before* inferno is resolvable → nginx exits with
+   `host not found in upstream "inferno"`. Restart nginx **last**, after inferno is up.
+
+### Option A — point the validator at our terminology endpoint: BLOCKED ON TRANSPORT
+
+Set `txServer 'http://host.docker.internal:3000'` (our tx operations are mounted on the same server).
+Once applied to the **worker** (not just inferno), the validator genuinely tries our endpoint:
+
+```
+Unable to connect to terminology server at http://host.docker.internal:3000.
+Error fetching the server's capability statement: Unsupported or unrecognized SSL message
+```
+
+- **The config path works** — the validator attempts our endpoint and fetches `/metadata` for a
+  CapabilityStatement. (Our `$validate-code` even validates the SNOMED encounter code directly:
+  `162673000` → true, "General examination of patient".)
+- **Blocker: transport.** The validator's terminology client speaks **TLS**, our endpoint is
+  **plaintext HTTP** on 3000 → "Unsupported or unrecognized SSL message"; it can't read our
+  CapabilityStatement, so it falls back to tx.fhir.org.
+- **To make A work** (bounded follow-up, not a config flip): (1) serve our tx endpoint over **TLS**
+  (we have `RONIN_TLS_CERT/KEY`) with a cert the validator will accept; (2) satisfy the validator's
+  tx **handshake** — it expects a **TerminologyCapabilities** resource at `/metadata?mode=terminology`
+  (we currently return a CapabilityStatement) and issues **batched** `$validate-code`; (3) confirm our
+  operations cover what it calls. This is the "cover the validator's batch/tx-resource calls"
+  follow-up flagged earlier — real work, worth doing to prove our terminology server end-to-end, but
+  out of scope for just getting clean validation runs.
+
+### Option B — don't use a live external tx server (ONC-aligned): WORKS
+
+The real (g)(10) suite already does this (`txServer nil` + filter tx errors). Our validator emits the
+error in an **unbracketed** form the stock `ERROR_FILTERS` regex misses
+(`… Error from https://tx.fhir.org/r4: Error: The cache '…' is not known…` — no `[` bracket). Fix =
+add catch-all filters. Applied to **both** suites (G10 `ERROR_FILTERS`; US Core `GENERAL_MESSAGE_FILTERS`):
+
+```ruby
+%r{Error from https?://tx.fhir.org},                 # unbracketed leaked tx errors
+%r{The cache '.*' is not known to this server}       # tx cache-session error
+```
+(+ `txServer 'n/a'` in the G10 suite to avoid the network entirely.)
+
+**Result (us_core_v610, the driven suite):**
+
+| Group | before (Run 9) | after Option B |
+|---|---|---|
+| Encounter | 9 pass, **validation_test FAIL** | **10 pass, 0 fail** (validation PASSES) |
+| DiagnosticReport-lab | 8 pass, validation FAIL + status | **9 pass**, validation PASSES (only status-search fail remains) |
+| Patient / Observation-lab | already passing | still pass |
+
+So with the flaky external-tx errors suppressed, **profile `validation_test` passes** — confirming
+our stored resources are structurally US-Core-conformant; the failures were the external terminology
+service, not our data. The lone remaining fails are the `Could not find status/intent values`
+compound-search value-extraction (served correctly on direct probe — harness-side).
+
+### Net
+- **B is the pragmatic, ONC-consistent fix** and is in place (both suites, both containers). Validation
+  runs are clean modulo the known harness compound-search quirk.
+- **A is viable but is a project** (TLS + TerminologyCapabilities handshake + batch `$validate-code`) —
+  the way to actually prove our terminology endpoint against the validator; deferred.
+- These suite/container/cache edits live in the **scratchpad g10 kit** (not the product) and are not
+  persisted if the kit is rebuilt; re-apply via `inferno/reload.sh` + the two filter snippets above.

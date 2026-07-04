@@ -36,7 +36,13 @@ are container-reachable). **Profile validation now executes** — `validation_te
 `validation_test` fails are **external `tx.fhir.org` terminology errors, not structural
 non-conformance** (only error-level lines are remote-tx cache errors on SNOMED `Encounter.type`); fix
 = point the validator at our **local** terminology server. Remaining `Could not find status/intent
-values` search fails are **served correctly on direct probe** (harness value-extraction). Prior Run 8:
+values` search fails are **served correctly on direct probe** (harness value-extraction). **Run 10**
+(terminology config): **Option B (suppress external tx.fhir.org errors, ONC-aligned) WORKS** — with tx
+filters added to both suites, Encounter/DiagnosticReport `validation_test` now PASS (our data is
+US-Core-conformant; failures were flaky external tx, not our data). **Option A (point validator at our
+tx endpoint)** is viable but blocked on transport (validator speaks TLS, our endpoint is HTTP) +
+needs a TerminologyCapabilities handshake + batch `$validate-code` — a bounded follow-up to prove our
+terminology server end-to-end. Prior Run 8:
 zero `fhir_client` crashes, Patient 10 PASS, clinical search/read/revinclude clean. Detail:
 `docs/standalone/inferno-g10-findings.md` §Run 9; drivers: `docs/standalone/inferno/`.
 
