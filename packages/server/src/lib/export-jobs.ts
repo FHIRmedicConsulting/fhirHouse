@@ -1,19 +1,19 @@
 /**
  * Bulk Data ($export) job store — disk-backed + async (replaces the in-memory dev stub).
  *
- * Each job is a directory under `FHIRENGINE_EXPORT_DIR` (default ./.ronin-export): `manifest.json`
+ * Each job is a directory under `FHIRENGINE_EXPORT_DIR` (default ./.fhirengine-export): `manifest.json`
  * (the FHIR Bulk Data completion manifest, incrementally updated) + one `<Type>.ndjson` per
  * exported resource type (streamed to disk, not held in memory). Completed jobs survive a
  * restart (served from disk); an in-flight job interrupted by a restart reads back as failed.
  * Object-store output is a follow-up (local FS only).
  */
-import { mkdir, writeFile, readFile, appendFile, rm } from "node:fs/promises";
+import { mkdir, writeFile, readFile, appendFile, rm, rename } from "node:fs/promises";
 import { createReadStream, existsSync } from "node:fs";
 import { Readable } from "node:stream";
 import { join } from "node:path";
 import { uuidv7 } from "./uuid-v7.js";
 
-const root = (): string => process.env.FHIRENGINE_EXPORT_DIR ?? "./.ronin-export";
+const root = (): string => process.env.FHIRENGINE_EXPORT_DIR ?? "./.fhirengine-export";
 const jobDir = (id: string): string => join(root(), id);
 const manifestPath = (id: string): string => join(jobDir(id), "manifest.json");
 export const typeFilePath = (id: string, type: string): string => join(jobDir(id), `${type}.ndjson`);
@@ -33,14 +33,21 @@ export async function createExportJob(request: string, transactionTime: string, 
   const id = uuidv7();
   await mkdir(jobDir(id), { recursive: true });
   const m: ExportManifest = { id, status: "in-progress", transactionTime, request, requiresAccessToken, output: [], error: [] };
-  await writeFile(manifestPath(id), JSON.stringify(m));
+  await writeManifest(m);
   return id;
 }
 
 export async function readManifest(id: string): Promise<ExportManifest | null> {
   try { return JSON.parse(await readFile(manifestPath(id), "utf8")) as ExportManifest; } catch { return null; }
 }
-async function writeManifest(m: ExportManifest): Promise<void> { await writeFile(manifestPath(m.id), JSON.stringify(m)); }
+/** Atomic (write-tmp + rename): the async runner updates the manifest while status polls
+ * read it — a plain truncate-write lets a poller read a partial file → JSON parse fails →
+ * spurious 404 mid-export (CI flake). Rename guarantees readers see old-or-new, never torn. */
+async function writeManifest(m: ExportManifest): Promise<void> {
+  const p = manifestPath(m.id);
+  await writeFile(`${p}.tmp`, JSON.stringify(m));
+  await rename(`${p}.tmp`, p);
+}
 
 /** Append NDJSON lines for a type (streamed — the runner pages through results). */
 export async function appendNdjson(id: string, type: string, lines: string): Promise<void> {
