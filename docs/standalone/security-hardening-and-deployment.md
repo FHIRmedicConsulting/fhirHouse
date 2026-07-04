@@ -79,6 +79,19 @@ Applied to every response. Defaults are safe; tune via env:
   server-side detail goes to the operator log — route that to a PHI-safe sink.
 - Responses carry `Cache-Control: no-store`.
 
+## 5a. Audit integrity (ADR-0035)
+
+AuditEvents are written as a **hash chain** (`prev_hash` + `hash`) so any edit, deletion, or fork of
+the audit trail is **detectable** (§164.312(b)(c)). Verify on demand — read-only:
+
+```bash
+op run --env-file=deploy/.env.op -- npx tsx scripts/ronin-audit-verify.ts   # exit 0 = intact
+```
+
+Retention: the audit store is append-only and never rewritten; `RONIN_AUDIT_RETENTION_DAYS` (default
+2190 = 6 years) is the minimum-retention knob. Hard WORM/object-lock + external tip-anchoring are
+post-Alpha follow-ups. The server makes tampering *detectable*, not *impossible*.
+
 ## 6. Supply chain (ADR-0034)
 
 CI runs on every push/PR: the **`security`** job — `npm audit` (fails on high/critical), a CycloneDX
@@ -91,7 +104,7 @@ HIGH/CRITICAL). Locally: `npm run audit`.
 - [ ] `RONIN_SECURITY_PROFILE=production` and the server boots (fail-closed gate passes).
 - [ ] TLS terminated (proxy or in-process); HTTP redirected to HTTPS at the edge.
 - [ ] Auth on, tested against a real IdP/JWKS (or our OAuth server with static keys).
-- [ ] Audit on; AuditEvents landing; accounting-of-disclosures query verified.
+- [ ] Audit on; AuditEvents landing; accounting-of-disclosures query verified; `ronin-audit-verify` clean.
 - [ ] CORS allowlist set to the real client origins; rate limits sized for expected load.
 - [ ] `npm audit` / `pip-audit` clean; SBOM archived for the release.
 - [ ] Secrets only via `op run`; none in env files committed to git.

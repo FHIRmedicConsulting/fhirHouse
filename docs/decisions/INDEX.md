@@ -35,6 +35,7 @@ Architecture Decision Records, chronological. Numbers never reused. Status: Prop
 | 0032 | [Production Security Profile & Fail-Closed Enforcement](0032-production-security-profile.md) | **Accepted** (2026-07-04) | 2026-07-04 |
 | 0033 | [HTTP-Tier Hardening (headers, CORS, rate limiting, body limits)](0033-http-tier-hardening.md) | **Accepted** (2026-07-04) | 2026-07-04 |
 | 0034 | [Supply-Chain Security — SBOM & Dependency Scanning](0034-supply-chain-sbom-dependency-scanning.md) | **Accepted** (2026-07-04) | 2026-07-04 |
+| 0035 | [Audit-Log Integrity (tamper-evidence) & Retention](0035-audit-log-integrity-and-retention.md) | **Accepted** (2026-07-04) | 2026-07-04 |
 
 ## Queued (not yet drafted)
 

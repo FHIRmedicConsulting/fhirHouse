@@ -7,6 +7,7 @@ import type { AuditEvent } from "@ronin/fhir-types";
 import type { AuditSink } from "./audit-middleware.js";
 import type { DeltaWarehouse } from "../lib/delta-warehouse.js";
 import { uuidv7 } from "../lib/uuid-v7.js";
+import { AuditChain } from "./audit-integrity.js";
 
 /** Best-effort "whose record was accessed" for accounting (entity Patient, else patient-context). */
 function patientOf(event: AuditEvent): string | null {
@@ -18,7 +19,10 @@ function patientOf(event: AuditEvent): string | null {
 }
 
 export class DeltaAuditSink implements AuditSink {
-  constructor(private readonly wh: DeltaWarehouse) {}
+  private readonly chain: AuditChain;
+  constructor(private readonly wh: DeltaWarehouse) {
+    this.chain = new AuditChain(wh);
+  }
 
   create(event: AuditEvent): Promise<void> {
     const entity = (event.entity?.[0]?.what as { reference?: string } | undefined)?.reference ?? null;
@@ -35,10 +39,11 @@ export class DeltaAuditSink implements AuditSink {
       patient: patientOf(event) ?? "",
       body_json: JSON.stringify(event),
     };
-    // Concurrent fire-and-forget audit writes to the single-writer audit table are serialized
-    // by the warehouse (per-table write chain, Priority #3) — no bespoke chain needed here.
-    // Failures surface via the audit middleware's onWriteError (never silent — §164.312(b)).
-    return this.wh.writeAudit(row);
+    // Tamper-evidence (ADR-0035): the chain assigns prev_hash + hash and serializes the write so
+    // concurrent audit writes form one linear, verifiable chain (see verifyAuditChain). The warehouse
+    // still serializes the underlying single-writer table write. Failures surface via the audit
+    // middleware's onWriteError (never silent — §164.312(b)).
+    return this.chain.append(row);
   }
 
   /** Accounting of disclosures for a patient (ADR-0016 §3 / HITECH), newest-first. */
