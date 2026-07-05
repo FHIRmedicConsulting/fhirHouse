@@ -59,6 +59,7 @@ export class JwksAuthStrategy implements AuthStrategy {
         patient: (p as any).patient,
         encounter: (p as any).encounter,
         fhirUser: (p as any).fhirUser,
+        purposeOfUse: (p as any).purpose_of_use ?? (p as any).pou,
       };
     } catch (e: any) {
       return { active: false, reason: `JWT verification failed: ${e?.code ?? e?.message ?? "invalid"}` }; // no token/key echo

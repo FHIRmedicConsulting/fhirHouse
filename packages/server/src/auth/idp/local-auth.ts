@@ -30,6 +30,7 @@ export class LocalAuthStrategy implements AuthStrategy {
         patient: (p as Record<string, unknown>).patient as string | undefined,
         encounter: (p as Record<string, unknown>).encounter as string | undefined,
         fhirUser: (p as Record<string, unknown>).fhirUser as string | undefined,
+        purposeOfUse: ((p as Record<string, unknown>).purpose_of_use ?? (p as Record<string, unknown>).pou) as string | undefined,
       };
     } catch (e: unknown) {
       return { active: false, reason: `JWT verification failed: ${(e as { code?: string; message?: string })?.code ?? (e as Error)?.message ?? "invalid"}` };

@@ -35,6 +35,9 @@ export interface IntrospectionResult {
   patient?: string;
   encounter?: string;
   fhirUser?: string;
+  /** Purpose-of-Use — from a VERIFIED token claim only (never a client header), so it can be
+   * trusted in consent decisions. Null when the IdP did not assert one. */
+  purposeOfUse?: string;
   /** Reason for inactive token, for diagnostics. */
   reason?: string;
 }

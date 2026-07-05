@@ -20,6 +20,7 @@ import { enforceReadConsent, filterReadConsent, consentEnabled } from "../auth/c
 import { applyObligations } from "../auth/redact.js";
 import { buildDataFilter, type DataFilter } from "../auth/data-filter.js";
 import type { RequestVerb } from "../auth/scope-enforcer.js";
+import type { AuthContext } from "../auth/auth-context.js";
 import { validateResource, type ValidationResult } from "../validation/validation-chain.js";
 import { badRequest, forbidden, notFound, preconditionFailed, unprocessable } from "../lib/errors.js";
 import type { OperationOutcome, Resource as FhirResource } from "@fhirengine/fhir-types";
@@ -40,11 +41,13 @@ function parseIdentifierToken(token: string): { system: string; value: string } 
 }
 
 /** One history Bundle entry from a stored version row (works for instance + type history). */
-function historyEntry(v: { id: string; version_id: number; last_updated: string; body_json: string; deleted?: boolean | null }, baseUrl: string, rt: string) {
+function historyEntry(v: { id: string; version_id: number; last_updated: string; body_json: string; deleted?: boolean | null }, baseUrl: string, rt: string, auth?: AuthContext) {
   const deleted = v.deleted === true;
   return {
     fullUrl: `${baseUrl}/${rt}/${v.id}`,
-    ...(deleted ? {} : { resource: JSON.parse(v.body_json) }),
+    // Obligation redaction (42 CFR Part 2 notice + inline label masking) applies to history
+    // bodies too, not just read/search (audit M2).
+    ...(deleted ? {} : { resource: applyObligations(JSON.parse(v.body_json), auth) }),
     request: { method: deleted ? "DELETE" : Number(v.version_id) === 1 ? "POST" : "PUT", url: `${rt}/${v.id}` },
     response: { status: deleted ? "204" : "200", etag: `W/"${v.version_id}"`, lastModified: v.last_updated },
   };
@@ -421,7 +424,7 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
       timestamp: new Date().toISOString(),
       total,
       link,
-      entry: page.map(({ rt, v }) => historyEntry(v, baseUrl, rt)),
+      entry: page.map(({ rt, v }) => historyEntry(v, baseUrl, rt, c.get("auth"))),
     });
   });
 
@@ -457,7 +460,7 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
       type: "history",
       timestamp: new Date().toISOString(),
       total: versions.length,
-      entry: versions.map((v) => historyEntry(v as any, baseUrl, rt)),
+      entry: versions.map((v) => historyEntry(v as any, baseUrl, rt, c.get("auth"))),
     });
   });
 
@@ -484,7 +487,7 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
       timestamp: new Date().toISOString(),
       total,
       link,
-      entry: rows.map((v) => historyEntry(v as any, baseUrl, rt)),
+      entry: rows.map((v) => historyEntry(v as any, baseUrl, rt, c.get("auth"))),
     });
   });
 
@@ -703,6 +706,22 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
     const visible = (await filterReadConsent(wh, resources, c.get("auth"))).allowed;
     const matchTotal = consentEnabled() && c.get("auth") && visible.length !== resources.length ? visible.length : total;
 
+    // _include/_revinclude entries are fetched by DIRECT read → they bypass both the
+    // query-layer compartment filter and the match consent filter. Gate them the same way
+    // (audit M1) so a caller can't exfiltrate a compartment-foreign or consent-blocked
+    // resource by naming it as an include target.
+    const authCtx = c.get("auth");
+    let includeResources = includeEntries.map((e) => e.resource as FhirResource);
+    if (authCtx) {
+      includeResources = includeResources.filter((r) => {
+        const df = dataFilterFor(c, (r as any).resourceType, "r");
+        return !df?.patientCompartmentId || inCompartment((r as any).resourceType, r, df.patientCompartmentId);
+      });
+    }
+    includeResources = (await filterReadConsent(wh, includeResources, authCtx)).allowed;
+    const allowedInc = new Set(includeResources.map((r) => `${(r as any).resourceType}/${r.id}`));
+    const visibleIncludes = includeEntries.filter((e) => allowedInc.has(`${(e.resource as any).resourceType}/${e.resource.id}`));
+
     return c.json({
       resourceType: "Bundle",
       type: "searchset",
@@ -711,7 +730,7 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
       link,
       entry: [
         ...visible.map((r) => ({ fullUrl: `${baseUrl}/${rt}/${r.id}`, resource: shape(r), search: { mode: "match" } })),
-        ...includeEntries.map((e) => ({ ...e, resource: shape(e.resource) })),
+        ...visibleIncludes.map((e) => ({ ...e, resource: shape(e.resource) })),
       ],
     });
   };

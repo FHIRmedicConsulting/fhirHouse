@@ -52,6 +52,11 @@ export function authMiddleware(options: AuthMiddlewareOptions): MiddlewareHandle
     if (!result.active) {
       throw unauthorized(result.reason ?? "Token is not active");
     }
+    // A resource-API access token MUST carry scopes. An OIDC id_token carries none (and its
+    // audience is the client, not this server) — reject it so it can't act as an access token.
+    if (!result.scope || !result.scope.trim()) {
+      throw unauthorized("token carries no scopes — not a resource-server access token");
+    }
 
     // --- Scope parsing + canonicalization (built into registry) ---
     const rawScopeString = result.scope ?? "";
@@ -69,7 +74,9 @@ export function authMiddleware(options: AuthMiddlewareOptions): MiddlewareHandle
       launchPatientId: result.patient ?? null,
       launchEncounterId: result.encounter ?? null,
       fhirUser: result.fhirUser ?? null,
-      purposeOfUse: c.req.header("X-Purpose-Of-Use") ?? null,
+      // Purpose-of-Use from the VERIFIED token claim only — a client-supplied header must not
+      // unlock consent-gated data (it was previously trusted here). Null if the IdP asserts none.
+      purposeOfUse: result.purposeOfUse ?? null,
       expiresAt: result.exp ?? 0,
       issuer: result.iss ?? "",
       parsedUnderSmartVersion,
