@@ -24,7 +24,7 @@ sidecar tests).
 | Operations | ✅ `$everything`, `$export` (dev), `$validate`, **`Patient/$member-match`** (HRex, CMS-0057 Payer-to-Payer) |
 | Validation (pre-Bronze) | ✅ structural + cardinality + **choice-type `[x]`** + terminology bindings (3-state) + **L4 FHIRPath invariants (top-level/one-level, R4-model-aware; deeper contexts deferred)** + installed-profile **required-elements + required bindings + required (value/pattern) slices** — **operator-opt-in** via `FHIRENGINE_VALIDATION_PROFILES` (package id / canonical URL / `declared`; default = base FHIR only) (NOT full L5 IG conformance — no closed/max slices, discriminators, or must-support; the authoritative profile verdict is the external HL7 validator) + slicing (first cut) |
 | Transactions | ✅ urn:uuid resolution + **conditional references** (`Type?identifier=…` → literal) + **`ifNoneExist`** conditional create |
-| Storage (Delta) | ✅ OPTIMIZE + VACUUM (all tables), **Z-order by `id`**, **current-version `is_current`** (atomic demote), **single-writer serialization + sidecar retry**, **startup table discovery** (local FS **and object stores** via sidecar `/list-tables`, pyarrow.fs; verified vs MinIO) (⚠️ **single-store serving only**: `FHIRENGINE_STORAGE_MODE=medallion` Gold-read-path not wired) |
+| Storage (Delta) | ✅ OPTIMIZE + VACUUM (all tables), **Z-order by `id`**, **current-version `is_current`** (atomic demote), **single-writer serialization + sidecar retry**, **startup table discovery** (local FS **and object stores** via sidecar `/list-tables`, pyarrow.fs; verified vs MinIO) + **medallion serving** (`FHIRENGINE_STORAGE_MODE=medallion`: Bronze ingest → Gold serving; external promotion — Dagster/Databricks/`fhirengine-promote`; CDF enabled at Bronze/Silver creation) |
 | Terminology | ✅ local store (752k concepts loadable) + **tx-server endpoints**: `ValueSet/$validate-code`, `CodeSystem/$validate-code`, `ValueSet/$expand`, `CodeSystem/$lookup` |
 | Provisioning | ✅ IG install, operator file loaders (LOINC/SNOMED/RxNorm), VSAC `$expand`, quarantine-reconcile |
 | Security (enforcement) | ✅ SMART scopes + JWKS auth, **Backend Services** (client_credentials+private_key_jwt), **UDAP B2B trust** (cert-chain software statements + **revocation: static list + live signature-verified CRL + OCSP** + **trusted DCR w/ durable registry** + **signed_metadata** + **tiered OAuth/RFC 9101 signed request** + **RFC 5280 path validation** (basic constraints / key usage / name constraints), opt-in), AuditEvent + accounting, consent + DS4P labels, obligations; ✅ **SMART discovery** + 401/WWW-Authenticate |
@@ -77,9 +77,9 @@ breadth (codeableConcept validate, `$expand` filter/paging/total) · ✅ search 
 ## Remaining follow-ups (explicitly deferred, lower priority)
 ✅ SMART **Backend Services** (client_credentials + private_key_jwt) — DONE. Remaining:
 **composite** search params + multi-field `_sort` (codegen) · slicing max/closed + L4 invariants
-at depth ≥2 · **medallion** Gold-read-path (single store is the supported topology) · run the full
-**Inferno (g)(10)** suites end-to-end (auth server + backend services now make the OAuth-gated
-suites reachable).
+at depth ≥2 · CDF-incremental promotion inside `fhirengine-promote` (full-rebuild is the shipped
+reference; external promoters can already use CDF) · run the full **Inferno (g)(10)** suites
+end-to-end (auth server + backend services now make the OAuth-gated suites reachable).
 
 ## Run / resume
 Guided setup: `cd packages/server && npm run init` (writes `deploy/.env`, prints run +

@@ -185,6 +185,20 @@ def _deadletter(path, bad):
     return len(bad)
 
 
+def _creation_config(path):
+    """Table properties applied at CREATION only. Bronze + Silver get Change Data Feed
+    (ADR-0026) so EXTERNAL promoters (Dagster / Databricks / the promote CLI) can read
+    incremental changes via load_cdf — the flag can't usefully be retrofitted (CDF only
+    covers versions after enablement). None for existing tables / other tiers."""
+    if "/bronze/" not in path and "/silver/" not in path:
+        return None
+    try:
+        DeltaTable(path)
+        return None  # exists — configuration is creation-time only
+    except Exception:
+        return {"delta.enableChangeDataFeed": "true"}
+
+
 def do_write(req):
     path = req["table_path"]
     rows = req["rows"]
@@ -198,7 +212,14 @@ def do_write(req):
     if good:
         if not _is_object_store(path):
             os.makedirs(os.path.dirname(path), exist_ok=True)
-        _with_retry(lambda: write_deltalake(path, _to_table(good, schema), mode=mode))
+        cfg = _creation_config(path)
+        kwargs = {"configuration": cfg} if cfg else {}
+        if mode == "overwrite":
+            # Full-rebuild semantics (ADR-0026 backstop): replace the SCHEMA too. Inferred
+            # schemas drift between batches (e.g. an all-empty list column infers Null, a
+            # populated one infers List(Struct)) — without this, re-promotion fails to cast.
+            kwargs["schema_mode"] = "overwrite"
+        _with_retry(lambda: write_deltalake(path, _to_table(good, schema), mode=mode, **kwargs))
         written = len(good)
 
     deadlettered = _deadletter(req.get("deadletter_path"), bad)
@@ -243,7 +264,9 @@ def do_write_version(req):
     if not _is_object_store(path):
         os.makedirs(os.path.dirname(path), exist_ok=True)
     if not os.path.exists(path):
-        _with_retry(lambda: write_deltalake(path, _table([row])))  # first version of the first id
+        cfg = _creation_config(path)
+        kwargs = {"configuration": cfg} if cfg else {}
+        _with_retry(lambda: write_deltalake(path, _table([row]), **kwargs))  # first version of the first id
         return {"version": DeltaTable(path).version(), "created": True}
     src = [row]
     if prev is not None:

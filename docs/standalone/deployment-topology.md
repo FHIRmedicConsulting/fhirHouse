@@ -43,15 +43,28 @@ the API reads/writes here)**. Silver feeds an external **Enterprise Analytics** 
   app. fhirEngine provides the Bronze/Silver/Gold plumbing only; data
   governance/quality/promotion criteria live in that other app.
 
-## Consistency decision (medallion) — PROPOSED, affects medallion only
+## Consistency decision (medallion) — RESOLVED 2026-07-04, affects medallion only
 
-Reads are served from Gold but writes flow Bronze→Silver→Gold. If promotion were async, a
-just-created resource would not be immediately readable — breaking transactional FHIR
-read-after-write. **Proposed:** in medallion the API write path writes **Gold synchronously**
-(Gold = current-version transactional) **and** lands raw in **Bronze** for lineage; Silver
-is the governed/flattened tier the enterprise app consumes. This matches today's
-single-store write+read semantics. To be ratified with the storage-topology ADR before any
-medallion build. **Does not affect single store.**
+**Decided (operator decision; supersedes the earlier synchronous-Gold-write proposal):**
+in medallion the API writes **Bronze only** (the write domain: ingest, version chain,
+optimistic locking, conditional-write uniqueness); **external orchestration**
+(Dagster / Databricks / cron — fhirEngine never promotes on its own) moves
+Bronze→Silver→Gold; the API **serves current-state reads and searches from Gold**.
+Consequences, by design:
+
+- **Eventual consistency**: a just-ingested resource is not readable/searchable until
+  promoted (404 before, served after). Deletes 410 only once the tombstone promotes.
+- **history/vread stay on Bronze** — it is the version log; Gold is current-version only.
+- Gold rows carry the full Bronze row shape (body + search/identifier indexes), so the
+  search engine runs unchanged against Gold.
+- Bronze + Silver tables are created with `delta.enableChangeDataFeed=true` so external
+  promoters can read incremental changes (`load_cdf`, ADR-0026); the in-repo
+  `fhirengine-promote` CLI is the idempotent full-rebuild reference implementation.
+
+Single store (`FHIRENGINE_STORAGE_MODE=single`, the default) is unaffected: writes and
+reads share Bronze — read-after-write holds. Choose **single** for transactional FHIR API
+semantics; choose **medallion** when an enterprise pipeline owns curation and the API
+serves the governed Gold projection.
 
 ## Open questions (unanswered — do not assume)
 

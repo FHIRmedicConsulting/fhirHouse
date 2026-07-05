@@ -6,6 +6,25 @@ All notable changes to fhirEngine are documented here. Format based on
 
 ## [Unreleased]
 
+### Added
+- **Medallion serving (Bronze/Silver/Gold complete)** — `FHIRENGINE_STORAGE_MODE=medallion`
+  now works end-to-end: the API **ingests to Bronze** (write domain: version chain,
+  optimistic locking, conditional-write uniqueness, history/vread) and **serves
+  current-state reads + searches from Gold** (same row shape as Bronze, so the whole
+  search engine runs unchanged). Promotion is **external by design** (Dagster / Databricks /
+  cron): `fhirengine-promote <Type…>|--all` (`npm run promote`) is the idempotent
+  full-rebuild reference promoter, and Bronze/Silver tables are created with
+  `delta.enableChangeDataFeed=true` so external promoters can consume incremental
+  changes (ADR-0026, now Accepted). Eventual consistency in medallion is by design —
+  a just-ingested resource serves 404 until promoted; single-store (default) keeps
+  read-after-write. Gold tables an external promoter writes appear without a server
+  restart (probe-on-miss discovery).
+
+### Fixed
+- `promote()` did not carry `search_param_index`/`is_current` into Gold rows (searches
+  over Gold silently returned nothing) and Silver re-promotion failed on inferred-schema
+  drift (`overwrite` now replaces the schema — full-rebuild is idempotent).
+
 ## [0.1.0-alpha.1] - 2026-07-04
 
 ### Added
@@ -87,7 +106,7 @@ All notable changes to fhirEngine are documented here. Format based on
 
 ### Known limitations (pre-alpha)
 - Not ONC (g)(10)-certified — individual US Core groups pass in Inferno; full suite not run end-to-end.
-- Single-store serving only (medallion Gold read-path WIP).
+- Medallion promotion inside the repo is full-rebuild (idempotent backstop); CDF-incremental is available to external promoters, not yet built into the CLI.
 - Composite/special search params + multi-field `_sort` are rejected under `Prefer: handling=strict`
   (not implemented as filters). L5 profile/IG conformance is partial (external HL7 validator is authoritative).
 - **CMS-0057 prior-auth is FHIR-facing only** — PAS adjudication is a **stub** (no real Utilization

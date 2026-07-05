@@ -203,7 +203,7 @@ async function main() {
   }
   env.FHIRENGINE_STORAGE_MODE = await pick("Storage topology", [
     { key: "single", label: "single — one Delta store (the supported serving path)" },
-    { key: "medallion", label: "medallion — Bronze→Silver→Gold (Gold read-path still WIP)" },
+    { key: "medallion", label: "medallion — Bronze ingest, Gold serving (external promotion — Dagster/Databricks/fhirengine-promote)" },
   ], def("FHIRENGINE_STORAGE_MODE", "single"));
 
   // 3 ── server basics

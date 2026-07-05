@@ -19,6 +19,7 @@ interface BronzeRow {
   last_updated: string;
   body_json: string;
   identifier_index: unknown;
+  search_param_index: unknown;
   ext_json: string;
   deleted: boolean | null;
   _ingested_at?: string | null;
@@ -39,8 +40,8 @@ export async function promote(wh: DeltaWarehouse, resourceType: string): Promise
   let rows: BronzeRow[];
   try {
     rows = await wh.query<BronzeRow>(
-      `SELECT id, version_id, last_updated, body_json, identifier_index, ext_json,
-              deleted, _ingested_at, _ingest_source FROM ${bronze}`,
+      `SELECT id, version_id, last_updated, body_json, identifier_index, search_param_index,
+              ext_json, deleted, _ingested_at, _ingest_source FROM ${bronze}`,
     );
   } catch {
     return { resourceType, bronzeRows: 0, currentIds: 0, gold: 0, silver: 0 };
@@ -54,9 +55,12 @@ export async function promote(wh: DeltaWarehouse, resourceType: string): Promise
   }
   const currentRows = [...current.values()];
 
-  // Gold — current-version projection (same Bronze shape), MERGE-upsert by id.
+  // Gold — current-version projection (same Bronze shape: search/identifier indexes ride
+  // along so the serve tier answers searches), MERGE-upsert by id. All Gold rows are the
+  // current version by construction.
   if (currentRows.length) {
-    await wh.mergeTier("gold", resourceType, currentRows, "id", "bronze");
+    const goldRows = currentRows.map((r) => ({ ...r, is_current: true }));
+    await wh.mergeTier("gold", resourceType, goldRows, "id", "bronze");
   }
 
   // Silver — flattened + governance, current version. Full-rebuild (overwrite).

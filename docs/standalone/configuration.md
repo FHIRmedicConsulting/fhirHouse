@@ -13,7 +13,7 @@ ADR-0032). Related: the security runbook (`security-hardening-and-deployment.md`
 | Var | Default | Description |
 |---|---|---|
 | `FHIRENGINE_DELTA_BASE` | `./.delta` (`/data/delta` in Docker) | Delta root — local path **or** object-store URI (`s3://…`, `gs://…`, `az://…`). The server + sidecar must agree. |
-| `FHIRENGINE_STORAGE_MODE` | `single` | `single` (supported serving) or `medallion` (Bronze→Silver→Gold; **Gold read-path WIP — single only for serving today**). |
+| `FHIRENGINE_STORAGE_MODE` | `single` | `single` (writes+reads share Bronze; read-after-write) or `medallion` (API ingests to Bronze, SERVES from Gold; external orchestration promotes Bronze→Silver→Gold — eventual consistency; history/vread stay on Bronze; `fhirengine-promote` is the reference promoter). |
 | `FHIRENGINE_DELTA_SIDECAR_URL` | `http://127.0.0.1:8077` | URL of the delta-rs sidecar (server → sidecar). |
 
 **Object-store credentials** (only when `FHIRENGINE_DELTA_BASE` is a cloud URI): `AWS_ACCESS_KEY_ID`,

@@ -1,6 +1,6 @@
 # ADR-0026: Medallion Promotion Orchestration — Delta CDF, No DLT
 
-- Status: **Proposed** (design research-validated; ratify on implementation with `DeltaWarehouse`). fhirEngine-specific.
+- Status: **Accepted** (2026-07-04 — implemented: Gold serving + `fhirengine-promote` full-rebuild reference + CDF enabled at Bronze/Silver creation for external incremental promoters; CLI-internal CDF-incremental remains a follow-up). fhirEngine-specific.
 - Date: 2026-06-27
 - Decider(s): Chad
 - Session: 032 (standalone fork)

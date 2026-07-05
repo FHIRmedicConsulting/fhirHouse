@@ -85,8 +85,13 @@ interface BronzeStoredRow {
 
 export class DeltaResourceRepository {
   readonly resourceType: string;
-  /** Logical table name registered with the warehouse (lowercased). */
+  /** Bronze logical table name — the WRITE domain: ingest, version chain (history/vread),
+   * optimistic locking, and conditional-write uniqueness always run here. */
   private readonly table: string;
+  /** SERVE table — where current-state reads/searches run: Gold in medallion (populated by
+   * external promotion — Dagster/Databricks/the promote CLI), Bronze in single-store. In
+   * medallion a just-ingested resource is NOT servable until promoted (by design). */
+  private readonly serveTable: string;
 
   constructor(
     private readonly wh: DeltaWarehouse,
@@ -95,6 +100,7 @@ export class DeltaResourceRepository {
   ) {
     this.resourceType = resourceType;
     this.table = resourceType.toLowerCase();
+    this.serveTable = wh.serveTableName(resourceType);
   }
 
   /** Land version 1 in Bronze. Source `id` preserved; UUIDv7 fallback. */
@@ -107,9 +113,9 @@ export class DeltaResourceRepository {
     return stamped;
   }
 
-  /** Current (latest) version. 404 if never existed, 410 if tombstoned. */
+  /** Current (latest) version from the SERVE tier. 404 if never existed, 410 if tombstoned. */
   async read(fhirId: string): Promise<FhirResource> {
-    const row = await this.currentRow(fhirId);
+    const row = await this.serveRow(fhirId);
     if (!row) throw notFound(this.resourceType, fhirId);
     if (row.deleted === true) throw gone(this.resourceType, fhirId);
     return JSON.parse(row.body_json) as FhirResource;
@@ -207,7 +213,7 @@ export class DeltaResourceRepository {
     sortParam?: string; // search-param code to sort by (else last_updated)
     sortNumeric?: boolean; // cast the sort key to DOUBLE (number/quantity) so 10 > 9
   }): Promise<{ resources: FhirResource[]; total: number }> {
-    if (!this.wh.hasTable(this.table)) return { resources: [], total: 0 };
+    if (!(await this.wh.serveTableReady(this.resourceType))) return { resources: [], total: 0 };
     if (opts.idIn && opts.idIn.length === 0) return { resources: [], total: 0 };
     const conds = opts.conds ?? [];
 
@@ -224,7 +230,7 @@ export class DeltaResourceRepository {
     }
     const cur = `cur AS (
       SELECT id, body_json, last_updated, search_param_index
-      FROM ${this.table} WHERE ${baseWhere.join(" AND ")})`;
+      FROM ${this.serveTable} WHERE ${baseWhere.join(" AND ")})`;
 
     const isNeg = (c: SearchCondition) => c.modifier === "not" || (c.modifier === "missing" && c.value === "true");
     const pos = conds.filter((c) => !isNeg(c));
@@ -280,12 +286,12 @@ export class DeltaResourceRepository {
    * (e.g. compartment membership for $everything: subject/patient/performer = Patient/123).
    */
   async findReferencing(paramCodes: string[], reference: string): Promise<FhirResource[]> {
-    if (!this.wh.hasTable(this.table) || paramCodes.length === 0) return [];
+    if (paramCodes.length === 0 || !(await this.wh.serveTableReady(this.resourceType))) return [];
     const placeholders = paramCodes.map(() => "?").join(", ");
     const rows = await this.wh.query<{ body_json: string }>(
       `SELECT DISTINCT body_json FROM (
          SELECT id, body_json, unnest(search_param_index) AS s
-         FROM ${this.table} WHERE is_current AND NOT deleted
+         FROM ${this.serveTable} WHERE is_current AND NOT deleted
        ) t WHERE t.s.code IN (${placeholders}) AND t.s.value = ?`,
       [...paramCodes, reference],
     );
@@ -307,11 +313,24 @@ export class DeltaResourceRepository {
 
   // --- helpers ---
 
+  /** Current row in the WRITE domain (Bronze) — optimistic locking + version chain. */
   private async currentRow(id: string): Promise<BronzeStoredRow | null> {
     if (!this.wh.hasTable(this.table)) return null;
     const rows = await this.wh.query<BronzeStoredRow>(
       `SELECT id, version_id, last_updated, body_json, deleted
        FROM ${this.table} WHERE id = ? ORDER BY version_id DESC LIMIT 1`,
+      [id],
+    );
+    return rows[0] ?? null;
+  }
+
+  /** Current row in the SERVE tier (Gold in medallion, Bronze in single-store). */
+  private async serveRow(id: string): Promise<BronzeStoredRow | null> {
+    if (this.serveTable === this.table) return this.currentRow(id);
+    if (!(await this.wh.serveTableReady(this.resourceType))) return null;
+    const rows = await this.wh.query<BronzeStoredRow>(
+      `SELECT id, version_id, last_updated, body_json, deleted
+       FROM ${this.serveTable} WHERE id = ? ORDER BY version_id DESC LIMIT 1`,
       [id],
     );
     return rows[0] ?? null;

@@ -81,14 +81,43 @@ export class DeltaWarehouse implements Warehouse {
   private readonly sidecarUrl: string;
   private readonly catalog: Catalog;
   private readonly base: string;
+  /** Storage topology (ADR-0026 / deployment-topology): `single` serves from Bronze;
+   * `medallion` serves from Gold (populated by EXTERNAL promotion — Dagster/Databricks/
+   * the promote CLI; fhirEngine itself only ingests to Bronze). */
+  readonly storageMode: StorageMode;
   /** Logical table name → Delta path, registered for DataFusion queries. */
   private readonly tables = new Map<string, string>();
+  /** Positive cache of serve tables confirmed to physically exist (probe once, then stick). */
+  private readonly servable = new Set<string>();
 
   constructor(opts: DeltaWarehouseOptions) {
     this.sidecarUrl = opts.sidecarUrl.replace(/\/$/, "");
     this.base = opts.base.replace(/\/$/, "");
-    const mode = opts.storageMode ?? (process.env.FHIRENGINE_STORAGE_MODE === "medallion" ? "medallion" : "single");
-    this.catalog = opts.catalog ?? new PathCatalog(opts.base, mode);
+    this.storageMode = opts.storageMode ?? (process.env.FHIRENGINE_STORAGE_MODE === "medallion" ? "medallion" : "single");
+    this.catalog = opts.catalog ?? new PathCatalog(opts.base, this.storageMode);
+  }
+
+  /** The logical table serving reads/searches for a resource type: Gold in medallion
+   * (current-version projection, same Bronze row shape), Bronze in single-store. */
+  serveTableName(resourceType: string): string {
+    if (this.storageMode !== "medallion") return this.catalog.tableName("bronze", resourceType);
+    return this.registerTier("gold", resourceType); // register path; existence is probed separately
+  }
+
+  /** Is the serve table physically there? Misses re-probe (an external promoter — Dagster/
+   * Databricks — may create Gold tables while we run); hits are cached. In single-store this
+   * is the ordinary registered-on-write check. */
+  async serveTableReady(resourceType: string): Promise<boolean> {
+    const name = this.serveTableName(resourceType);
+    if (this.storageMode !== "medallion") return this.hasTable(name);
+    if (this.servable.has(name)) return true;
+    try {
+      await this.query(`SELECT 1 FROM ${name} LIMIT 1`);
+      this.servable.add(name);
+      return true;
+    } catch {
+      return false; // not promoted yet — serve empty (eventual consistency by design)
+    }
   }
 
   /** Register a logical table name → path so queries can reference it. */

@@ -34,7 +34,7 @@ Architecture Decision Records, chronological. Numbers never reused. Status: Prop
 | 0023 | [Open-Source Licensing — Apache-2.0 Core + Open-Core Proprietary Modules](0023-open-source-licensing-and-open-core-model.md) | **Accepted** (2026-07-04; Apache-2.0 ratified — CLA + IP-attorney review are follow-ups) | 2026-06-27 |
 | 0024 | [Clean-Room R4 Columnar Schema Generator — Mapping Spec](0024-clean-room-r4-columnar-schema-generator.md) | **Accepted** (POC-validated across all 146 R4 types) | 2026-06-27 |
 | 0025 | [Catalog / Governance Binding Seam](0025-catalog-governance-binding-seam.md) | **Proposed** (path-based default + Unity Catalog OSS first; resolves 0022 §5) | 2026-06-27 |
-| 0026 | [Medallion Promotion Orchestration — Delta CDF, No DLT](0026-medallion-promotion-orchestration.md) | **Proposed** (supersedes ADR-0019 §7 DLT for standalone) | 2026-06-27 |
+| 0026 | [Medallion Promotion Orchestration — Delta CDF, No DLT](0026-medallion-promotion-orchestration.md) | **Accepted** (2026-07-04 implemented; supersedes ADR-0019 §7 DLT for standalone) | 2026-06-27 |
 | 0027 | [Governed View Layer — SQL-on-FHIR v2 ViewDefinitions](0027-governed-view-layer-sql-on-fhir.md) | **Proposed** (future / demand-gated) | 2026-06-27 |
 | 0028 | [Cross-Product Platform Alignment — One Engine (delta-rs/DataFusion) + One Protocol Tier (TS/Hono) Across Ronin + fhirEngine](0028-cross-product-platform-alignment.md) | **Accepted** (direction ratified 2026-06-28; Ronin migration gated on delta-rs-on-Databricks-UC spike) | 2026-06-28 |
 | 0029 | [Runtime & Stack — TypeScript/Node + Hono (ratifies the un-ratified stack)](0029-runtime-and-stack.md) | **Accepted** (2026-06-28; supersedes Rejected ADR-0002) | 2026-06-28 |

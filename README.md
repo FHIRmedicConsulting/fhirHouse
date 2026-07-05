@@ -18,9 +18,10 @@ HTTP (Hono)
                                    └─ Python sidecar (deltalake + pyarrow)
 ```
 
-- **Storage topology (install-time):** single Delta store (dev default) or medallion
-  (Bronze→Silver→Gold, Gold operational). `FHIRENGINE_STORAGE_MODE=single|medallion`.
-  _(Alpha: single-store serving is the supported path; the medallion Gold read-path is WIP.)_
+- **Storage topology (install-time):** single Delta store (dev default, read-after-write) or
+  medallion (Bronze→Silver→Gold). `FHIRENGINE_STORAGE_MODE=single|medallion`. In medallion the
+  API ingests to **Bronze** and serves from **Gold**; external orchestration (Dagster/Databricks/
+  the `fhirengine-promote` CLI) promotes between tiers — eventual consistency by design.
 - **Clean-room columnar flattener** generated from CC0 HL7 R4 StructureDefinitions
   (no proprietary schemas).
 
