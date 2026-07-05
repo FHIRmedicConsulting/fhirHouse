@@ -50,9 +50,9 @@ export const ExplanationOfBenefitSchema = z
   .object({
     resourceType: z.literal("ExplanationOfBenefit"),
     status: z.enum(["active", "cancelled", "draft", "entered-in-error"]),
-    // `type` is required by the generated EOB shape AND drives C4BB profile
-    // selection in `EobRepository.c4bbProfileForType()` — required at the
-    // REST boundary too.
+    // `type` is required by the R4 EOB shape. NOTE: CARIN BB (C4BB) *profile* selection/
+    // conformance is NOT implemented — EOB is served by the generic resource handler + the
+    // additive `type`/`service-date` search params; there is no EOB-specific profiling.
     type: FhirObject,
     use: z.enum(["claim", "preauthorization", "predetermination"]),
     outcome: z.enum(["queued", "complete", "error", "partial"]),

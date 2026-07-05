@@ -54,4 +54,24 @@ describe.skipIf(!SIDECAR)("REST: search v2", () => {
     expect(b.total).toBe(1);
     expect(b.entry[0].resource.id).toBe(ids[1]);
   });
+
+  // Feature-completeness audit fix: Period-typed date params (Encounter.date=period) were not
+  // indexed → date search silently returned empty; sa/eb prefixes were unparsed → empty.
+  it("date search works on a Period-typed param (Encounter.date), incl. sa/eb prefixes", async () => {
+    const eid = `enc-dt-${Date.now()}`;
+    await req("POST", "/Encounter", { resourceType: "Encounter", id: eid, status: "finished", class: { code: "AMB" }, subject: { reference: "Patient/x" }, period: { start: "2026-02-01T10:00:00Z", end: "2026-02-01T11:00:00Z" } });
+    for (const q of ["date=2026-02-01", "date=ge2026-01-01", "date=sa2026-01-01", "date=eb2026-12-31"]) {
+      const b = await (await req("GET", `/Encounter?${q}&_id=${eid}`)).json();
+      expect(b.total, q).toBe(1);
+    }
+  });
+
+  // Strict handling must REJECT unimplemented control params + token modifiers (were silently ignored).
+  it("strict handling rejects _filter/_tag/:in (no silent ignore); lenient default still 200", async () => {
+    expect((await req("GET", "/Patient?_filter=x")).status).toBe(200); // FHIR default = lenient
+    for (const p of ["/Patient?_filter=x", "/Patient?_tag=t", "/Observation?code:in=http://vs"]) {
+      const r = await app.fetch(new Request(`http://test${p}`, { headers: { Prefer: "handling=strict" } }));
+      expect(r.status, p).toBe(400);
+    }
+  });
 });

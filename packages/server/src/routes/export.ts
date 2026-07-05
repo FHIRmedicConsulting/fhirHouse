@@ -46,18 +46,21 @@ export function mountExport(app: Hono, wh: DeltaWarehouse, baseUrl: string): voi
     return count;
   };
 
-  /** Export a type limited to the compartments of the given patient ids (Patient → those ids). */
-  const exportForPatients = async (jobId: string, rt: string, patientIds: string[]): Promise<number> => {
+  /** Export a type limited to the compartments of the given patient ids (Patient → those ids).
+   * `since` filters by meta.lastUpdated so `_since` is honored on patient/group scope too (was
+   * silently ignored — a client asking for a delta got a full dump). */
+  const exportForPatients = async (jobId: string, rt: string, patientIds: string[], since?: string): Promise<number> => {
     const seen = new Set<string>();
+    const after = (r: FhirResource): boolean => !since || String((r.meta as { lastUpdated?: string } | undefined)?.lastUpdated ?? "") >= since;
     const out: FhirResource[] = [];
     if (rt === "Patient") {
-      for (const pid of patientIds) { try { out.push(await repo("Patient").read(pid)); } catch { /* gone */ } }
+      for (const pid of patientIds) { try { const p = await repo("Patient").read(pid); if (after(p)) out.push(p); } catch { /* gone */ } }
     } else {
       const params = (patientCompartment as Record<string, string[]>)[rt];
       if (!params?.length) return 0;
       for (const pid of patientIds) {
         for (const m of await repo(rt).findReferencing(params, `Patient/${pid}`)) {
-          if (m.id && !seen.has(m.id)) { seen.add(m.id); out.push(m); }
+          if (m.id && !seen.has(m.id) && after(m)) { seen.add(m.id); out.push(m); }
         }
       }
     }
@@ -76,7 +79,7 @@ export function mountExport(app: Hono, wh: DeltaWarehouse, baseUrl: string): voi
         if (!wh.hasTable(rt.toLowerCase())) continue;
         if (opts.typeFilter?.length && !opts.typeFilter.includes(rt)) continue;
         const count = limited
-          ? await exportForPatients(jobId, rt, opts.patientIds ?? [])
+          ? await exportForPatients(jobId, rt, opts.patientIds ?? [], opts.since)
           : await exportAll(jobId, rt, opts.since);
         if (count > 0) await recordOutput(jobId, rt, fileUrl(jobId, rt), count);
       }

@@ -3,8 +3,10 @@
  * the R4 Core resource registry + the interactions the delta app actually implements +
  * installed profiles (supportedProfile) from the conformance store.
  *
- * Kept honest — only declares what's wired (CRUD, vread, instance history, identifier
- * search). System-level transaction/batch and richer search are NOT advertised until built.
+ * Kept honest — declares what's actually wired: CRUD + vread, instance/type/system history,
+ * batch + transaction, rich search, $validate/$everything/$export, and the terminology +
+ * CMS-0057 operations that have live handlers. (NOTE: transaction is NOT fully atomic — an
+ * append-only store has no cross-resource rollback; see routes/transaction.ts.)
  */
 import { r4CoreResourceTypes } from "../fhir-schema/r4-registry.js";
 import { searchParamsFor } from "../fhir-schema/r4-search-params.js";
@@ -44,8 +46,8 @@ export async function buildCapabilityStatement(wh: DeltaWarehouse, baseUrl: stri
   };
 
   // Per-resource operations: every type supports $validate; Patient adds $everything; the
-  // terminology resources add their tx ops. ($export is intentionally NOT advertised until it's
-  // production-grade — the current impl is an in-memory dev stub.)
+  // terminology resources add their tx ops. $export IS advertised — it's async + disk-backed
+  // (routes/export.ts), not the old in-memory stub.
   const operationsFor = (rt: string) => {
     const ops = [{ name: "validate", definition: "http://hl7.org/fhir/OperationDefinition/Resource-validate" }];
     if (rt === "Patient") ops.push(

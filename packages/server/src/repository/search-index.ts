@@ -43,6 +43,13 @@ function extract(code: string, type: string, r: unknown, out: SearchIndexEntry[]
       strings(code, r, out);
       break;
     case "date":
+      // A date param's FHIRPath often yields a Period ({start,end}) or Timing (event[]/repeat.bounds),
+      // not a bare string — e.g. Encounter.date=period, Procedure.date=performed[x], Condition
+      // onset/abatement. Index every instant found so range/prefix matches work; a bare string/number
+      // (dateTime/instant) indexes directly. (Was: only bare strings → Period-typed date search
+      // silently returned empty.)
+      dateValues(r).forEach((v) => push(out, code, v));
+      break;
     case "uri":
     case "number":
       if (typeof r === "string" || typeof r === "number" || typeof r === "boolean") push(out, code, r);
@@ -58,6 +65,22 @@ function extract(code: string, type: string, r: unknown, out: SearchIndexEntry[]
       if (typeof r === "object" && (r as any).reference) push(out, code, (r as any).reference);
       break;
   }
+}
+
+/** Pull the date instants a `date`-param value can carry: a bare dateTime/instant string, a
+ * Period ({start,end}), or a Timing ({event[], repeat.boundsPeriod}). Returns all found. */
+function dateValues(r: unknown): string[] {
+  if (typeof r === "string" || typeof r === "number") return [String(r)];
+  if (!r || typeof r !== "object") return [];
+  const o = r as Record<string, unknown>;
+  const out: string[] = [];
+  for (const k of ["start", "end", "valueDateTime", "valueDate", "valueInstant"]) {
+    if (typeof o[k] === "string") out.push(o[k] as string);
+  }
+  if (Array.isArray(o.event)) for (const e of o.event) if (typeof e === "string") out.push(e);
+  const bounds = (o.repeat as Record<string, unknown> | undefined)?.boundsPeriod as Record<string, unknown> | undefined;
+  if (bounds) for (const k of ["start", "end"]) if (typeof bounds[k] === "string") out.push(bounds[k] as string);
+  return out;
 }
 
 function token(code: string, r: unknown, out: SearchIndexEntry[]): void {

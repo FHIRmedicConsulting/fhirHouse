@@ -67,8 +67,11 @@ function clampInt(raw: string | undefined, dflt: number): number {
 
 /** FHIR date/number prefix → SQL comparison (`sw` = prefix/day match for no-prefix & eq). */
 function parseRangeParam(raw: string): { op: string; value: string } | null {
-  const m = /^(eq|ne|gt|lt|ge|le)(.+)$/.exec(raw);
-  const opMap: Record<string, string> = { gt: ">", lt: "<", ge: ">=", le: "<=", eq: "sw", ne: "!=" };
+  // All 9 FHIR date/number prefixes. sa (starts-after) ≈ >, eb (ends-before) ≈ < against the
+  // indexed instant; ap (approximately) degrades to a prefix/day match rather than silently
+  // returning empty. (Was: sa/eb/ap unmatched → parsed as literal text → no results.)
+  const m = /^(eq|ne|gt|lt|ge|le|sa|eb|ap)(.+)$/.exec(raw);
+  const opMap: Record<string, string> = { gt: ">", lt: "<", ge: ">=", le: "<=", eq: "sw", ne: "!=", sa: ">", eb: "<", ap: "sw" };
   if (m) {
     const op = opMap[m[1]!];
     return op ? { op, value: m[2]! } : null;
@@ -105,14 +108,31 @@ const HANDLEABLE_PARAM_TYPES = new Set(["token", "string", "date", "number", "qu
  * additionally flags **unknown** params only under `Prefer: handling=strict` (FHIR default is lenient
  * — ignore unknown params). Control (`_*`) and chained (`a.b`) params are handled elsewhere.
  */
+/** Control params this engine actually consumes — the rest (`_filter`, `_tag`, `_profile`,
+ * `_security`, `_source`, `_contained`, `_list`, `_text`, `_content`, `_total`, `_offset`, …)
+ * are NOT implemented and must be flagged under strict rather than silently ignored. */
+const SUPPORTED_CONTROL_PARAMS = new Set([
+  "_id", "_lastUpdated", "_count", "_getpagesoffset", "_sort", "_summary", "_elements",
+  "_include", "_revinclude", "_has", "_type", "_format", "_pretty",
+]);
+/** Token modifiers the index can actually apply. `:in/:not-in/:below/:above/:of-type/:text`
+ * degrade to a wrong plain match — flag them under strict instead of silently mis-matching. */
+const UNSUPPORTED_TOKEN_MODIFIERS = new Set(["in", "not-in", "below", "above", "of-type", "text"]);
+
 function unsupportedSearchParams(rt: string, queries: Record<string, string[]>, strict: boolean): string[] {
   const bad: string[] = [];
   for (const key of Object.keys(queries)) {
-    if (key.startsWith("_") || key.includes(".")) continue;
-    const code = key.split(":")[0]!;
-    const def = searchParam(rt, code);
-    if (!def) { if (strict) bad.push(code); continue; }
+    if (key.includes(".")) continue; // chained params handled elsewhere
+    if (key.startsWith("_")) {
+      const base = key.split(":")[0]!;
+      if (strict && !SUPPORTED_CONTROL_PARAMS.has(base)) bad.push(base); // e.g. _filter, _tag, _profile
+      continue;
+    }
+    const [code, modifier] = key.split(":");
+    const def = searchParam(rt, code!);
+    if (!def) { if (strict) bad.push(code!); continue; }
     if (!HANDLEABLE_PARAM_TYPES.has(def.type)) bad.push(`${code} (${def.type})`);
+    else if (strict && modifier && UNSUPPORTED_TOKEN_MODIFIERS.has(modifier)) bad.push(`${code}:${modifier}`);
   }
   return bad;
 }
