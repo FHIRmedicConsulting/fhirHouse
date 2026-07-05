@@ -105,21 +105,25 @@ export class DeltaResourceRepository {
 
   /** Land version 1 in Bronze. Source `id` preserved (ingestion/migration); UUIDv7 fallback. */
   async create(input: FhirResource): Promise<FhirResource> {
+    // Serialize on the table so concurrent writes don't race the version/commit (Priority #3).
+    return this.wh.serializeTable("bronze", this.resourceType, () => this.createUnlocked(input));
+  }
+
+  /** create() WITHOUT acquiring the table lock — for a caller that already holds it (atomic
+   * conditional create, where the match-check + create must be in one critical section). */
+  async createUnlocked(input: FhirResource): Promise<FhirResource> {
     const now = this.clock();
     const clientId = input.id; // a caller-supplied id we're asked to preserve
     const fhirId = clientId ?? uuidv7(now.getTime());
     const stamped = this.stamp(input, fhirId, 1, now);
-    // Serialize on the table so concurrent writes don't race the version/commit (Priority #3).
-    await this.wh.serializeTable("bronze", this.resourceType, async () => {
-      // A create that reuses an EXISTING id would land a second version-1 row: the sidecar's
-      // demote-and-insert MERGE then flips the old v1 back to is_current AND drops the new body,
-      // producing two current rows for one id (invariant break). Reject — use PUT to update.
-      if (clientId !== undefined) {
-        const existing = await this.currentRow(fhirId);
-        if (existing) throw conflict(`${this.resourceType}/${fhirId} already exists — use PUT to update`);
-      }
-      await this.writeVersion(stamped, 1, now, false);
-    });
+    // A create that reuses an EXISTING id would land a second version-1 row: the sidecar's
+    // demote-and-insert MERGE then flips the old v1 back to is_current AND drops the new body,
+    // producing two current rows for one id (invariant break). Reject — use PUT to update.
+    if (clientId !== undefined) {
+      const existing = await this.currentRow(fhirId);
+      if (existing) throw conflict(`${this.resourceType}/${fhirId} already exists — use PUT to update`);
+    }
+    await this.writeVersion(stamped, 1, now, false);
     return stamped;
   }
 

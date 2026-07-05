@@ -168,3 +168,18 @@ def test_merge_rejects_bad_key(tmp_path):
     ds.do_write({"table_path": p, "rows": [bronze("a", 1, True)], "schema": "bronze"})
     with pytest.raises(ValueError):
         ds.do_merge({"table_path": p, "rows": [bronze("a", 2, True)], "key": "id = 1 OR '' = ''"})
+
+
+def test_write_version_conflict_detected(tmp_path):
+    """Cross-process race: two writers both compute version N+1 off a stale read. The second
+    must NOT silently drop its body — the guarded MERGE surfaces a conflict."""
+    p = str(tmp_path / "patient")
+    ds.do_write_version({"table_path": p, "row": bronze("a", 1, True), "prev_version_id": None})
+    # first writer lands v2 (demote v1)
+    ds.do_write_version({"table_path": p, "row": bronze("a", 2, True), "prev_version_id": 1})
+    # second writer ALSO tries v2 off the stale v1 read → conflict, not a lost write
+    with pytest.raises(Exception):
+        ds.do_write_version({"table_path": p, "row": bronze("a", 2, True, body_json='{"x":"lost"}'), "prev_version_id": 1})
+    # exactly one current row, and it's the first writer's v2 (body intact)
+    rows = q(p, "SELECT version_id, is_current FROM t WHERE is_current = true")
+    assert len(rows) == 1 and rows[0]["version_id"] == 2

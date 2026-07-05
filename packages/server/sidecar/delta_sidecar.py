@@ -310,13 +310,25 @@ def do_write_version(req):
         src.append({**_blank_bronze_row(), "id": row["id"], "version_id": prev, "is_current": False})
 
     def _commit():
-        DeltaTable(path).merge(  # re-read table state each attempt (latest snapshot for the merge)
+        res = DeltaTable(path).merge(  # re-read table state each attempt (latest snapshot for the merge)
             source=_table(src),
             predicate="target.id = source.id AND target.version_id = source.version_id",
             source_alias="source", target_alias="target",
-        ).when_matched_update(updates={"is_current": "source.is_current"}  # demote the prior version
+        ).when_matched_update(
+            # Demote ONLY the currently-current prior version (source.is_current=false rows).
+            # Scoping this to the demote row means a NEW-version row that collides with an
+            # existing one (cross-process race, ADR-0026) has no matching clause and is not
+            # inserted → detectable below, instead of silently overwriting is_current.
+            predicate="source.is_current = false AND target.is_current = true",
+            updates={"is_current": "source.is_current"},
         ).when_not_matched_insert_all(predicate="source.is_current = true"  # insert only the new version
         ).execute()
+        # The new version MUST have landed. If another writer already committed this version_id
+        # (two server instances both computed N+1 off a stale read), it won't insert — raise
+        # rather than return success on a dropped write, so the caller re-reads and re-versions.
+        inserted = res.get("num_target_rows_inserted") if isinstance(res, dict) else None
+        if inserted is not None and int(inserted) < 1:
+            raise CommitFailedError(f"version conflict: {row['id']}@{row['version_id']} already exists")
     _with_retry(_commit)
     return {"version": DeltaTable(path).version()}
 

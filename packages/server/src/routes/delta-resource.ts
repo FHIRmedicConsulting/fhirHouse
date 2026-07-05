@@ -349,15 +349,25 @@ export function deltaResourceRoutes(wh: DeltaWarehouse, baseUrl: string): Hono {
     const resource = validate(await c.req.json().catch(() => null), rt);
     const ifNoneExist = c.req.header("If-None-Exist");
     if (ifNoneExist) {
-      const { total, match } = await resolveConditional(rt, ifNoneExist);
-      if (total === 1) {
-        return c.json(match!, 200, {
-          Location: `${baseUrl}/${rt}/${match!.id}`,
-          ETag: `W/"${match!.meta?.versionId ?? "1"}"`,
-        });
+      // ATOMIC conditional create: hold the table write-chain across the match-check AND the
+      // create, so two concurrent If-None-Exist creates can't both see 0 matches and both
+      // insert (duplicate business identifier). resolveConditional/searchByParams are reads
+      // (no lock) and createUnlocked skips the self-lock, so this is race-free within-process.
+      const outcome = await wh.serializeTable("bronze", rt, async (): Promise<{ created: boolean; resource: FhirResource }> => {
+        const { total, match } = await resolveConditional(rt, ifNoneExist);
+        if (total > 1) throw preconditionFailed(`If-None-Exist matched ${total} resources — not created`);
+        if (total === 1) return { created: false, resource: match! };
+        return { created: true, resource: await repo(rt).createUnlocked(resource) };
+      });
+      const r = outcome.resource;
+      if (!outcome.created) {
+        return c.json(r, 200, { Location: `${baseUrl}/${rt}/${r.id}`, ETag: `W/"${r.meta?.versionId ?? "1"}"` });
       }
-      if (total > 1) throw preconditionFailed(`If-None-Exist matched ${total} resources — not created`);
-      // total === 0 → fall through to a normal create
+      return c.json(r, 201, {
+        Location: `${baseUrl}/${rt}/${r.id}`,
+        ETag: `W/"${r.meta?.versionId ?? "1"}"`,
+        "Last-Modified": r.meta?.lastUpdated ?? new Date().toISOString(),
+      });
     }
     const created = await repo(rt).create(resource);
     return c.json(created, 201, {
