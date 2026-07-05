@@ -28,6 +28,9 @@ export interface Catalog {
   auditPath(): string;
   /** UDAP dynamically-registered clients store (ADR-0036 — durable DCR registry). */
   udapClientPath(): string;
+  /** MPI table location (patient_link / patient_match_review / patient_merge_history) —
+   * all MPI tables live in Gold per ADR-0012 §2 (operational identity data). */
+  mpiPath(table: string): string;
 }
 
 /**
@@ -74,6 +77,10 @@ export class PathCatalog implements Catalog {
 
   auditPath(): string {
     return `${this.base}/audit/audit_event`;
+  }
+
+  mpiPath(table: string): string {
+    return `${this.base}/gold/${table}`;
   }
 
   udapClientPath(): string {

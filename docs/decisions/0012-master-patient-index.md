@@ -1,6 +1,6 @@
 # ADR-0012: Master Patient Index — Deterministic v1, Splink v2 with Guardrails, PPRL v1.x, HITL Review Queue
 
-- Status: **Accepted**
+- Status: **Accepted** (fhirEngine implementation 2026-07-04: deterministic v1 + §3.4 guardrails + review-queue/link/merge-history tables + merge Provenance, ENFORCED at Bronze→Silver/Gold promotion with survivor reference-rewrite; Splink/PPRL remain external-pipeline scope)
 - Date: 2026-06-19
 - Decider(s): Chad
 - Session: 014

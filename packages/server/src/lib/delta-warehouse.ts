@@ -201,6 +201,19 @@ export class DeltaWarehouse implements Warehouse {
     await this.postWrite(path, "/write", { table_path: path, rows, mode, schema: "infer" });
   }
 
+  /** Register an MPI table for queries (patient_link / patient_match_review / …). */
+  registerMpi(table: string): string {
+    this.registerTable(table, this.catalog.mpiPath(table));
+    return table;
+  }
+
+  /** Write rows to an MPI table (ADR-0012 — Gold-anchored identity tables). */
+  async writeMpi(table: string, rows: unknown[], mode: "append" | "overwrite" = "append"): Promise<void> {
+    const path = this.catalog.mpiPath(table);
+    this.registerTable(table, path);
+    await this.postWrite(path, "/write", { table_path: path, rows, mode, schema: "infer" });
+  }
+
   /** Register a conformance-store table for queries. */
   registerConformance(table: string): string {
     this.registerTable(table, this.catalog.conformancePath(table));

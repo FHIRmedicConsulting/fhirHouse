@@ -35,6 +35,12 @@ writer, ADR-0026), `GOOGLE_SERVICE_ACCOUNT`, `AZURE_STORAGE_ACCOUNT_NAME`, `AZUR
 |---|---|---|
 | `FHIRENGINE_VALIDATION_PROFILES` | — | Conformance-profile requirement for incoming resources. Empty = validate against the installed FHIR version only (structure, invariants, base bindings); `meta.profile` claims are stored, not enforced. Comma-separated entries: an installed IG package id (`hl7.fhir.us.core` — enforce its profile per resource type), a profile canonical URL, or `declared` (enforce each resource's `meta.profile` claims). Requires the referenced IG to be installed (`fhirengine-terminology install-ig`). |
 
+## MPI / dedup (ADR-0012, deterministic v1)
+
+| Var | Default | Description |
+|---|---|---|
+| `FHIRENGINE_MPI` | on | Deterministic Patient dedup **enforced at promotion** (Bronze→Silver/Gold): duplicates sharing a normalized business identifier merge (survivor = latest write; merged record readable by id with a `replaced-by` link, excluded from search); `Patient/<merged>` references in every promoted type are rewritten to the survivor; `patient_link` / `patient_match_review` / `patient_merge_history` (all Gold) + merge Provenance are maintained. Hard-deny guardrails (§3.4 — SSN conflict, sex mismatch, date-of-death mismatch, multi-match) route to the review queue instead of merging and are **not** disableable. Set `off` to skip dedup entirely. Splink/PPRL (probabilistic) are external-pipeline scope. |
+
 ## Security profile & transport (ADR-0031/0032)
 
 | Var | Default | Description |

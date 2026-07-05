@@ -20,6 +20,19 @@ All notable changes to fhirEngine are documented here. Format based on
   read-after-write. Gold tables an external promoter writes appear without a server
   restart (probe-on-miss discovery).
 
+- **MPI / dedup enforced in Silver + Gold** (ADR-0012 v1, deterministic) — promotion now
+  resolves Patient identity: duplicates sharing a normalized business identifier
+  auto-merge (survivor = latest write; merged record stays readable by id with a
+  `replaced-by` link + `active=false` but is excluded from every search; the survivor
+  absorbs the merged identifiers so old MRNs resolve to the golden record), and
+  `Patient/<merged>` references in every other promoted type are rewritten to the
+  survivor. Hard-deny guardrails (§3.4 — conflicting SSN = hard distinct, sex mismatch,
+  date-of-death mismatch, multi-match ≥3) never auto-merge: they land in the
+  `patient_match_review` stewardship queue. `patient_link` (authoritative identifier→id
+  map) + `patient_merge_history` + merge `Provenance` (activity=MERGE) are maintained —
+  all Gold-anchored per the ADR. `FHIRENGINE_MPI=off` disables; Splink/PPRL stay
+  external-pipeline scope.
+
 ### Fixed
 - `promote()` did not carry `search_param_index`/`is_current` into Gold rows (searches
   over Gold silently returned nothing) and Silver re-promotion failed on inferred-schema

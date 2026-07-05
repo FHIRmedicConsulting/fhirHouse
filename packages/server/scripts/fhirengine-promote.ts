@@ -13,7 +13,7 @@
  *   fhirengine-promote --all                              promote every Bronze table
  */
 import { DeltaWarehouse } from "../src/lib/delta-warehouse.js";
-import { promote } from "../src/repository/promote.js";
+import { promote, loadSurvivorMap } from "../src/repository/promote.js";
 import { r4CoreResourceTypes } from "../src/fhir-schema/r4-registry.js";
 
 /** Bronze table names are lowercased — recover the canonical R4 casing for the flattener. */
@@ -45,12 +45,19 @@ async function main() {
     }
   }
 
+  // Patient FIRST: its MPI resolution (ADR-0012 dedup) produces the merged→survivor map
+  // every other type's reference rewrite depends on.
+  types.sort((a, b) => (a === "Patient" ? -1 : b === "Patient" ? 1 : a.localeCompare(b)));
+
   const results = [];
+  let survivorOf: Map<string, string> | undefined;
   for (const t of types) {
     const t0 = Date.now();
-    const r = await promote(wh, t);
+    const r = await promote(wh, t, t === "Patient" ? undefined : { survivorOf });
+    if (t === "Patient") survivorOf = await loadSurvivorMap(wh);
     results.push({ ...r, ms: Date.now() - t0 });
-    process.stderr.write(`  ${r.resourceType}: bronze=${r.bronzeRows} → gold=${r.gold} silver=${r.silver}\n`);
+    const mpiNote = r.merges !== undefined ? ` mpi(merges=${r.merges} reviews=${r.reviews})` : "";
+    process.stderr.write(`  ${r.resourceType}: bronze=${r.bronzeRows} → gold=${r.gold} silver=${r.silver}${mpiNote}\n`);
   }
   console.log(JSON.stringify({ promoted: results.length, results }, null, 2));
 }
