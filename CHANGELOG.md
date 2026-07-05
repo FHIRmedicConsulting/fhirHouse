@@ -6,6 +6,22 @@ All notable changes to fhirEngine are documented here. Format based on
 
 ## [Unreleased]
 
+### Changed / fixed (feature-completeness follow-ups)
+- **Validation now rejects unknown/extra elements** (structural validator) — a resource with a
+  garbage or **typo'd** element (e.g. `deceasedBolean` for `deceasedBoolean`, `valueStrng` for
+  `valueString`) was previously accepted silently; it's now a 422. FHIR base elements the
+  columnar schema drops (meta/text/extension/contained/modifierExtension) and primitive-extension
+  `_field` siblings are allowlisted so valid US Core resources still pass. (Max-cardinality for
+  finite `max=N` is still not enforced — the columnar schema only carries list-vs-scalar; deferred.)
+- **PAS `Claim/$submit` returns a PENDED response, not an approval.** It previously returned
+  `outcome: complete` + a fabricated `preAuthRef`, which a partner's integration engine would
+  machine-read as an authorization. It now returns `outcome: queued` with a Da Vinci review-action
+  of `pended` and NO `preAuthRef` (a tracking identifier only) — fhirEngine performs no
+  adjudication, and the response can no longer be misread as a grant. (`$inquire` correlates by
+  the tracking id.)
+- Removed a phantom `EobRepository.c4bbProfileForType()` reference and corrected stale
+  CapabilityStatement docstrings (from the feature-completeness audit).
+
 ## [0.1.0-alpha.4] - 2026-07-05
 
 ### Security (deep-audit hardening, 2026-07-05)

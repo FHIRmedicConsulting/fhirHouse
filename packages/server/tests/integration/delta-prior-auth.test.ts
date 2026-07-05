@@ -1,6 +1,7 @@
 /**
  * Da Vinci PAS Claim/$submit + $inquire (CMS-0057 Prior Authorization API). FHIR-native submit records
- * a ClaimResponse; inquire returns it by patient / preAuthRef. Sidecar-gated. (Adjudication is a stub.)
+ * a PENDED ClaimResponse (outcome=queued, no preAuthRef — fhirEngine does NOT adjudicate); inquire
+ * returns it by patient / tracking identifier. Sidecar-gated.
  */
 import { describe, it, expect, beforeAll } from "vitest";
 import { DeltaWarehouse } from "../../src/lib/delta-warehouse.js";
@@ -14,14 +15,14 @@ describe.skipIf(!SIDECAR)("Claim/$submit + $inquire (PAS)", () => {
   const app = SIDECAR ? createDeltaApp({ warehouse: wh, baseUrl: "http://test" }) : (null as unknown as ReturnType<typeof createDeltaApp>);
   const post = (p: string, b: unknown) => app.fetch(new Request(`http://test${p}`, { method: "POST", headers: { "Content-Type": "application/fhir+json" }, body: JSON.stringify(b) }));
   const PT = "Patient/pas-p1";
-  let preAuthRef: string;
+  let trackingId: string;
 
   const submit = (claim: Record<string, unknown>) =>
     post("/Claim/$submit", { resourceType: "Bundle", type: "collection", entry: [{ resource: { resourceType: "Claim", ...claim } }] });
 
   beforeAll(async () => { if (SIDECAR && !(await wh.health())) throw new Error("sidecar down"); });
 
-  it("$submit records a ClaimResponse (complete + preAuthRef) for a preauthorization Claim", async () => {
+  it("$submit records a PENDED ClaimResponse (outcome=queued, NO preAuthRef — not an approval)", async () => {
     const res = await submit({ use: "preauthorization", patient: { reference: PT }, item: [{ sequence: 1 }] });
     expect(res.status).toBe(200);
     const bundle = await res.json();
@@ -29,9 +30,10 @@ describe.skipIf(!SIDECAR)("Claim/$submit + $inquire (PAS)", () => {
     const cr = bundle.entry[0].resource;
     expect(cr.resourceType).toBe("ClaimResponse");
     expect(cr.use).toBe("preauthorization");
-    expect(cr.outcome).toBe("complete");
-    expect(cr.preAuthRef).toMatch(/^PA-/);
-    preAuthRef = cr.preAuthRef;
+    expect(cr.outcome).toBe("queued");            // pended, not adjudicated
+    expect(cr.preAuthRef).toBeUndefined();        // no fabricated authorization number
+    trackingId = cr.identifier?.[0]?.value;
+    expect(trackingId).toMatch(/^TRK-/);
   });
 
   it("$submit rejects a non-preauthorization Claim (400)", async () => {
@@ -47,11 +49,11 @@ describe.skipIf(!SIDECAR)("Claim/$submit + $inquire (PAS)", () => {
     expect(bundle.entry.every((e: { resource: { resourceType: string; use: string } }) => e.resource.resourceType === "ClaimResponse" && e.resource.use === "preauthorization")).toBe(true);
   });
 
-  it("$inquire by preAuthRef (Parameters) returns the matching ClaimResponse", async () => {
-    const res = await post("/Claim/$inquire", { resourceType: "Parameters", parameter: [{ name: "preAuthRef", valueString: preAuthRef }] });
+  it("$inquire by tracking id (Parameters preAuthRef param) returns the matching ClaimResponse", async () => {
+    const res = await post("/Claim/$inquire", { resourceType: "Parameters", parameter: [{ name: "preAuthRef", valueString: trackingId }] });
     expect(res.status).toBe(200);
     const bundle = await res.json();
-    expect(bundle.entry.some((e: { resource: { preAuthRef?: string } }) => e.resource.preAuthRef === preAuthRef)).toBe(true);
+    expect(bundle.entry.some((e: { resource: { identifier?: Array<{ value?: string }> } }) => e.resource.identifier?.[0]?.value === trackingId)).toBe(true);
   });
 
   it("$submit rejects a non-Bundle body (400)", async () => {

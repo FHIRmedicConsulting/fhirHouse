@@ -53,7 +53,24 @@ function checkValue(v: unknown, t: ColType, fhirType: string, path: string, issu
   }
 }
 
+/** FHIR base elements valid on any object regardless of the columnar schema (which drops
+ * extension/contained/text/meta). Kept permissive across levels to avoid false-rejecting valid
+ * resources — the goal is to catch UNKNOWN/typo'd elements, not to police base-element placement. */
+const BASE_ELEMENTS = new Set([
+  "resourceType", "id", "meta", "implicitRules", "language", "text", "contained",
+  "extension", "modifierExtension", "fhir_comments",
+]);
+
 function walk(obj: Record<string, unknown>, cols: Column[], path: string, issues: ValidationIssue[]): void {
+  const known = new Set(cols.map((c) => c.name));
+  // Unknown/extra-element rejection: a key that is neither a schema element, a FHIR base
+  // element, nor a primitive-extension sibling (`_field` for a known `field`) is invalid.
+  // (Was: the resource's own keys were never checked, so garbage/typo'd elements passed clean.)
+  for (const key of Object.keys(obj)) {
+    if (known.has(key) || BASE_ELEMENTS.has(key)) continue;
+    if (key.startsWith("_") && (known.has(key.slice(1)) || BASE_ELEMENTS.has(key.slice(1)))) continue;
+    issues.push({ path: `${path}.${key}`, message: `unknown element '${key}' (not in the ${path.split(".")[0]} schema)` });
+  }
   for (const c of cols) {
     const v = obj[c.name];
     if (v === undefined || v === null) {

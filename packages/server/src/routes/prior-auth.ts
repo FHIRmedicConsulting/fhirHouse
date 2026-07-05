@@ -7,9 +7,12 @@
  *   POST /Claim/$submit   in: Bundle{ Claim(use=preauthorization), … } → out: Bundle{ ClaimResponse }
  *   POST /Claim/$inquire  in: Bundle{ Claim } | Parameters → out: Bundle{ ClaimResponse… }
  *
- * SCOPE (first slice): the **adjudication is a stub** — a real payer's decision comes from its
- * Utilization Management system, and the PAS *gateway* converts FHIR ⇄ **X12 278** (a large, separate
- * component — see the CMS-0057 plan). This implements the FHIR-facing operations + persistence.
+ * SCOPE (first slice): fhirEngine performs **no adjudication** — a real payer's decision comes from
+ * its Utilization Management system, and the PAS *gateway* converts FHIR ⇄ **X12 278** (a large,
+ * separate component — see the CMS-0057 plan). So `$submit` returns a **PENDED** ClaimResponse
+ * (`outcome: queued`, review-action `pended`, NO `preAuthRef`): the request is received + queued,
+ * NOT authorized. This is deliberate so a partner's integration engine can never machine-read a
+ * fabricated approval. Grant/deny + a real preAuthRef require a UM/X12-278 backend.
  */
 import type { Hono } from "hono";
 import { DeltaResourceRepository } from "../repository/delta-resource-repository.js";
@@ -40,7 +43,8 @@ export function mountPriorAuth(app: Hono, wh: DeltaWarehouse, baseUrl: string): 
     if (!claim) return c.json(oo("required", "the submission Bundle must contain a Claim"), 400);
     if (claim.use !== "preauthorization") return c.json(oo("invalid", "Claim.use must be 'preauthorization' for prior authorization"), 400);
 
-    const preAuthRef = `PA-${uuidv7().slice(0, 13)}`;
+    // Tracking id for $inquire correlation — NOT a preAuthRef (no authorization is granted).
+    const trackingId = `TRK-${uuidv7().slice(0, 13)}`;
     const claimResponse = {
       resourceType: "ClaimResponse",
       status: "active",
@@ -48,16 +52,23 @@ export function mountPriorAuth(app: Hono, wh: DeltaWarehouse, baseUrl: string): 
       use: "preauthorization",
       patient: claim.patient,
       created: new Date().toISOString(),
-      insurer: claim.insurer ?? { display: "fhirEngine (stub payer)" },
+      insurer: claim.insurer ?? { display: "fhirEngine (no adjudication)" },
       ...(claim.id ? { request: { reference: `Claim/${claim.id}` } } : {}),
-      // Stub adjudication — NOT a real UM decision (see file header).
-      outcome: "complete",
-      disposition: "Prior authorization received and recorded (stub adjudication — not a real UM decision)",
-      preAuthRef,
-      identifier: [{ system: `${baseUrl}/fhir/prior-auth`, value: preAuthRef }],
+      // PENDED, not decided (see header): outcome=queued, review-action pended, NO preAuthRef.
+      // fhirEngine does not adjudicate — a machine MUST NOT read this as an approval.
+      outcome: "queued",
+      disposition: "Pended — received and queued for utilization-management review. No authorization has been granted (fhirEngine performs no adjudication; connect a UM / X12-278 gateway).",
+      identifier: [{ system: `${baseUrl}/fhir/prior-auth-tracking`, value: trackingId }],
       item: (claim.item ?? []).map((it) => ({
         itemSequence: it.sequence ?? 1,
-        adjudication: [{ category: { coding: [{ system: "http://terminology.hl7.org/CodeSystem/adjudication", code: "submitted" }] } }],
+        // Da Vinci PAS review-action: pended (A4) — no decision made.
+        adjudication: [{
+          category: { coding: [{ system: "http://terminology.hl7.org/CodeSystem/adjudication", code: "submitted" }] },
+          extension: [{
+            url: "http://hl7.org/fhir/us/davinci-pas/StructureDefinition/extension-reviewAction",
+            extension: [{ url: "number", valueCodeableConcept: { coding: [{ system: "https://codesystem.x12.org/005010/306", code: "A4", display: "Pended" }] } }],
+          }],
+        }],
       })),
     };
     const stored = await repo("ClaimResponse").create(claimResponse as unknown as FhirResource);
