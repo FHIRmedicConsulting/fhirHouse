@@ -6,6 +6,8 @@ All notable changes to fhirEngine are documented here. Format based on
 
 ## [Unreleased]
 
+## [0.1.0-alpha.2] - 2026-07-04
+
 ### Added
 - **Medallion serving (Bronze/Silver/Gold complete)** — `FHIRENGINE_STORAGE_MODE=medallion`
   now works end-to-end: the API **ingests to Bronze** (write domain: version chain,
@@ -128,5 +130,6 @@ All notable changes to fhirEngine are documented here. Format based on
   components pending a component-disclosure/ADR (see `docs/standalone/cms-0057-b2b-apis-plan.md`). CARIN
   BB / PDex **profile conformance** (validating against those profiles) still requires IG install (L5).
 
-[Unreleased]: https://github.com/FHIRmedicConsulting/fhirEngine/compare/v0.1.0-alpha.1...main
+[Unreleased]: https://github.com/FHIRmedicConsulting/fhirEngine/compare/v0.1.0-alpha.2...main
+[0.1.0-alpha.2]: https://github.com/FHIRmedicConsulting/fhirEngine/compare/v0.1.0-alpha.1...v0.1.0-alpha.2
 [0.1.0-alpha.1]: https://github.com/FHIRmedicConsulting/fhirEngine/releases/tag/v0.1.0-alpha.1
