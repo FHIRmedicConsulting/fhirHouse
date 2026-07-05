@@ -34,7 +34,6 @@ _SIDECAR_TOKEN = os.environ.get("FHIRENGINE_SIDECAR_TOKEN", "")
 import pyarrow as pa
 from deltalake import DeltaTable, QueryBuilder, write_deltalake
 from deltalake.exceptions import CommitFailedError
-from fhir.resources import get_fhir_model_class  # R4 Core structural validation (pydantic)
 
 _COMMIT_ATTEMPTS = 5
 
@@ -127,97 +126,8 @@ def _confine(path):
     return path
 
 
-# --- Validation (PRIOR to Bronze landing; R4 Core focus, profile-extensible) ---
-
-# Dead-letter / failed-message queue schema (a queryable Delta table).
-DEADLETTER_SCHEMA = pa.schema([
-    ("id", pa.string()),
-    ("resourceType", pa.string()),
-    ("error", pa.string()),
-    ("body_json", pa.string()),
-    ("failed_at", pa.string()),
-])
-
-# Facility for MULTIPLE profile validation (Chad): code-registered validators
-# (profile-URL → callable raising on violation), PLUS dynamically-derived validators
-# loaded from INSTALLED profile snapshots in the conformance store (see below).
-PROFILE_VALIDATORS = {}
-
-# Base Delta root (set in main) — used to read installed profiles + terminology.
+# Base Delta root (set in main) — used by path confinement + table listing.
 _BASE = "."
-# Cache of required top-level elements per installed profile URL (first-cut profile
-# validation). Invalidated on restart; re-install + restart picks up changes.
-_profile_req_cache = {}
-
-
-def _profile_required(url):
-    """Required top-level elements (min>=1) for an INSTALLED profile, from its snapshot
-    in the conformance store. [] if the profile isn't installed (not enforced)."""
-    if url in _profile_req_cache:
-        return _profile_req_cache[url]
-    req = []
-    try:
-        path = os.path.join(_BASE, "conformance", "structuredefinition")
-        if _is_object_store(path) or os.path.exists(path):
-            qb = QueryBuilder().register("sd", DeltaTable(path))
-            esc = url.replace("'", "''")
-            rows = pa.table(qb.execute(f"SELECT json FROM sd WHERE url = '{esc}' LIMIT 1").read_all()).to_pylist()
-            if rows:
-                sd = json.loads(rows[0]["json"])
-                rtype = sd.get("type")
-                for e in sd.get("snapshot", {}).get("element", []):
-                    segs = (e.get("path") or "").split(".")
-                    if len(segs) == 2 and segs[0] == rtype and (e.get("min") or 0) >= 1:
-                        req.append(segs[1])
-    except Exception:
-        req = []
-    _profile_req_cache[url] = req
-    return req
-
-
-def _validate_resource(body):
-    """Raise on invalid. (1) R4 Core base structural validation (always);
-    (2) for each claimed meta.profile: required-element enforcement from the installed
-    profile snapshot + any code-registered validator."""
-    get_fhir_model_class(body.get("resourceType")).model_validate(body)
-    for prof in ((body.get("meta") or {}).get("profile") or []):
-        for el in _profile_required(prof):
-            v = body.get(el)
-            if v is None or v == [] or v == "":
-                raise ValueError(f"profile {prof} requires element '{el}'")
-        fn = PROFILE_VALIDATORS.get(prof)
-        if fn:
-            fn(body)
-
-
-def _validate_split(rows):
-    """Partition Bronze rows into (valid, dead-lettered) by validating body_json."""
-    good, bad = [], []
-    for r in rows:
-        rt, body = None, None
-        try:
-            body = json.loads(r.get("body_json") or "{}")
-            rt = body.get("resourceType")
-            _validate_resource(body)
-            good.append(r)
-        except Exception as e:
-            bad.append({
-                "id": r.get("id"),
-                "resourceType": rt,
-                "error": str(e)[:1500],
-                "body_json": r.get("body_json"),
-                "failed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            })
-    return good, bad
-
-
-def _deadletter(path, bad):
-    if not path or not bad:
-        return 0
-    if not _is_object_store(path):
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-    write_deltalake(path, pa.Table.from_pylist(bad, schema=DEADLETTER_SCHEMA), mode="append")
-    return len(bad)
 
 
 def _creation_config(path):
@@ -239,12 +149,10 @@ def do_write(req):
     rows = req["rows"]
     mode = req.get("mode", "append")
     schema = req.get("schema", "bronze")
-    # Validation gates Bronze ingestion ONLY (validate=true); promotion writes
-    # (Silver/Gold) pass validate=false — they're already-governed data.
-    good, bad = (_validate_split(rows) if req.get("validate") else (rows, []))
-
+    # Validation lives in the TS ValidationSupportChain now (ADR-0028); the sidecar is a
+    # pure writer — no structural/profile validation here (was dead: no caller sent validate).
     written = 0
-    if good:
+    if rows:
         if not _is_object_store(path):
             os.makedirs(os.path.dirname(path), exist_ok=True)
         cfg = _creation_config(path)
@@ -254,14 +162,11 @@ def do_write(req):
             # schemas drift between batches (e.g. an all-empty list column infers Null, a
             # populated one infers List(Struct)) — without this, re-promotion fails to cast.
             kwargs["schema_mode"] = "overwrite"
-        _with_retry(lambda: write_deltalake(path, _to_table(good, schema), mode=mode, **kwargs))
-        written = len(good)
+        _with_retry(lambda: write_deltalake(path, _to_table(rows, schema), mode=mode, **kwargs))
+        written = len(rows)
 
-    deadlettered = _deadletter(req.get("deadletter_path"), bad)
     return {
         "written": written,
-        "deadlettered": deadlettered,
-        "errors": [{"id": b["id"], "resourceType": b["resourceType"], "error": b["error"]} for b in bad][:20],
         "version": DeltaTable(path).version() if written else None,
     }
 
@@ -368,19 +273,6 @@ def do_migrate_is_current(req):
     tbl = pa.table(result)
     _with_retry(lambda: write_deltalake(path, tbl, mode="overwrite", schema_mode="overwrite"))
     return {"migrated": True, "rows": tbl.num_rows}
-
-
-def do_validate(req):
-    """Validate-only (no write) — for benchmarking the Python validation path."""
-    results = []
-    for r in req.get("resources", []):
-        body = r if isinstance(r, dict) and "resourceType" in r else json.loads((r or {}).get("body_json", "{}"))
-        try:
-            _validate_resource(body)
-            results.append({"valid": True})
-        except Exception as e:
-            results.append({"valid": False, "error": str(e)[:300]})
-    return {"results": results}
 
 
 def _zorder_columns(dt, zorder):
@@ -510,7 +402,7 @@ def do_delete(req):
 
 
 ROUTES = {"/write": do_write, "/write-version": do_write_version, "/merge": do_merge, "/query": do_query,
-          "/validate": do_validate, "/migrate-is-current": do_migrate_is_current,
+ "/migrate-is-current": do_migrate_is_current,
           "/optimize": do_optimize, "/optimize-all": do_optimize_all, "/delete": do_delete,
           "/list-tables": do_list_tables}
 
