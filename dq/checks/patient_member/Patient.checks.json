@@ -1,0 +1,463 @@
+{
+ "resourceType": "Patient",
+ "domain": "patient_member",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "active"
+   ],
+   "max": 1,
+   "metric": "max_card:active",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "gender"
+   ],
+   "parent": null,
+   "codes": [
+    "female",
+    "male",
+    "other",
+    "unknown"
+   ],
+   "metric": "binding:gender",
+   "source": "http://hl7.org/fhir/ValueSet/administrative-gender",
+   "description": "required binding (4 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "gender"
+   ],
+   "max": 1,
+   "metric": "max_card:gender",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "birthDate"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2})?)?$",
+   "metric": "format:birthDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "date lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "birthDate"
+   ],
+   "parent": null,
+   "metric": "date_range:birthDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "birthDate"
+   ],
+   "max": 1,
+   "metric": "max_card:birthDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "deceasedDateTime"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:deceasedDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "deceasedDateTime"
+   ],
+   "parent": null,
+   "metric": "date_range:deceasedDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "deceasedBoolean"
+   ],
+   "max": 1,
+   "metric": "max_card:deceasedBoolean",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "deceasedDateTime"
+   ],
+   "max": 1,
+   "metric": "max_card:deceasedDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "maritalStatus"
+   ],
+   "max": 1,
+   "metric": "max_card:maritalStatus",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "multipleBirthBoolean"
+   ],
+   "max": 1,
+   "metric": "max_card:multipleBirthBoolean",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "multipleBirthInteger"
+   ],
+   "max": 1,
+   "metric": "max_card:multipleBirthInteger",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "gender"
+   ],
+   "parent": [
+    "contact"
+   ],
+   "codes": [
+    "female",
+    "male",
+    "other",
+    "unknown"
+   ],
+   "metric": "binding:contact.gender",
+   "source": "http://hl7.org/fhir/ValueSet/administrative-gender",
+   "description": "required binding (4 codes)"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "organization"
+   ],
+   "parent": [
+    "contact"
+   ],
+   "targets": [
+    "Organization"
+   ],
+   "metric": "ref_target:contact.organization",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "generalPractitioner"
+   ],
+   "parent": null,
+   "targets": [
+    "Organization",
+    "Practitioner",
+    "PractitionerRole"
+   ],
+   "metric": "ref_target:generalPractitioner",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization/Practitioner/PractitionerRole"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "managingOrganization"
+   ],
+   "parent": null,
+   "targets": [
+    "Organization"
+   ],
+   "metric": "ref_target:managingOrganization",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "managingOrganization"
+   ],
+   "max": 1,
+   "metric": "max_card:managingOrganization",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "other"
+   ],
+   "parent": [
+    "link"
+   ],
+   "metric": "required:link.other",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Patient.link.other has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "other"
+   ],
+   "parent": [
+    "link"
+   ],
+   "targets": [
+    "Patient",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:link.other",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Patient/RelatedPerson"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "type"
+   ],
+   "parent": [
+    "link"
+   ],
+   "metric": "required:link.type",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Patient.link.type has base cardinality min>=1"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "type"
+   ],
+   "parent": [
+    "link"
+   ],
+   "codes": [
+    "refer",
+    "replaced-by",
+    "replaces",
+    "seealso"
+   ],
+   "metric": "binding:link.type",
+   "source": "http://hl7.org/fhir/ValueSet/link-type",
+   "description": "required binding (4 codes)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "identifier"
+   ],
+   "parent": null,
+   "metric": "ms:identifier",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "system"
+   ],
+   "parent": [
+    "identifier"
+   ],
+   "metric": "ms:identifier.system",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "value"
+   ],
+   "parent": [
+    "identifier"
+   ],
+   "metric": "ms:identifier.value",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "name"
+   ],
+   "parent": null,
+   "metric": "ms:name",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "family"
+   ],
+   "parent": [
+    "name"
+   ],
+   "metric": "ms:name.family",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "given"
+   ],
+   "parent": [
+    "name"
+   ],
+   "metric": "ms:name.given",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "system"
+   ],
+   "parent": [
+    "telecom"
+   ],
+   "metric": "ms:telecom.system",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "value"
+   ],
+   "parent": [
+    "telecom"
+   ],
+   "metric": "ms:telecom.value",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "use"
+   ],
+   "parent": [
+    "telecom"
+   ],
+   "metric": "ms:telecom.use",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "gender"
+   ],
+   "parent": null,
+   "metric": "ms:gender",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "birthDate"
+   ],
+   "parent": null,
+   "metric": "ms:birthDate",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "address"
+   ],
+   "parent": null,
+   "metric": "ms:address",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "line"
+   ],
+   "parent": [
+    "address"
+   ],
+   "metric": "ms:address.line",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "city"
+   ],
+   "parent": [
+    "address"
+   ],
+   "metric": "ms:address.city",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "state"
+   ],
+   "parent": [
+    "address"
+   ],
+   "metric": "ms:address.state",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "postalCode"
+   ],
+   "parent": [
+    "address"
+   ],
+   "metric": "ms:address.postalCode",
+   "source": "us-core-patient",
+   "description": "US Core must-support (us-core-patient)"
+  }
+ ]
+}

@@ -1,0 +1,124 @@
+{
+ "resourceType": "RelatedPerson",
+ "domain": "patient_member",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "active"
+   ],
+   "max": 1,
+   "metric": "max_card:active",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "patient"
+   ],
+   "parent": null,
+   "metric": "required:patient",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "RelatedPerson.patient has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "patient"
+   ],
+   "parent": null,
+   "targets": [
+    "Patient"
+   ],
+   "metric": "ref_target:patient",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Patient"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "patient"
+   ],
+   "max": 1,
+   "metric": "max_card:patient",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "gender"
+   ],
+   "parent": null,
+   "codes": [
+    "female",
+    "male",
+    "other",
+    "unknown"
+   ],
+   "metric": "binding:gender",
+   "source": "http://hl7.org/fhir/ValueSet/administrative-gender",
+   "description": "required binding (4 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "gender"
+   ],
+   "max": 1,
+   "metric": "max_card:gender",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "birthDate"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2})?)?$",
+   "metric": "format:birthDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "date lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "birthDate"
+   ],
+   "parent": null,
+   "metric": "date_range:birthDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "birthDate"
+   ],
+   "max": 1,
+   "metric": "max_card:birthDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "period"
+   ],
+   "max": 1,
+   "metric": "max_card:period",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  }
+ ]
+}

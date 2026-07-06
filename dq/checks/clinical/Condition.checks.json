@@ -1,0 +1,553 @@
+{
+ "resourceType": "Condition",
+ "domain": "clinical",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "binding",
+   "path": [
+    "clinicalStatus",
+    "coding",
+    "code"
+   ],
+   "parent": null,
+   "codes": [
+    "active",
+    "inactive",
+    "recurrence",
+    "relapse",
+    "remission",
+    "resolved"
+   ],
+   "metric": "binding:clinicalStatus",
+   "source": "http://hl7.org/fhir/ValueSet/condition-clinical",
+   "description": "required binding (6 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "clinicalStatus"
+   ],
+   "max": 1,
+   "metric": "max_card:clinicalStatus",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "verificationStatus",
+    "coding",
+    "code"
+   ],
+   "parent": null,
+   "codes": [
+    "confirmed",
+    "differential",
+    "entered-in-error",
+    "provisional",
+    "refuted",
+    "unconfirmed"
+   ],
+   "metric": "binding:verificationStatus",
+   "source": "http://hl7.org/fhir/ValueSet/condition-ver-status",
+   "description": "required binding (6 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "verificationStatus"
+   ],
+   "max": 1,
+   "metric": "max_card:verificationStatus",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "severity"
+   ],
+   "max": 1,
+   "metric": "max_card:severity",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "code"
+   ],
+   "max": 1,
+   "metric": "max_card:code",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "metric": "required:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Condition.subject has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "targets": [
+    "Group",
+    "Patient"
+   ],
+   "metric": "ref_target:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Group/Patient"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "subject"
+   ],
+   "max": 1,
+   "metric": "max_card:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "encounter"
+   ],
+   "parent": null,
+   "targets": [
+    "Encounter"
+   ],
+   "metric": "ref_target:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Encounter"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "encounter"
+   ],
+   "max": 1,
+   "metric": "max_card:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "onsetDateTime"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:onsetDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "onsetDateTime"
+   ],
+   "parent": null,
+   "metric": "date_range:onsetDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "onsetDateTime"
+   ],
+   "max": 1,
+   "metric": "max_card:onsetDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "onsetAge"
+   ],
+   "max": 1,
+   "metric": "max_card:onsetAge",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "onsetPeriod"
+   ],
+   "max": 1,
+   "metric": "max_card:onsetPeriod",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "onsetRange"
+   ],
+   "max": 1,
+   "metric": "max_card:onsetRange",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "onsetString"
+   ],
+   "max": 1,
+   "metric": "max_card:onsetString",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "abatementDateTime"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:abatementDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "abatementDateTime"
+   ],
+   "parent": null,
+   "metric": "date_range:abatementDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "abatementDateTime"
+   ],
+   "max": 1,
+   "metric": "max_card:abatementDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "abatementAge"
+   ],
+   "max": 1,
+   "metric": "max_card:abatementAge",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "abatementPeriod"
+   ],
+   "max": 1,
+   "metric": "max_card:abatementPeriod",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "abatementRange"
+   ],
+   "max": 1,
+   "metric": "max_card:abatementRange",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "abatementString"
+   ],
+   "max": 1,
+   "metric": "max_card:abatementString",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "recordedDate"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:recordedDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "recordedDate"
+   ],
+   "parent": null,
+   "metric": "date_range:recordedDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "recordedDate"
+   ],
+   "max": 1,
+   "metric": "max_card:recordedDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "recorder"
+   ],
+   "parent": null,
+   "targets": [
+    "Patient",
+    "Practitioner",
+    "PractitionerRole",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:recorder",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Patient/Practitioner/PractitionerRole/RelatedPerson"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "recorder"
+   ],
+   "max": 1,
+   "metric": "max_card:recorder",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "asserter"
+   ],
+   "parent": null,
+   "targets": [
+    "Patient",
+    "Practitioner",
+    "PractitionerRole",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:asserter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Patient/Practitioner/PractitionerRole/RelatedPerson"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "asserter"
+   ],
+   "max": 1,
+   "metric": "max_card:asserter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "assessment"
+   ],
+   "parent": [
+    "stage"
+   ],
+   "targets": [
+    "ClinicalImpression",
+    "DiagnosticReport",
+    "Observation"
+   ],
+   "metric": "ref_target:stage.assessment",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at ClinicalImpression/DiagnosticReport/Observation"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "clinicalStatus"
+   ],
+   "parent": null,
+   "metric": "ms:clinicalStatus",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "verificationStatus"
+   ],
+   "parent": null,
+   "metric": "ms:verificationStatus",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "category"
+   ],
+   "parent": null,
+   "metric": "ms:category",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "code"
+   ],
+   "parent": null,
+   "metric": "ms:code",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "metric": "ms:subject",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "onsetDateTime"
+   ],
+   "parent": null,
+   "metric": "ms:onsetDateTime",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "onsetAge"
+   ],
+   "parent": null,
+   "metric": "ms:onsetAge",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "onsetPeriod"
+   ],
+   "parent": null,
+   "metric": "ms:onsetPeriod",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "onsetRange"
+   ],
+   "parent": null,
+   "metric": "ms:onsetRange",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "onsetString"
+   ],
+   "parent": null,
+   "metric": "ms:onsetString",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "abatementDateTime"
+   ],
+   "parent": null,
+   "metric": "ms:abatementDateTime",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "abatementAge"
+   ],
+   "parent": null,
+   "metric": "ms:abatementAge",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "abatementPeriod"
+   ],
+   "parent": null,
+   "metric": "ms:abatementPeriod",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "abatementRange"
+   ],
+   "parent": null,
+   "metric": "ms:abatementRange",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "abatementString"
+   ],
+   "parent": null,
+   "metric": "ms:abatementString",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "recordedDate"
+   ],
+   "parent": null,
+   "metric": "ms:recordedDate",
+   "source": "us-core-condition-problems-health-concerns",
+   "description": "US Core must-support (us-core-condition-problems-health-concerns)"
+  }
+ ]
+}

@@ -1,0 +1,715 @@
+{
+ "resourceType": "MedicationRequest",
+ "domain": "clinical",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "required",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "required:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "MedicationRequest.status has base cardinality min>=1"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "codes": [
+    "active",
+    "cancelled",
+    "completed",
+    "draft",
+    "entered-in-error",
+    "on-hold",
+    "stopped",
+    "unknown"
+   ],
+   "metric": "binding:status",
+   "source": "http://hl7.org/fhir/ValueSet/medicationrequest-status",
+   "description": "required binding (8 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "status"
+   ],
+   "max": 1,
+   "metric": "max_card:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "statusReason"
+   ],
+   "max": 1,
+   "metric": "max_card:statusReason",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "intent"
+   ],
+   "parent": null,
+   "metric": "required:intent",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "MedicationRequest.intent has base cardinality min>=1"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "intent"
+   ],
+   "parent": null,
+   "codes": [
+    "filler-order",
+    "instance-order",
+    "option",
+    "order",
+    "original-order",
+    "plan",
+    "proposal",
+    "reflex-order"
+   ],
+   "metric": "binding:intent",
+   "source": "http://hl7.org/fhir/ValueSet/medicationrequest-intent",
+   "description": "required binding (8 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "intent"
+   ],
+   "max": 1,
+   "metric": "max_card:intent",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "priority"
+   ],
+   "parent": null,
+   "codes": [
+    "asap",
+    "routine",
+    "stat",
+    "urgent"
+   ],
+   "metric": "binding:priority",
+   "source": "http://hl7.org/fhir/ValueSet/request-priority",
+   "description": "required binding (4 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "priority"
+   ],
+   "max": 1,
+   "metric": "max_card:priority",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "doNotPerform"
+   ],
+   "max": 1,
+   "metric": "max_card:doNotPerform",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "reportedReference"
+   ],
+   "parent": null,
+   "targets": [
+    "Organization",
+    "Patient",
+    "Practitioner",
+    "PractitionerRole",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:reportedReference",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization/Patient/Practitioner/PractitionerRole"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "reportedBoolean"
+   ],
+   "max": 1,
+   "metric": "max_card:reportedBoolean",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "reportedReference"
+   ],
+   "max": 1,
+   "metric": "max_card:reportedReference",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "medicationReference"
+   ],
+   "parent": null,
+   "targets": [
+    "Medication"
+   ],
+   "metric": "ref_target:medicationReference",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Medication"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "medicationCodeableConcept"
+   ],
+   "max": 1,
+   "metric": "max_card:medicationCodeableConcept",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "medicationReference"
+   ],
+   "max": 1,
+   "metric": "max_card:medicationReference",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "metric": "required:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "MedicationRequest.subject has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "targets": [
+    "Group",
+    "Patient"
+   ],
+   "metric": "ref_target:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Group/Patient"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "subject"
+   ],
+   "max": 1,
+   "metric": "max_card:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "encounter"
+   ],
+   "parent": null,
+   "targets": [
+    "Encounter"
+   ],
+   "metric": "ref_target:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Encounter"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "encounter"
+   ],
+   "max": 1,
+   "metric": "max_card:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "authoredOn"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:authoredOn",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "authoredOn"
+   ],
+   "parent": null,
+   "metric": "date_range:authoredOn",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "authoredOn"
+   ],
+   "max": 1,
+   "metric": "max_card:authoredOn",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "requester"
+   ],
+   "parent": null,
+   "targets": [
+    "Device",
+    "Organization",
+    "Patient",
+    "Practitioner",
+    "PractitionerRole",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:requester",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Device/Organization/Patient/Practitioner"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "requester"
+   ],
+   "max": 1,
+   "metric": "max_card:requester",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "performer"
+   ],
+   "parent": null,
+   "targets": [
+    "CareTeam",
+    "Device",
+    "Organization",
+    "Patient",
+    "Practitioner",
+    "PractitionerRole",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:performer",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at CareTeam/Device/Organization/Patient"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "performer"
+   ],
+   "max": 1,
+   "metric": "max_card:performer",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "performerType"
+   ],
+   "max": 1,
+   "metric": "max_card:performerType",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "recorder"
+   ],
+   "parent": null,
+   "targets": [
+    "Practitioner",
+    "PractitionerRole"
+   ],
+   "metric": "ref_target:recorder",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Practitioner/PractitionerRole"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "recorder"
+   ],
+   "max": 1,
+   "metric": "max_card:recorder",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "reasonReference"
+   ],
+   "parent": null,
+   "targets": [
+    "Condition",
+    "Observation"
+   ],
+   "metric": "ref_target:reasonReference",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Condition/Observation"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "basedOn"
+   ],
+   "parent": null,
+   "targets": [
+    "CarePlan",
+    "ImmunizationRecommendation",
+    "MedicationRequest",
+    "ServiceRequest"
+   ],
+   "metric": "ref_target:basedOn",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at CarePlan/ImmunizationRecommendation/MedicationRequest/ServiceRequest"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "groupIdentifier"
+   ],
+   "max": 1,
+   "metric": "max_card:groupIdentifier",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "courseOfTherapyType"
+   ],
+   "max": 1,
+   "metric": "max_card:courseOfTherapyType",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "insurance"
+   ],
+   "parent": null,
+   "targets": [
+    "ClaimResponse",
+    "Coverage"
+   ],
+   "metric": "ref_target:insurance",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at ClaimResponse/Coverage"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "dispenseRequest"
+   ],
+   "max": 1,
+   "metric": "max_card:dispenseRequest",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "performer"
+   ],
+   "parent": [
+    "dispenseRequest"
+   ],
+   "targets": [
+    "Organization"
+   ],
+   "metric": "ref_target:dispenseRequest.performer",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "substitution"
+   ],
+   "max": 1,
+   "metric": "max_card:substitution",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "priorPrescription"
+   ],
+   "parent": null,
+   "targets": [
+    "MedicationRequest"
+   ],
+   "metric": "ref_target:priorPrescription",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at MedicationRequest"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "priorPrescription"
+   ],
+   "max": 1,
+   "metric": "max_card:priorPrescription",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "detectedIssue"
+   ],
+   "parent": null,
+   "targets": [
+    "DetectedIssue"
+   ],
+   "metric": "ref_target:detectedIssue",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at DetectedIssue"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "eventHistory"
+   ],
+   "parent": null,
+   "targets": [
+    "Provenance"
+   ],
+   "metric": "ref_target:eventHistory",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Provenance"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "ms:status",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "intent"
+   ],
+   "parent": null,
+   "metric": "ms:intent",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "category"
+   ],
+   "parent": null,
+   "metric": "ms:category",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "reportedBoolean"
+   ],
+   "parent": null,
+   "metric": "ms:reportedBoolean",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "reportedReference"
+   ],
+   "parent": null,
+   "metric": "ms:reportedReference",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "medicationCodeableConcept"
+   ],
+   "parent": null,
+   "metric": "ms:medicationCodeableConcept",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "medicationReference"
+   ],
+   "parent": null,
+   "metric": "ms:medicationReference",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "metric": "ms:subject",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "encounter"
+   ],
+   "parent": null,
+   "metric": "ms:encounter",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "authoredOn"
+   ],
+   "parent": null,
+   "metric": "ms:authoredOn",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "requester"
+   ],
+   "parent": null,
+   "metric": "ms:requester",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "dosageInstruction"
+   ],
+   "parent": null,
+   "metric": "ms:dosageInstruction",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "timing"
+   ],
+   "parent": [
+    "dosageInstruction"
+   ],
+   "metric": "ms:dosageInstruction.timing",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "doseAndRate"
+   ],
+   "parent": [
+    "dosageInstruction"
+   ],
+   "metric": "ms:dosageInstruction.doseAndRate",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "dispenseRequest"
+   ],
+   "parent": null,
+   "metric": "ms:dispenseRequest",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "numberOfRepeatsAllowed"
+   ],
+   "parent": [
+    "dispenseRequest"
+   ],
+   "metric": "ms:dispenseRequest.numberOfRepeatsAllowed",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "quantity"
+   ],
+   "parent": [
+    "dispenseRequest"
+   ],
+   "metric": "ms:dispenseRequest.quantity",
+   "source": "us-core-medicationrequest",
+   "description": "US Core must-support (us-core-medicationrequest)"
+  }
+ ]
+}

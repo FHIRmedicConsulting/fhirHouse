@@ -1,0 +1,660 @@
+{
+ "resourceType": "Encounter",
+ "domain": "clinical",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "required",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "required:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Encounter.status has base cardinality min>=1"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "codes": [
+    "arrived",
+    "cancelled",
+    "entered-in-error",
+    "finished",
+    "in-progress",
+    "onleave",
+    "planned",
+    "triaged",
+    "unknown"
+   ],
+   "metric": "binding:status",
+   "source": "http://hl7.org/fhir/ValueSet/encounter-status",
+   "description": "required binding (9 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "status"
+   ],
+   "max": 1,
+   "metric": "max_card:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "status"
+   ],
+   "parent": [
+    "statusHistory"
+   ],
+   "metric": "required:statusHistory.status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Encounter.statusHistory.status has base cardinality min>=1"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "status"
+   ],
+   "parent": [
+    "statusHistory"
+   ],
+   "codes": [
+    "arrived",
+    "cancelled",
+    "entered-in-error",
+    "finished",
+    "in-progress",
+    "onleave",
+    "planned",
+    "triaged",
+    "unknown"
+   ],
+   "metric": "binding:statusHistory.status",
+   "source": "http://hl7.org/fhir/ValueSet/encounter-status",
+   "description": "required binding (9 codes)"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "period"
+   ],
+   "parent": [
+    "statusHistory"
+   ],
+   "metric": "required:statusHistory.period",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Encounter.statusHistory.period has base cardinality min>=1"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "class"
+   ],
+   "parent": null,
+   "metric": "required:class",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Encounter.class has base cardinality min>=1"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "class"
+   ],
+   "max": 1,
+   "metric": "max_card:class",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "class"
+   ],
+   "parent": [
+    "classHistory"
+   ],
+   "metric": "required:classHistory.class",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Encounter.classHistory.class has base cardinality min>=1"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "period"
+   ],
+   "parent": [
+    "classHistory"
+   ],
+   "metric": "required:classHistory.period",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Encounter.classHistory.period has base cardinality min>=1"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "serviceType"
+   ],
+   "max": 1,
+   "metric": "max_card:serviceType",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "priority"
+   ],
+   "max": 1,
+   "metric": "max_card:priority",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "targets": [
+    "Group",
+    "Patient"
+   ],
+   "metric": "ref_target:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Group/Patient"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "subject"
+   ],
+   "max": 1,
+   "metric": "max_card:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "episodeOfCare"
+   ],
+   "parent": null,
+   "targets": [
+    "EpisodeOfCare"
+   ],
+   "metric": "ref_target:episodeOfCare",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at EpisodeOfCare"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "basedOn"
+   ],
+   "parent": null,
+   "targets": [
+    "ServiceRequest"
+   ],
+   "metric": "ref_target:basedOn",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at ServiceRequest"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "individual"
+   ],
+   "parent": [
+    "participant"
+   ],
+   "targets": [
+    "Practitioner",
+    "PractitionerRole",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:participant.individual",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Practitioner/PractitionerRole/RelatedPerson"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "appointment"
+   ],
+   "parent": null,
+   "targets": [
+    "Appointment"
+   ],
+   "metric": "ref_target:appointment",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Appointment"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "period"
+   ],
+   "max": 1,
+   "metric": "max_card:period",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "length"
+   ],
+   "max": 1,
+   "metric": "max_card:length",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "reasonReference"
+   ],
+   "parent": null,
+   "targets": [
+    "Condition",
+    "ImmunizationRecommendation",
+    "Observation",
+    "Procedure"
+   ],
+   "metric": "ref_target:reasonReference",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Condition/ImmunizationRecommendation/Observation/Procedure"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "condition"
+   ],
+   "parent": [
+    "diagnosis"
+   ],
+   "metric": "required:diagnosis.condition",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Encounter.diagnosis.condition has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "condition"
+   ],
+   "parent": [
+    "diagnosis"
+   ],
+   "targets": [
+    "Condition",
+    "Procedure"
+   ],
+   "metric": "ref_target:diagnosis.condition",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Condition/Procedure"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "account"
+   ],
+   "parent": null,
+   "targets": [
+    "Account"
+   ],
+   "metric": "ref_target:account",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Account"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "hospitalization"
+   ],
+   "max": 1,
+   "metric": "max_card:hospitalization",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "origin"
+   ],
+   "parent": [
+    "hospitalization"
+   ],
+   "targets": [
+    "Location",
+    "Organization"
+   ],
+   "metric": "ref_target:hospitalization.origin",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Location/Organization"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "destination"
+   ],
+   "parent": [
+    "hospitalization"
+   ],
+   "targets": [
+    "Location",
+    "Organization"
+   ],
+   "metric": "ref_target:hospitalization.destination",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Location/Organization"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "location"
+   ],
+   "parent": [
+    "location"
+   ],
+   "metric": "required:location.location",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Encounter.location.location has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "location"
+   ],
+   "parent": [
+    "location"
+   ],
+   "targets": [
+    "Location"
+   ],
+   "metric": "ref_target:location.location",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Location"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "status"
+   ],
+   "parent": [
+    "location"
+   ],
+   "codes": [
+    "active",
+    "completed",
+    "planned",
+    "reserved"
+   ],
+   "metric": "binding:location.status",
+   "source": "http://hl7.org/fhir/ValueSet/encounter-location-status",
+   "description": "required binding (4 codes)"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "serviceProvider"
+   ],
+   "parent": null,
+   "targets": [
+    "Organization"
+   ],
+   "metric": "ref_target:serviceProvider",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "serviceProvider"
+   ],
+   "max": 1,
+   "metric": "max_card:serviceProvider",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "partOf"
+   ],
+   "parent": null,
+   "targets": [
+    "Encounter"
+   ],
+   "metric": "ref_target:partOf",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Encounter"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "partOf"
+   ],
+   "max": 1,
+   "metric": "max_card:partOf",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "identifier"
+   ],
+   "parent": null,
+   "metric": "ms:identifier",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "system"
+   ],
+   "parent": [
+    "identifier"
+   ],
+   "metric": "ms:identifier.system",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "value"
+   ],
+   "parent": [
+    "identifier"
+   ],
+   "metric": "ms:identifier.value",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "ms:status",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "class"
+   ],
+   "parent": null,
+   "metric": "ms:class",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "type"
+   ],
+   "parent": null,
+   "metric": "ms:type",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "metric": "ms:subject",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "participant"
+   ],
+   "parent": null,
+   "metric": "ms:participant",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "type"
+   ],
+   "parent": [
+    "participant"
+   ],
+   "metric": "ms:participant.type",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "period"
+   ],
+   "parent": [
+    "participant"
+   ],
+   "metric": "ms:participant.period",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "individual"
+   ],
+   "parent": [
+    "participant"
+   ],
+   "metric": "ms:participant.individual",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "period"
+   ],
+   "parent": null,
+   "metric": "ms:period",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "reasonCode"
+   ],
+   "parent": null,
+   "metric": "ms:reasonCode",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "reasonReference"
+   ],
+   "parent": null,
+   "metric": "ms:reasonReference",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "hospitalization"
+   ],
+   "parent": null,
+   "metric": "ms:hospitalization",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "dischargeDisposition"
+   ],
+   "parent": [
+    "hospitalization"
+   ],
+   "metric": "ms:hospitalization.dischargeDisposition",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "location"
+   ],
+   "parent": null,
+   "metric": "ms:location",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "location"
+   ],
+   "parent": [
+    "location"
+   ],
+   "metric": "ms:location.location",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "serviceProvider"
+   ],
+   "parent": null,
+   "metric": "ms:serviceProvider",
+   "source": "us-core-encounter",
+   "description": "US Core must-support (us-core-encounter)"
+  }
+ ]
+}

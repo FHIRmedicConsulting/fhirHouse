@@ -1,0 +1,583 @@
+{
+ "resourceType": "Immunization",
+ "domain": "clinical",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "required",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "required:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Immunization.status has base cardinality min>=1"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "codes": [
+    "completed",
+    "entered-in-error",
+    "not-done"
+   ],
+   "metric": "binding:status",
+   "source": "http://hl7.org/fhir/ValueSet/immunization-status",
+   "description": "required binding (3 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "status"
+   ],
+   "max": 1,
+   "metric": "max_card:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "statusReason"
+   ],
+   "max": 1,
+   "metric": "max_card:statusReason",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "vaccineCode"
+   ],
+   "parent": null,
+   "metric": "required:vaccineCode",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Immunization.vaccineCode has base cardinality min>=1"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "vaccineCode"
+   ],
+   "max": 1,
+   "metric": "max_card:vaccineCode",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "patient"
+   ],
+   "parent": null,
+   "metric": "required:patient",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Immunization.patient has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "patient"
+   ],
+   "parent": null,
+   "targets": [
+    "Patient"
+   ],
+   "metric": "ref_target:patient",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Patient"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "patient"
+   ],
+   "max": 1,
+   "metric": "max_card:patient",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "encounter"
+   ],
+   "parent": null,
+   "targets": [
+    "Encounter"
+   ],
+   "metric": "ref_target:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Encounter"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "encounter"
+   ],
+   "max": 1,
+   "metric": "max_card:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "occurrenceDateTime"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:occurrenceDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "occurrenceDateTime"
+   ],
+   "parent": null,
+   "metric": "date_range:occurrenceDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "occurrenceDateTime"
+   ],
+   "max": 1,
+   "metric": "max_card:occurrenceDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "occurrenceString"
+   ],
+   "max": 1,
+   "metric": "max_card:occurrenceString",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "recorded"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:recorded",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "recorded"
+   ],
+   "parent": null,
+   "metric": "date_range:recorded",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "recorded"
+   ],
+   "max": 1,
+   "metric": "max_card:recorded",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "primarySource"
+   ],
+   "max": 1,
+   "metric": "max_card:primarySource",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "reportOrigin"
+   ],
+   "max": 1,
+   "metric": "max_card:reportOrigin",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "location"
+   ],
+   "parent": null,
+   "targets": [
+    "Location"
+   ],
+   "metric": "ref_target:location",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Location"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "location"
+   ],
+   "max": 1,
+   "metric": "max_card:location",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "manufacturer"
+   ],
+   "parent": null,
+   "targets": [
+    "Organization"
+   ],
+   "metric": "ref_target:manufacturer",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "manufacturer"
+   ],
+   "max": 1,
+   "metric": "max_card:manufacturer",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "lotNumber"
+   ],
+   "max": 1,
+   "metric": "max_card:lotNumber",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "expirationDate"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2})?)?$",
+   "metric": "format:expirationDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "date lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "expirationDate"
+   ],
+   "parent": null,
+   "metric": "date_range:expirationDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "expirationDate"
+   ],
+   "max": 1,
+   "metric": "max_card:expirationDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "site"
+   ],
+   "max": 1,
+   "metric": "max_card:site",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "route"
+   ],
+   "max": 1,
+   "metric": "max_card:route",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "doseQuantity"
+   ],
+   "max": 1,
+   "metric": "max_card:doseQuantity",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "actor"
+   ],
+   "parent": [
+    "performer"
+   ],
+   "metric": "required:performer.actor",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Immunization.performer.actor has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "actor"
+   ],
+   "parent": [
+    "performer"
+   ],
+   "targets": [
+    "Organization",
+    "Practitioner",
+    "PractitionerRole"
+   ],
+   "metric": "ref_target:performer.actor",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization/Practitioner/PractitionerRole"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "reasonReference"
+   ],
+   "parent": null,
+   "targets": [
+    "Condition",
+    "DiagnosticReport",
+    "Observation"
+   ],
+   "metric": "ref_target:reasonReference",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Condition/DiagnosticReport/Observation"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "isSubpotent"
+   ],
+   "max": 1,
+   "metric": "max_card:isSubpotent",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "publicationDate"
+   ],
+   "parent": [
+    "education"
+   ],
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:education.publicationDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "publicationDate"
+   ],
+   "parent": [
+    "education"
+   ],
+   "metric": "date_range:education.publicationDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "presentationDate"
+   ],
+   "parent": [
+    "education"
+   ],
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:education.presentationDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "presentationDate"
+   ],
+   "parent": [
+    "education"
+   ],
+   "metric": "date_range:education.presentationDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "fundingSource"
+   ],
+   "max": 1,
+   "metric": "max_card:fundingSource",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "date"
+   ],
+   "parent": [
+    "reaction"
+   ],
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:reaction.date",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "date"
+   ],
+   "parent": [
+    "reaction"
+   ],
+   "metric": "date_range:reaction.date",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "detail"
+   ],
+   "parent": [
+    "reaction"
+   ],
+   "targets": [
+    "Observation"
+   ],
+   "metric": "ref_target:reaction.detail",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Observation"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "authority"
+   ],
+   "parent": [
+    "protocolApplied"
+   ],
+   "targets": [
+    "Organization"
+   ],
+   "metric": "ref_target:protocolApplied.authority",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "ms:status",
+   "source": "us-core-immunization",
+   "description": "US Core must-support (us-core-immunization)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "statusReason"
+   ],
+   "parent": null,
+   "metric": "ms:statusReason",
+   "source": "us-core-immunization",
+   "description": "US Core must-support (us-core-immunization)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "vaccineCode"
+   ],
+   "parent": null,
+   "metric": "ms:vaccineCode",
+   "source": "us-core-immunization",
+   "description": "US Core must-support (us-core-immunization)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "patient"
+   ],
+   "parent": null,
+   "metric": "ms:patient",
+   "source": "us-core-immunization",
+   "description": "US Core must-support (us-core-immunization)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "occurrenceDateTime"
+   ],
+   "parent": null,
+   "metric": "ms:occurrenceDateTime",
+   "source": "us-core-immunization",
+   "description": "US Core must-support (us-core-immunization)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "occurrenceString"
+   ],
+   "parent": null,
+   "metric": "ms:occurrenceString",
+   "source": "us-core-immunization",
+   "description": "US Core must-support (us-core-immunization)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "primarySource"
+   ],
+   "parent": null,
+   "metric": "ms:primarySource",
+   "source": "us-core-immunization",
+   "description": "US Core must-support (us-core-immunization)"
+  }
+ ]
+}

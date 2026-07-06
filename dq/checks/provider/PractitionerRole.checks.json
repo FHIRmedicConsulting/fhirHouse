@@ -1,0 +1,306 @@
+{
+ "resourceType": "PractitionerRole",
+ "domain": "provider",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "active"
+   ],
+   "max": 1,
+   "metric": "max_card:active",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "period"
+   ],
+   "max": 1,
+   "metric": "max_card:period",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "practitioner"
+   ],
+   "parent": null,
+   "targets": [
+    "Practitioner"
+   ],
+   "metric": "ref_target:practitioner",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Practitioner"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "practitioner"
+   ],
+   "max": 1,
+   "metric": "max_card:practitioner",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "organization"
+   ],
+   "parent": null,
+   "targets": [
+    "Organization"
+   ],
+   "metric": "ref_target:organization",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "organization"
+   ],
+   "max": 1,
+   "metric": "max_card:organization",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "location"
+   ],
+   "parent": null,
+   "targets": [
+    "Location"
+   ],
+   "metric": "ref_target:location",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Location"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "healthcareService"
+   ],
+   "parent": null,
+   "targets": [
+    "HealthcareService"
+   ],
+   "metric": "ref_target:healthcareService",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at HealthcareService"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "daysOfWeek"
+   ],
+   "parent": [
+    "availableTime"
+   ],
+   "codes": [
+    "fri",
+    "mon",
+    "sat",
+    "sun",
+    "thu",
+    "tue",
+    "wed"
+   ],
+   "metric": "binding:availableTime.daysOfWeek",
+   "source": "http://hl7.org/fhir/ValueSet/days-of-week",
+   "description": "required binding (7 codes)"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "availableStartTime"
+   ],
+   "parent": [
+    "availableTime"
+   ],
+   "regex": "^\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?$",
+   "metric": "format:availableTime.availableStartTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "time lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "availableStartTime"
+   ],
+   "parent": [
+    "availableTime"
+   ],
+   "metric": "date_range:availableTime.availableStartTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "availableEndTime"
+   ],
+   "parent": [
+    "availableTime"
+   ],
+   "regex": "^\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?$",
+   "metric": "format:availableTime.availableEndTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "time lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "availableEndTime"
+   ],
+   "parent": [
+    "availableTime"
+   ],
+   "metric": "date_range:availableTime.availableEndTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "description"
+   ],
+   "parent": [
+    "notAvailable"
+   ],
+   "metric": "required:notAvailable.description",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "PractitionerRole.notAvailable.description has base cardinality min>=1"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "availabilityExceptions"
+   ],
+   "max": 1,
+   "metric": "max_card:availabilityExceptions",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "endpoint"
+   ],
+   "parent": null,
+   "targets": [
+    "Endpoint"
+   ],
+   "metric": "ref_target:endpoint",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Endpoint"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "practitioner"
+   ],
+   "parent": null,
+   "metric": "ms:practitioner",
+   "source": "us-core-practitionerrole",
+   "description": "US Core must-support (us-core-practitionerrole)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "organization"
+   ],
+   "parent": null,
+   "metric": "ms:organization",
+   "source": "us-core-practitionerrole",
+   "description": "US Core must-support (us-core-practitionerrole)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "code"
+   ],
+   "parent": null,
+   "metric": "ms:code",
+   "source": "us-core-practitionerrole",
+   "description": "US Core must-support (us-core-practitionerrole)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "specialty"
+   ],
+   "parent": null,
+   "metric": "ms:specialty",
+   "source": "us-core-practitionerrole",
+   "description": "US Core must-support (us-core-practitionerrole)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "location"
+   ],
+   "parent": null,
+   "metric": "ms:location",
+   "source": "us-core-practitionerrole",
+   "description": "US Core must-support (us-core-practitionerrole)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "telecom"
+   ],
+   "parent": null,
+   "metric": "ms:telecom",
+   "source": "us-core-practitionerrole",
+   "description": "US Core must-support (us-core-practitionerrole)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "system"
+   ],
+   "parent": [
+    "telecom"
+   ],
+   "metric": "ms:telecom.system",
+   "source": "us-core-practitionerrole",
+   "description": "US Core must-support (us-core-practitionerrole)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "value"
+   ],
+   "parent": [
+    "telecom"
+   ],
+   "metric": "ms:telecom.value",
+   "source": "us-core-practitionerrole",
+   "description": "US Core must-support (us-core-practitionerrole)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "endpoint"
+   ],
+   "parent": null,
+   "metric": "ms:endpoint",
+   "source": "us-core-practitionerrole",
+   "description": "US Core must-support (us-core-practitionerrole)"
+  }
+ ]
+}

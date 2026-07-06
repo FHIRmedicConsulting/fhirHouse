@@ -34,6 +34,9 @@ class PathCatalog:
     def dq_score_path(self) -> str:
         return f"{self.base}/gold/dq_score"
 
+    def dq_profile_path(self) -> str:
+        return f"{self.base}/gold/dq_profile"
+
     def pprl_tokens_path(self) -> str:
         return f"{self.base}/gold/pprl_tokens"
 

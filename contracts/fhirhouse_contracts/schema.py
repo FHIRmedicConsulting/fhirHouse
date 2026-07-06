@@ -41,6 +41,10 @@ FHIRHOUSE_TABLES: dict[str, list[str]] = {
         "run_id", "computed_at", "tier", "resource_type", "dimension", "metric",
         "numerator", "denominator", "score", "details_json", "dq_version",
     ],
+    "dq_profile": [
+        "run_id", "computed_at", "tier", "resource_type", "subject", "stat",
+        "value_num", "value_text", "dq_version",
+    ],
 }
 
 

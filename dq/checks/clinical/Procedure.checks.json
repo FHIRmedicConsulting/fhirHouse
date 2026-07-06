@@ -1,0 +1,540 @@
+{
+ "resourceType": "Procedure",
+ "domain": "clinical",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "reference_target",
+   "path": [
+    "basedOn"
+   ],
+   "parent": null,
+   "targets": [
+    "CarePlan",
+    "ServiceRequest"
+   ],
+   "metric": "ref_target:basedOn",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at CarePlan/ServiceRequest"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "partOf"
+   ],
+   "parent": null,
+   "targets": [
+    "MedicationAdministration",
+    "Observation",
+    "Procedure"
+   ],
+   "metric": "ref_target:partOf",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at MedicationAdministration/Observation/Procedure"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "required:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Procedure.status has base cardinality min>=1"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "codes": [
+    "completed",
+    "entered-in-error",
+    "in-progress",
+    "not-done",
+    "on-hold",
+    "preparation",
+    "stopped",
+    "unknown"
+   ],
+   "metric": "binding:status",
+   "source": "http://hl7.org/fhir/ValueSet/event-status",
+   "description": "required binding (8 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "status"
+   ],
+   "max": 1,
+   "metric": "max_card:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "statusReason"
+   ],
+   "max": 1,
+   "metric": "max_card:statusReason",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "category"
+   ],
+   "max": 1,
+   "metric": "max_card:category",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "code"
+   ],
+   "max": 1,
+   "metric": "max_card:code",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "metric": "required:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Procedure.subject has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "targets": [
+    "Group",
+    "Patient"
+   ],
+   "metric": "ref_target:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Group/Patient"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "subject"
+   ],
+   "max": 1,
+   "metric": "max_card:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "encounter"
+   ],
+   "parent": null,
+   "targets": [
+    "Encounter"
+   ],
+   "metric": "ref_target:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Encounter"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "encounter"
+   ],
+   "max": 1,
+   "metric": "max_card:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "performedDateTime"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:performedDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "performedDateTime"
+   ],
+   "parent": null,
+   "metric": "date_range:performedDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "performedDateTime"
+   ],
+   "max": 1,
+   "metric": "max_card:performedDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "performedPeriod"
+   ],
+   "max": 1,
+   "metric": "max_card:performedPeriod",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "performedString"
+   ],
+   "max": 1,
+   "metric": "max_card:performedString",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "performedAge"
+   ],
+   "max": 1,
+   "metric": "max_card:performedAge",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "performedRange"
+   ],
+   "max": 1,
+   "metric": "max_card:performedRange",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "recorder"
+   ],
+   "parent": null,
+   "targets": [
+    "Patient",
+    "Practitioner",
+    "PractitionerRole",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:recorder",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Patient/Practitioner/PractitionerRole/RelatedPerson"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "recorder"
+   ],
+   "max": 1,
+   "metric": "max_card:recorder",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "asserter"
+   ],
+   "parent": null,
+   "targets": [
+    "Patient",
+    "Practitioner",
+    "PractitionerRole",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:asserter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Patient/Practitioner/PractitionerRole/RelatedPerson"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "asserter"
+   ],
+   "max": 1,
+   "metric": "max_card:asserter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "actor"
+   ],
+   "parent": [
+    "performer"
+   ],
+   "metric": "required:performer.actor",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Procedure.performer.actor has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "actor"
+   ],
+   "parent": [
+    "performer"
+   ],
+   "targets": [
+    "Device",
+    "Organization",
+    "Patient",
+    "Practitioner",
+    "PractitionerRole",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:performer.actor",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Device/Organization/Patient/Practitioner"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "onBehalfOf"
+   ],
+   "parent": [
+    "performer"
+   ],
+   "targets": [
+    "Organization"
+   ],
+   "metric": "ref_target:performer.onBehalfOf",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "location"
+   ],
+   "parent": null,
+   "targets": [
+    "Location"
+   ],
+   "metric": "ref_target:location",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Location"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "location"
+   ],
+   "max": 1,
+   "metric": "max_card:location",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "reasonReference"
+   ],
+   "parent": null,
+   "targets": [
+    "Condition",
+    "DiagnosticReport",
+    "DocumentReference",
+    "Observation",
+    "Procedure"
+   ],
+   "metric": "ref_target:reasonReference",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Condition/DiagnosticReport/DocumentReference/Observation"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "outcome"
+   ],
+   "max": 1,
+   "metric": "max_card:outcome",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "report"
+   ],
+   "parent": null,
+   "targets": [
+    "Composition",
+    "DiagnosticReport",
+    "DocumentReference"
+   ],
+   "metric": "ref_target:report",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Composition/DiagnosticReport/DocumentReference"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "complicationDetail"
+   ],
+   "parent": null,
+   "targets": [
+    "Condition"
+   ],
+   "metric": "ref_target:complicationDetail",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Condition"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "manipulated"
+   ],
+   "parent": [
+    "focalDevice"
+   ],
+   "metric": "required:focalDevice.manipulated",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Procedure.focalDevice.manipulated has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "manipulated"
+   ],
+   "parent": [
+    "focalDevice"
+   ],
+   "targets": [
+    "Device"
+   ],
+   "metric": "ref_target:focalDevice.manipulated",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Device"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "usedReference"
+   ],
+   "parent": null,
+   "targets": [
+    "Device",
+    "Medication",
+    "Substance"
+   ],
+   "metric": "ref_target:usedReference",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Device/Medication/Substance"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "ms:status",
+   "source": "us-core-procedure",
+   "description": "US Core must-support (us-core-procedure)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "code"
+   ],
+   "parent": null,
+   "metric": "ms:code",
+   "source": "us-core-procedure",
+   "description": "US Core must-support (us-core-procedure)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "metric": "ms:subject",
+   "source": "us-core-procedure",
+   "description": "US Core must-support (us-core-procedure)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "performedDateTime"
+   ],
+   "parent": null,
+   "metric": "ms:performedDateTime",
+   "source": "us-core-procedure",
+   "description": "US Core must-support (us-core-procedure)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "performedPeriod"
+   ],
+   "parent": null,
+   "metric": "ms:performedPeriod",
+   "source": "us-core-procedure",
+   "description": "US Core must-support (us-core-procedure)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "performedString"
+   ],
+   "parent": null,
+   "metric": "ms:performedString",
+   "source": "us-core-procedure",
+   "description": "US Core must-support (us-core-procedure)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "performedAge"
+   ],
+   "parent": null,
+   "metric": "ms:performedAge",
+   "source": "us-core-procedure",
+   "description": "US Core must-support (us-core-procedure)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "performedRange"
+   ],
+   "parent": null,
+   "metric": "ms:performedRange",
+   "source": "us-core-procedure",
+   "description": "US Core must-support (us-core-procedure)"
+  }
+ ]
+}

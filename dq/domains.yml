@@ -1,0 +1,23 @@
+# fhirHouse DQ domains (FH-0004 §1): which resource types each governance domain
+# covers, and the US Core profile whose must-support elements drive the domain's
+# completeness expectations. Extend per deployment; regenerate check suites with
+#   python -m fhirhouse_dq.generate_checks
+domains:
+  patient_member:
+    Patient: { us_core: us-core-patient }
+    Coverage: { us_core: us-core-coverage }
+    RelatedPerson: {}
+  provider:
+    Practitioner: { us_core: us-core-practitioner }
+    PractitionerRole: { us_core: us-core-practitionerrole }
+    Organization: { us_core: us-core-organization }
+    Location: { us_core: us-core-location }
+  clinical:
+    Encounter: { us_core: us-core-encounter }
+    Condition: { us_core: us-core-condition-problems-health-concerns }
+    Observation: { us_core: us-core-observation-lab }
+    Procedure: { us_core: us-core-procedure }
+    MedicationRequest: { us_core: us-core-medicationrequest }
+    AllergyIntolerance: { us_core: us-core-allergyintolerance }
+    Immunization: { us_core: us-core-immunization }
+    DiagnosticReport: { us_core: us-core-diagnosticreport-lab }

@@ -1,0 +1,754 @@
+{
+ "resourceType": "Observation",
+ "domain": "clinical",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "reference_target",
+   "path": [
+    "basedOn"
+   ],
+   "parent": null,
+   "targets": [
+    "CarePlan",
+    "DeviceRequest",
+    "ImmunizationRecommendation",
+    "MedicationRequest",
+    "NutritionOrder",
+    "ServiceRequest"
+   ],
+   "metric": "ref_target:basedOn",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at CarePlan/DeviceRequest/ImmunizationRecommendation/MedicationRequest"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "partOf"
+   ],
+   "parent": null,
+   "targets": [
+    "ImagingStudy",
+    "Immunization",
+    "MedicationAdministration",
+    "MedicationDispense",
+    "MedicationStatement",
+    "Procedure"
+   ],
+   "metric": "ref_target:partOf",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at ImagingStudy/Immunization/MedicationAdministration/MedicationDispense"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "required:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Observation.status has base cardinality min>=1"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "codes": [
+    "amended",
+    "cancelled",
+    "corrected",
+    "entered-in-error",
+    "final",
+    "preliminary",
+    "registered",
+    "unknown"
+   ],
+   "metric": "binding:status",
+   "source": "http://hl7.org/fhir/ValueSet/observation-status",
+   "description": "required binding (8 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "status"
+   ],
+   "max": 1,
+   "metric": "max_card:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "code"
+   ],
+   "parent": null,
+   "metric": "required:code",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Observation.code has base cardinality min>=1"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "code"
+   ],
+   "max": 1,
+   "metric": "max_card:code",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "targets": [
+    "Device",
+    "Group",
+    "Location",
+    "Patient"
+   ],
+   "metric": "ref_target:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Device/Group/Location/Patient"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "subject"
+   ],
+   "max": 1,
+   "metric": "max_card:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "encounter"
+   ],
+   "parent": null,
+   "targets": [
+    "Encounter"
+   ],
+   "metric": "ref_target:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Encounter"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "encounter"
+   ],
+   "max": 1,
+   "metric": "max_card:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "effectiveDateTime"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:effectiveDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "effectiveDateTime"
+   ],
+   "parent": null,
+   "metric": "date_range:effectiveDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "effectiveInstant"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$",
+   "metric": "format:effectiveInstant",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "instant lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "effectiveInstant"
+   ],
+   "parent": null,
+   "metric": "date_range:effectiveInstant",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "effectiveDateTime"
+   ],
+   "max": 1,
+   "metric": "max_card:effectiveDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "effectivePeriod"
+   ],
+   "max": 1,
+   "metric": "max_card:effectivePeriod",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "effectiveTiming"
+   ],
+   "max": 1,
+   "metric": "max_card:effectiveTiming",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "effectiveInstant"
+   ],
+   "max": 1,
+   "metric": "max_card:effectiveInstant",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "issued"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$",
+   "metric": "format:issued",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "instant lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "issued"
+   ],
+   "parent": null,
+   "metric": "date_range:issued",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "issued"
+   ],
+   "max": 1,
+   "metric": "max_card:issued",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "performer"
+   ],
+   "parent": null,
+   "targets": [
+    "CareTeam",
+    "Organization",
+    "Patient",
+    "Practitioner",
+    "PractitionerRole",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:performer",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at CareTeam/Organization/Patient/Practitioner"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "valueTime"
+   ],
+   "parent": null,
+   "regex": "^\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?$",
+   "metric": "format:valueTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "time lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "valueTime"
+   ],
+   "parent": null,
+   "metric": "date_range:valueTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "valueDateTime"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:valueDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "valueDateTime"
+   ],
+   "parent": null,
+   "metric": "date_range:valueDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "valueQuantity"
+   ],
+   "max": 1,
+   "metric": "max_card:valueQuantity",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "valueCodeableConcept"
+   ],
+   "max": 1,
+   "metric": "max_card:valueCodeableConcept",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "valueString"
+   ],
+   "max": 1,
+   "metric": "max_card:valueString",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "valueBoolean"
+   ],
+   "max": 1,
+   "metric": "max_card:valueBoolean",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "valueInteger"
+   ],
+   "max": 1,
+   "metric": "max_card:valueInteger",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "valueRange"
+   ],
+   "max": 1,
+   "metric": "max_card:valueRange",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "valueRatio"
+   ],
+   "max": 1,
+   "metric": "max_card:valueRatio",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "valueSampledData"
+   ],
+   "max": 1,
+   "metric": "max_card:valueSampledData",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "valueTime"
+   ],
+   "max": 1,
+   "metric": "max_card:valueTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "valueDateTime"
+   ],
+   "max": 1,
+   "metric": "max_card:valueDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "valuePeriod"
+   ],
+   "max": 1,
+   "metric": "max_card:valuePeriod",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "dataAbsentReason"
+   ],
+   "max": 1,
+   "metric": "max_card:dataAbsentReason",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "bodySite"
+   ],
+   "max": 1,
+   "metric": "max_card:bodySite",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "method"
+   ],
+   "max": 1,
+   "metric": "max_card:method",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "specimen"
+   ],
+   "parent": null,
+   "targets": [
+    "Specimen"
+   ],
+   "metric": "ref_target:specimen",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Specimen"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "specimen"
+   ],
+   "max": 1,
+   "metric": "max_card:specimen",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "device"
+   ],
+   "parent": null,
+   "targets": [
+    "Device",
+    "DeviceMetric"
+   ],
+   "metric": "ref_target:device",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Device/DeviceMetric"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "device"
+   ],
+   "max": 1,
+   "metric": "max_card:device",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "hasMember"
+   ],
+   "parent": null,
+   "targets": [
+    "MolecularSequence",
+    "Observation",
+    "QuestionnaireResponse"
+   ],
+   "metric": "ref_target:hasMember",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at MolecularSequence/Observation/QuestionnaireResponse"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "derivedFrom"
+   ],
+   "parent": null,
+   "targets": [
+    "DocumentReference",
+    "ImagingStudy",
+    "Media",
+    "MolecularSequence",
+    "Observation",
+    "QuestionnaireResponse"
+   ],
+   "metric": "ref_target:derivedFrom",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at DocumentReference/ImagingStudy/Media/MolecularSequence"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "code"
+   ],
+   "parent": [
+    "component"
+   ],
+   "metric": "required:component.code",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Observation.component.code has base cardinality min>=1"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "valueTime"
+   ],
+   "parent": [
+    "component"
+   ],
+   "regex": "^\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?$",
+   "metric": "format:component.valueTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "time lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "valueTime"
+   ],
+   "parent": [
+    "component"
+   ],
+   "metric": "date_range:component.valueTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "valueDateTime"
+   ],
+   "parent": [
+    "component"
+   ],
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:component.valueDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "valueDateTime"
+   ],
+   "parent": [
+    "component"
+   ],
+   "metric": "date_range:component.valueDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "category"
+   ],
+   "parent": null,
+   "metric": "ms:category",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "code"
+   ],
+   "parent": null,
+   "metric": "ms:code",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "valueQuantity"
+   ],
+   "parent": null,
+   "metric": "ms:valueQuantity",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "valueCodeableConcept"
+   ],
+   "parent": null,
+   "metric": "ms:valueCodeableConcept",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "valueString"
+   ],
+   "parent": null,
+   "metric": "ms:valueString",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "valueBoolean"
+   ],
+   "parent": null,
+   "metric": "ms:valueBoolean",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "valueInteger"
+   ],
+   "parent": null,
+   "metric": "ms:valueInteger",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "valueRange"
+   ],
+   "parent": null,
+   "metric": "ms:valueRange",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "valueRatio"
+   ],
+   "parent": null,
+   "metric": "ms:valueRatio",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "valueSampledData"
+   ],
+   "parent": null,
+   "metric": "ms:valueSampledData",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "valueTime"
+   ],
+   "parent": null,
+   "metric": "ms:valueTime",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "valueDateTime"
+   ],
+   "parent": null,
+   "metric": "ms:valueDateTime",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "valuePeriod"
+   ],
+   "parent": null,
+   "metric": "ms:valuePeriod",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "specimen"
+   ],
+   "parent": null,
+   "metric": "ms:specimen",
+   "source": "us-core-observation-lab",
+   "description": "US Core must-support (us-core-observation-lab)"
+  }
+ ]
+}

@@ -1,0 +1,501 @@
+{
+ "resourceType": "AllergyIntolerance",
+ "domain": "clinical",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "binding",
+   "path": [
+    "clinicalStatus",
+    "coding",
+    "code"
+   ],
+   "parent": null,
+   "codes": [
+    "active",
+    "inactive",
+    "resolved"
+   ],
+   "metric": "binding:clinicalStatus",
+   "source": "http://hl7.org/fhir/ValueSet/allergyintolerance-clinical",
+   "description": "required binding (3 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "clinicalStatus"
+   ],
+   "max": 1,
+   "metric": "max_card:clinicalStatus",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "verificationStatus",
+    "coding",
+    "code"
+   ],
+   "parent": null,
+   "codes": [
+    "confirmed",
+    "entered-in-error",
+    "refuted",
+    "unconfirmed"
+   ],
+   "metric": "binding:verificationStatus",
+   "source": "http://hl7.org/fhir/ValueSet/allergyintolerance-verification",
+   "description": "required binding (4 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "verificationStatus"
+   ],
+   "max": 1,
+   "metric": "max_card:verificationStatus",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "type"
+   ],
+   "parent": null,
+   "codes": [
+    "allergy",
+    "intolerance"
+   ],
+   "metric": "binding:type",
+   "source": "http://hl7.org/fhir/ValueSet/allergy-intolerance-type",
+   "description": "required binding (2 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "type"
+   ],
+   "max": 1,
+   "metric": "max_card:type",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "category"
+   ],
+   "parent": null,
+   "codes": [
+    "biologic",
+    "environment",
+    "food",
+    "medication"
+   ],
+   "metric": "binding:category",
+   "source": "http://hl7.org/fhir/ValueSet/allergy-intolerance-category",
+   "description": "required binding (4 codes)"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "criticality"
+   ],
+   "parent": null,
+   "codes": [
+    "high",
+    "low",
+    "unable-to-assess"
+   ],
+   "metric": "binding:criticality",
+   "source": "http://hl7.org/fhir/ValueSet/allergy-intolerance-criticality",
+   "description": "required binding (3 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "criticality"
+   ],
+   "max": 1,
+   "metric": "max_card:criticality",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "code"
+   ],
+   "max": 1,
+   "metric": "max_card:code",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "patient"
+   ],
+   "parent": null,
+   "metric": "required:patient",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "AllergyIntolerance.patient has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "patient"
+   ],
+   "parent": null,
+   "targets": [
+    "Patient"
+   ],
+   "metric": "ref_target:patient",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Patient"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "patient"
+   ],
+   "max": 1,
+   "metric": "max_card:patient",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "encounter"
+   ],
+   "parent": null,
+   "targets": [
+    "Encounter"
+   ],
+   "metric": "ref_target:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Encounter"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "encounter"
+   ],
+   "max": 1,
+   "metric": "max_card:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "onsetDateTime"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:onsetDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "onsetDateTime"
+   ],
+   "parent": null,
+   "metric": "date_range:onsetDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "onsetDateTime"
+   ],
+   "max": 1,
+   "metric": "max_card:onsetDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "onsetAge"
+   ],
+   "max": 1,
+   "metric": "max_card:onsetAge",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "onsetPeriod"
+   ],
+   "max": 1,
+   "metric": "max_card:onsetPeriod",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "onsetRange"
+   ],
+   "max": 1,
+   "metric": "max_card:onsetRange",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "onsetString"
+   ],
+   "max": 1,
+   "metric": "max_card:onsetString",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "recordedDate"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:recordedDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "recordedDate"
+   ],
+   "parent": null,
+   "metric": "date_range:recordedDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "recordedDate"
+   ],
+   "max": 1,
+   "metric": "max_card:recordedDate",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "recorder"
+   ],
+   "parent": null,
+   "targets": [
+    "Patient",
+    "Practitioner",
+    "PractitionerRole",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:recorder",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Patient/Practitioner/PractitionerRole/RelatedPerson"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "recorder"
+   ],
+   "max": 1,
+   "metric": "max_card:recorder",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "asserter"
+   ],
+   "parent": null,
+   "targets": [
+    "Patient",
+    "Practitioner",
+    "PractitionerRole",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:asserter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Patient/Practitioner/PractitionerRole/RelatedPerson"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "asserter"
+   ],
+   "max": 1,
+   "metric": "max_card:asserter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "lastOccurrence"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:lastOccurrence",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "lastOccurrence"
+   ],
+   "parent": null,
+   "metric": "date_range:lastOccurrence",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "lastOccurrence"
+   ],
+   "max": 1,
+   "metric": "max_card:lastOccurrence",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "manifestation"
+   ],
+   "parent": [
+    "reaction"
+   ],
+   "metric": "required:reaction.manifestation",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "AllergyIntolerance.reaction.manifestation has base cardinality min>=1"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "onset"
+   ],
+   "parent": [
+    "reaction"
+   ],
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:reaction.onset",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "onset"
+   ],
+   "parent": [
+    "reaction"
+   ],
+   "metric": "date_range:reaction.onset",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "severity"
+   ],
+   "parent": [
+    "reaction"
+   ],
+   "codes": [
+    "mild",
+    "moderate",
+    "severe"
+   ],
+   "metric": "binding:reaction.severity",
+   "source": "http://hl7.org/fhir/ValueSet/reaction-event-severity",
+   "description": "required binding (3 codes)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "clinicalStatus"
+   ],
+   "parent": null,
+   "metric": "ms:clinicalStatus",
+   "source": "us-core-allergyintolerance",
+   "description": "US Core must-support (us-core-allergyintolerance)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "verificationStatus"
+   ],
+   "parent": null,
+   "metric": "ms:verificationStatus",
+   "source": "us-core-allergyintolerance",
+   "description": "US Core must-support (us-core-allergyintolerance)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "code"
+   ],
+   "parent": null,
+   "metric": "ms:code",
+   "source": "us-core-allergyintolerance",
+   "description": "US Core must-support (us-core-allergyintolerance)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "patient"
+   ],
+   "parent": null,
+   "metric": "ms:patient",
+   "source": "us-core-allergyintolerance",
+   "description": "US Core must-support (us-core-allergyintolerance)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "reaction"
+   ],
+   "parent": null,
+   "metric": "ms:reaction",
+   "source": "us-core-allergyintolerance",
+   "description": "US Core must-support (us-core-allergyintolerance)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "manifestation"
+   ],
+   "parent": [
+    "reaction"
+   ],
+   "metric": "ms:reaction.manifestation",
+   "source": "us-core-allergyintolerance",
+   "description": "US Core must-support (us-core-allergyintolerance)"
+  }
+ ]
+}

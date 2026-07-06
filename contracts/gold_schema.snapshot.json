@@ -47,6 +47,17 @@
  ],
  "fhir_version": "4.0.1",
  "fhirhouse_tables": {
+  "dq_profile": [
+   "run_id",
+   "computed_at",
+   "tier",
+   "resource_type",
+   "subject",
+   "stat",
+   "value_num",
+   "value_text",
+   "dq_version"
+  ],
   "dq_score": [
    "run_id",
    "computed_at",
@@ -111,7 +122,7 @@
    "unmerged_at"
   ]
  },
- "pinned_at": "2026-07-06T19:02:29+00:00",
+ "pinned_at": "2026-07-06T20:41:24+00:00",
  "resource_types": [
   "Account",
   "ActivityDefinition",

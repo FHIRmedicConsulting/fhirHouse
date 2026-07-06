@@ -1,0 +1,412 @@
+{
+ "resourceType": "DiagnosticReport",
+ "domain": "clinical",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "reference_target",
+   "path": [
+    "basedOn"
+   ],
+   "parent": null,
+   "targets": [
+    "CarePlan",
+    "ImmunizationRecommendation",
+    "MedicationRequest",
+    "NutritionOrder",
+    "ServiceRequest"
+   ],
+   "metric": "ref_target:basedOn",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at CarePlan/ImmunizationRecommendation/MedicationRequest/NutritionOrder"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "required:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "DiagnosticReport.status has base cardinality min>=1"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "codes": [
+    "amended",
+    "appended",
+    "cancelled",
+    "corrected",
+    "entered-in-error",
+    "final",
+    "partial",
+    "preliminary",
+    "registered",
+    "unknown"
+   ],
+   "metric": "binding:status",
+   "source": "http://hl7.org/fhir/ValueSet/diagnostic-report-status",
+   "description": "required binding (10 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "status"
+   ],
+   "max": 1,
+   "metric": "max_card:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "code"
+   ],
+   "parent": null,
+   "metric": "required:code",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "DiagnosticReport.code has base cardinality min>=1"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "code"
+   ],
+   "max": 1,
+   "metric": "max_card:code",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "targets": [
+    "Device",
+    "Group",
+    "Location",
+    "Patient"
+   ],
+   "metric": "ref_target:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Device/Group/Location/Patient"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "subject"
+   ],
+   "max": 1,
+   "metric": "max_card:subject",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "encounter"
+   ],
+   "parent": null,
+   "targets": [
+    "Encounter"
+   ],
+   "metric": "ref_target:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Encounter"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "encounter"
+   ],
+   "max": 1,
+   "metric": "max_card:encounter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "effectiveDateTime"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}(-\\d{2}(-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2}))?)?)?$",
+   "metric": "format:effectiveDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "dateTime lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "effectiveDateTime"
+   ],
+   "parent": null,
+   "metric": "date_range:effectiveDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "effectiveDateTime"
+   ],
+   "max": 1,
+   "metric": "max_card:effectiveDateTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "effectivePeriod"
+   ],
+   "max": 1,
+   "metric": "max_card:effectivePeriod",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "issued"
+   ],
+   "parent": null,
+   "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$",
+   "metric": "format:issued",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "instant lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "issued"
+   ],
+   "parent": null,
+   "metric": "date_range:issued",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "issued"
+   ],
+   "max": 1,
+   "metric": "max_card:issued",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "performer"
+   ],
+   "parent": null,
+   "targets": [
+    "CareTeam",
+    "Organization",
+    "Practitioner",
+    "PractitionerRole"
+   ],
+   "metric": "ref_target:performer",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at CareTeam/Organization/Practitioner/PractitionerRole"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "resultsInterpreter"
+   ],
+   "parent": null,
+   "targets": [
+    "CareTeam",
+    "Organization",
+    "Practitioner",
+    "PractitionerRole"
+   ],
+   "metric": "ref_target:resultsInterpreter",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at CareTeam/Organization/Practitioner/PractitionerRole"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "specimen"
+   ],
+   "parent": null,
+   "targets": [
+    "Specimen"
+   ],
+   "metric": "ref_target:specimen",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Specimen"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "result"
+   ],
+   "parent": null,
+   "targets": [
+    "Observation"
+   ],
+   "metric": "ref_target:result",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Observation"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "imagingStudy"
+   ],
+   "parent": null,
+   "targets": [
+    "ImagingStudy"
+   ],
+   "metric": "ref_target:imagingStudy",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at ImagingStudy"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "link"
+   ],
+   "parent": [
+    "media"
+   ],
+   "metric": "required:media.link",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "DiagnosticReport.media.link has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "link"
+   ],
+   "parent": [
+    "media"
+   ],
+   "targets": [
+    "Media"
+   ],
+   "metric": "ref_target:media.link",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Media"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "conclusion"
+   ],
+   "max": 1,
+   "metric": "max_card:conclusion",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "ms:status",
+   "source": "us-core-diagnosticreport-lab",
+   "description": "US Core must-support (us-core-diagnosticreport-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "category"
+   ],
+   "parent": null,
+   "metric": "ms:category",
+   "source": "us-core-diagnosticreport-lab",
+   "description": "US Core must-support (us-core-diagnosticreport-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "code"
+   ],
+   "parent": null,
+   "metric": "ms:code",
+   "source": "us-core-diagnosticreport-lab",
+   "description": "US Core must-support (us-core-diagnosticreport-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "subject"
+   ],
+   "parent": null,
+   "metric": "ms:subject",
+   "source": "us-core-diagnosticreport-lab",
+   "description": "US Core must-support (us-core-diagnosticreport-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "effectiveDateTime"
+   ],
+   "parent": null,
+   "metric": "ms:effectiveDateTime",
+   "source": "us-core-diagnosticreport-lab",
+   "description": "US Core must-support (us-core-diagnosticreport-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "effectivePeriod"
+   ],
+   "parent": null,
+   "metric": "ms:effectivePeriod",
+   "source": "us-core-diagnosticreport-lab",
+   "description": "US Core must-support (us-core-diagnosticreport-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "issued"
+   ],
+   "parent": null,
+   "metric": "ms:issued",
+   "source": "us-core-diagnosticreport-lab",
+   "description": "US Core must-support (us-core-diagnosticreport-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "performer"
+   ],
+   "parent": null,
+   "metric": "ms:performer",
+   "source": "us-core-diagnosticreport-lab",
+   "description": "US Core must-support (us-core-diagnosticreport-lab)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "result"
+   ],
+   "parent": null,
+   "metric": "ms:result",
+   "source": "us-core-diagnosticreport-lab",
+   "description": "US Core must-support (us-core-diagnosticreport-lab)"
+  }
+ ]
+}

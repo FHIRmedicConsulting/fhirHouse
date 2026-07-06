@@ -1,0 +1,400 @@
+{
+ "resourceType": "Coverage",
+ "domain": "patient_member",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "required",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "required:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Coverage.status has base cardinality min>=1"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "codes": [
+    "active",
+    "cancelled",
+    "draft",
+    "entered-in-error"
+   ],
+   "metric": "binding:status",
+   "source": "http://hl7.org/fhir/ValueSet/fm-status",
+   "description": "required binding (4 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "status"
+   ],
+   "max": 1,
+   "metric": "max_card:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "type"
+   ],
+   "max": 1,
+   "metric": "max_card:type",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "policyHolder"
+   ],
+   "parent": null,
+   "targets": [
+    "Organization",
+    "Patient",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:policyHolder",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization/Patient/RelatedPerson"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "policyHolder"
+   ],
+   "max": 1,
+   "metric": "max_card:policyHolder",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "subscriber"
+   ],
+   "parent": null,
+   "targets": [
+    "Patient",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:subscriber",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Patient/RelatedPerson"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "subscriber"
+   ],
+   "max": 1,
+   "metric": "max_card:subscriber",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "subscriberId"
+   ],
+   "max": 1,
+   "metric": "max_card:subscriberId",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "beneficiary"
+   ],
+   "parent": null,
+   "metric": "required:beneficiary",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Coverage.beneficiary has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "beneficiary"
+   ],
+   "parent": null,
+   "targets": [
+    "Patient"
+   ],
+   "metric": "ref_target:beneficiary",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Patient"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "beneficiary"
+   ],
+   "max": 1,
+   "metric": "max_card:beneficiary",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "dependent"
+   ],
+   "max": 1,
+   "metric": "max_card:dependent",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "relationship"
+   ],
+   "max": 1,
+   "metric": "max_card:relationship",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "period"
+   ],
+   "max": 1,
+   "metric": "max_card:period",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "payor"
+   ],
+   "parent": null,
+   "metric": "required:payor",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Coverage.payor has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "payor"
+   ],
+   "parent": null,
+   "targets": [
+    "Organization",
+    "Patient",
+    "RelatedPerson"
+   ],
+   "metric": "ref_target:payor",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization/Patient/RelatedPerson"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "type"
+   ],
+   "parent": [
+    "class"
+   ],
+   "metric": "required:class.type",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Coverage.class.type has base cardinality min>=1"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "value"
+   ],
+   "parent": [
+    "class"
+   ],
+   "metric": "required:class.value",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Coverage.class.value has base cardinality min>=1"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "order"
+   ],
+   "max": 1,
+   "metric": "max_card:order",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "network"
+   ],
+   "max": 1,
+   "metric": "max_card:network",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "subrogation"
+   ],
+   "max": 1,
+   "metric": "max_card:subrogation",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "contract"
+   ],
+   "parent": null,
+   "targets": [
+    "Contract"
+   ],
+   "metric": "ref_target:contract",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Contract"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "identifier"
+   ],
+   "parent": null,
+   "metric": "ms:identifier",
+   "source": "us-core-coverage",
+   "description": "US Core must-support (us-core-coverage)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "type"
+   ],
+   "parent": [
+    "identifier"
+   ],
+   "metric": "ms:identifier.type",
+   "source": "us-core-coverage",
+   "description": "US Core must-support (us-core-coverage)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "ms:status",
+   "source": "us-core-coverage",
+   "description": "US Core must-support (us-core-coverage)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "type"
+   ],
+   "parent": null,
+   "metric": "ms:type",
+   "source": "us-core-coverage",
+   "description": "US Core must-support (us-core-coverage)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "subscriberId"
+   ],
+   "parent": null,
+   "metric": "ms:subscriberId",
+   "source": "us-core-coverage",
+   "description": "US Core must-support (us-core-coverage)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "beneficiary"
+   ],
+   "parent": null,
+   "metric": "ms:beneficiary",
+   "source": "us-core-coverage",
+   "description": "US Core must-support (us-core-coverage)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "relationship"
+   ],
+   "parent": null,
+   "metric": "ms:relationship",
+   "source": "us-core-coverage",
+   "description": "US Core must-support (us-core-coverage)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "period"
+   ],
+   "parent": null,
+   "metric": "ms:period",
+   "source": "us-core-coverage",
+   "description": "US Core must-support (us-core-coverage)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "payor"
+   ],
+   "parent": null,
+   "metric": "ms:payor",
+   "source": "us-core-coverage",
+   "description": "US Core must-support (us-core-coverage)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "class"
+   ],
+   "parent": null,
+   "metric": "ms:class",
+   "source": "us-core-coverage",
+   "description": "US Core must-support (us-core-coverage)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "value"
+   ],
+   "parent": [
+    "class"
+   ],
+   "metric": "ms:class.value",
+   "source": "us-core-coverage",
+   "description": "US Core must-support (us-core-coverage)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "name"
+   ],
+   "parent": [
+    "class"
+   ],
+   "metric": "ms:class.name",
+   "source": "us-core-coverage",
+   "description": "US Core must-support (us-core-coverage)"
+  }
+ ]
+}

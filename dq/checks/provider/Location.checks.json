@@ -1,0 +1,385 @@
+{
+ "resourceType": "Location",
+ "domain": "provider",
+ "generated_from": [
+  "hl7.fhir.r4.core#4.0.1",
+  "hl7.fhir.us.core#6.1.0"
+ ],
+ "regenerate": "python -m fhirhouse_dq.generate_checks",
+ "dropped": {
+  "binding_unexpandable": 0
+ },
+ "checks": [
+  {
+   "kind": "binding",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "codes": [
+    "active",
+    "inactive",
+    "suspended"
+   ],
+   "metric": "binding:status",
+   "source": "http://hl7.org/fhir/ValueSet/location-status",
+   "description": "required binding (3 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "status"
+   ],
+   "max": 1,
+   "metric": "max_card:status",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "operationalStatus"
+   ],
+   "max": 1,
+   "metric": "max_card:operationalStatus",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "name"
+   ],
+   "max": 1,
+   "metric": "max_card:name",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "description"
+   ],
+   "max": 1,
+   "metric": "max_card:description",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "mode"
+   ],
+   "parent": null,
+   "codes": [
+    "instance",
+    "kind"
+   ],
+   "metric": "binding:mode",
+   "source": "http://hl7.org/fhir/ValueSet/location-mode",
+   "description": "required binding (2 codes)"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "mode"
+   ],
+   "max": 1,
+   "metric": "max_card:mode",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "address"
+   ],
+   "max": 1,
+   "metric": "max_card:address",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "physicalType"
+   ],
+   "max": 1,
+   "metric": "max_card:physicalType",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "position"
+   ],
+   "max": 1,
+   "metric": "max_card:position",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "longitude"
+   ],
+   "parent": [
+    "position"
+   ],
+   "metric": "required:position.longitude",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Location.position.longitude has base cardinality min>=1"
+  },
+  {
+   "kind": "required",
+   "path": [
+    "latitude"
+   ],
+   "parent": [
+    "position"
+   ],
+   "metric": "required:position.latitude",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "Location.position.latitude has base cardinality min>=1"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "managingOrganization"
+   ],
+   "parent": null,
+   "targets": [
+    "Organization"
+   ],
+   "metric": "ref_target:managingOrganization",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Organization"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "managingOrganization"
+   ],
+   "max": 1,
+   "metric": "max_card:managingOrganization",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "partOf"
+   ],
+   "parent": null,
+   "targets": [
+    "Location"
+   ],
+   "metric": "ref_target:partOf",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Location"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "partOf"
+   ],
+   "max": 1,
+   "metric": "max_card:partOf",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "binding",
+   "path": [
+    "daysOfWeek"
+   ],
+   "parent": [
+    "hoursOfOperation"
+   ],
+   "codes": [
+    "fri",
+    "mon",
+    "sat",
+    "sun",
+    "thu",
+    "tue",
+    "wed"
+   ],
+   "metric": "binding:hoursOfOperation.daysOfWeek",
+   "source": "http://hl7.org/fhir/ValueSet/days-of-week",
+   "description": "required binding (7 codes)"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "openingTime"
+   ],
+   "parent": [
+    "hoursOfOperation"
+   ],
+   "regex": "^\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?$",
+   "metric": "format:hoursOfOperation.openingTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "time lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "openingTime"
+   ],
+   "parent": [
+    "hoursOfOperation"
+   ],
+   "metric": "date_range:hoursOfOperation.openingTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "format",
+   "path": [
+    "closingTime"
+   ],
+   "parent": [
+    "hoursOfOperation"
+   ],
+   "regex": "^\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?$",
+   "metric": "format:hoursOfOperation.closingTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "time lexical form"
+  },
+  {
+   "kind": "date_plausible",
+   "path": [
+    "closingTime"
+   ],
+   "parent": [
+    "hoursOfOperation"
+   ],
+   "metric": "date_range:hoursOfOperation.closingTime",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "temporal value within [1900, today+1y]"
+  },
+  {
+   "kind": "max_cardinality",
+   "path": [
+    "availabilityExceptions"
+   ],
+   "max": 1,
+   "metric": "max_card:availabilityExceptions",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "scalar element (max=1) must not be an array"
+  },
+  {
+   "kind": "reference_target",
+   "path": [
+    "endpoint"
+   ],
+   "parent": null,
+   "targets": [
+    "Endpoint"
+   ],
+   "metric": "ref_target:endpoint",
+   "source": "hl7.fhir.r4.core#4.0.1",
+   "description": "reference points at Endpoint"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "status"
+   ],
+   "parent": null,
+   "metric": "ms:status",
+   "source": "us-core-location",
+   "description": "US Core must-support (us-core-location)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "name"
+   ],
+   "parent": null,
+   "metric": "ms:name",
+   "source": "us-core-location",
+   "description": "US Core must-support (us-core-location)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "telecom"
+   ],
+   "parent": null,
+   "metric": "ms:telecom",
+   "source": "us-core-location",
+   "description": "US Core must-support (us-core-location)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "address"
+   ],
+   "parent": null,
+   "metric": "ms:address",
+   "source": "us-core-location",
+   "description": "US Core must-support (us-core-location)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "line"
+   ],
+   "parent": [
+    "address"
+   ],
+   "metric": "ms:address.line",
+   "source": "us-core-location",
+   "description": "US Core must-support (us-core-location)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "city"
+   ],
+   "parent": [
+    "address"
+   ],
+   "metric": "ms:address.city",
+   "source": "us-core-location",
+   "description": "US Core must-support (us-core-location)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "state"
+   ],
+   "parent": [
+    "address"
+   ],
+   "metric": "ms:address.state",
+   "source": "us-core-location",
+   "description": "US Core must-support (us-core-location)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "postalCode"
+   ],
+   "parent": [
+    "address"
+   ],
+   "metric": "ms:address.postalCode",
+   "source": "us-core-location",
+   "description": "US Core must-support (us-core-location)"
+  },
+  {
+   "kind": "must_support",
+   "path": [
+    "managingOrganization"
+   ],
+   "parent": null,
+   "metric": "ms:managingOrganization",
+   "source": "us-core-location",
+   "description": "US Core must-support (us-core-location)"
+  }
+ ]
+}
