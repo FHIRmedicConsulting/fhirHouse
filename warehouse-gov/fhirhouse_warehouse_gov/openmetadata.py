@@ -134,8 +134,14 @@ def _tables_in(base: str, tier: str) -> list[str]:
 
 # ── registration / lineage / tags / DQ ──────────────────────────────────────────
 
-def register_store(om: OpenMetadataClient, base: str, service: str, database: str) -> dict[str, dict]:
-    """Register every tier table; returns fqn -> table entity."""
+def register_store(om: OpenMetadataClient, base: str, service: str, database: str,
+                   all_types: bool = True) -> dict[str, dict]:
+    """Register tier tables; returns fqn -> table entity.
+
+    With `all_types` (default) the FULL pinned R4 contract is registered — all 146
+    resource types per tier — because the schema contract exists for every type
+    (fhirEngine materializes tables on first write). Types with no data yet are
+    marked in the description; physical governance tables are always included."""
     pin = load_pin()
     canonical = {t.lower(): t for t in pin["resource_types"]}
     om.put("/services/databaseServices", {
@@ -149,7 +155,9 @@ def register_store(om: OpenMetadataClient, base: str, service: str, database: st
     for tier, desc in TIER_DESCRIPTIONS.items():
         om.put("/databaseSchemas", {"name": tier, "database": f"{service}.{database}",
                                     "description": desc})
-        for t in _tables_in(base, tier):
+        physical = set(_tables_in(base, tier))
+        names = sorted(physical | set(canonical)) if all_types else sorted(physical)
+        for t in names:
             rt = canonical.get(t)
             if tier == "silver" and rt:
                 cols = silver_columns(rt, pin)
@@ -157,10 +165,12 @@ def register_store(om: OpenMetadataClient, base: str, service: str, database: st
                 cols = BRONZE_COLUMNS
             else:
                 cols = _governance_columns(t, pin)
+            landed = "" if t in physical else " — no data landed in this deployment yet"
             entities[f"{service}.{database}.{tier}.{t}"] = om.put("/tables", {
                 "name": t, "databaseSchema": f"{service}.{database}.{tier}",
                 "columns": cols,
-                "description": f"FHIR {rt}" if rt else "fhirHouse governance table"})
+                "description": (f"FHIR {rt}{landed}" if rt
+                                else f"fhirHouse governance table{landed}")})
     return entities
 
 

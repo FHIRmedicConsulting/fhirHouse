@@ -94,8 +94,10 @@ def enrich_descriptions(om: OpenMetadataClient, tables: list[dict],
         rtype = canonical.get(t["name"])
         if not rtype:
             continue
+        marker = ("\n\n*No data landed in this deployment yet.*"
+                  if "no data landed" in (t.get("description") or "") else "")
         ops = [{"op": "add" if not t.get("description") else "replace",
-                "path": "/description", "value": resource_description(pkgs, rtype)}]
+                "path": "/description", "value": resource_description(pkgs, rtype) + marker}]
         tier = t["fullyQualifiedName"].rsplit(".", 2)[-2]
         if tier == "silver":
             docs = element_docs(pkgs, rtype)
