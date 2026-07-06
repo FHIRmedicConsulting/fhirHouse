@@ -53,9 +53,9 @@ keeping `git merge upstream/main` conflict-free.
 ## Invariants (do not break)
 
 - **Additive-only over upstream.** All fhirHouse code lives in `warehouse-gov/`,
-  `dbt/`, `dagster/`, `mdm/`, `dq/`, `lineage/`, `contracts/`, and
-  `docs/decisions/FH-*`. Never edit files owned by fhirEngine `upstream` — it
-  breaks conflict-free merges.
+  `dbt/`, `dagster/`, `mdm/`, `dq/`, `lineage/`, `contracts/`, `views/`, and
+  `docs/decisions/FH-*` (+ `docs/research/` notes dated by fhirHouse sessions).
+  Never edit files owned by fhirEngine `upstream` — it breaks conflict-free merges.
 - **delta-rs is the only writer.** Nothing in fhirHouse writes Delta directly; hand
   result sets to fhirEngine's writer/sidecar.
 - **Honor the Gold contract.** MDM/cleaning output must land in fhirEngine's
@@ -73,24 +73,30 @@ keeping `git merge upstream/main` conflict-free.
 | `dq/` | DQ scoring: Kahn dimensions + IG conformance via HL7 validator (the L5 gap fhirEngine names) | ADR-0015 validation |
 | `lineage/` | Technical lineage (dbt/Dagster asset graph) + FHIR Provenance bridge + catalog binding | ADR-0025 |
 | `warehouse-gov/` | Catalog/governance binding (OpenMetadata or DataHub — decide in FH-0004) | ADR-0025 |
+| `views/` | SQL-on-FHIR v2 ViewDefinitions + FHIRPath→DuckDB compiler (FH-0005; the published governed-view contract) | ADR-0027 |
 
 ## Backlog for Claude Code
 
-1. Run `./bootstrap-fork.sh` on the host to establish the real git fork (pull
-   fhirEngine history via `upstream`, commit the scaffold). Then add your own
-   `origin`.
-2. `contracts/`: extract fhirEngine's flattener schema
-   (`packages/server/src/fhir-schema/clean-room-flattener.ts` + generated R4
-   schemas) into a pinned JSON snapshot; implement `drift_test.py` against it.
-3. `dq/`: implement Kahn-dimension scoring; wire the HL7 Java validator for L5 IG
-   conformance.
-4. `mdm/`: stand up the Splink model + blocking rules per ADR-0012 §2 bands; PPRL
-   tokenization per §2 `gold.pprl_tokens`.
-5. `dagster/`: define assets + wrap `fhirengine-promote`; add a HITL sensor over
-   `patient_match_review`.
-6. `lineage/`: choose OpenMetadata vs DataHub (FH-0004), wire dbt + Dagster
-   ingestion, add the Provenance bridge.
-7. Close open decisions: FH-0001 (open-core a/b), FH-0004 (catalog choice).
+Done (commit `f42e252`, 2026-07-06): fork bootstrap · `contracts/` pin +
+`drift_test.py` + `fhirhouse_contracts` seam package · `dq/` Kahn scoring + HL7
+validator wrapper · `mdm/` Splink-on-DuckDB + guardrails + PPRL · `dagster/` assets
++ HITL sensor · `lineage/` Provenance bridge · dbt staging/marts · CI (drift test,
+pytest, dbt parse, ruff). Run tests with `.venv/bin/pytest`; re-pin after upstream
+merges with `python contracts/pin_schema.py`.
+
+Remaining:
+
+1. Add an `origin` remote and push (`gh repo create <you>/fhirHouse --private
+   --source=. --remote=origin --push`).
+2. `views/`: implement the FHIRPath→DuckDB ViewDefinition compiler (FH-0005;
+   robustness taxonomy in `docs/research/2026-07-06-sql-on-fhir-view-layer.md` §6),
+   wire the `sql-on-fhir.js` shared test suite into CI, author the US Core base view
+   pack, and add the dbt macro that emits a model per ViewDefinition. The compiler's
+   fast path reads flattened-column names from `contracts/gold_schema.snapshot.json`.
+3. `warehouse-gov/`: run the OpenMetadata-vs-DataHub spike (FH-0004), then wire dbt
+   + Dagster lineage ingestion (`lineage/` technical half is blocked on this).
+4. Close open decisions: FH-0001 (open-core a/b), FH-0004 (catalog choice),
+   FH-0005 (accept the compile-to-DuckDB view layer).
 
 ## fhirEngine ADRs to read (in `docs/decisions/` after bootstrap)
 

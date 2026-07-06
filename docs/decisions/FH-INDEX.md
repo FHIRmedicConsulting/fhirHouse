@@ -9,5 +9,6 @@ ADRs (0001–0036) in the same `docs/decisions/` directory after the fork bootst
 | FH-0002 | Topology Support — Medallion-First | Accepted |
 | FH-0003 | Compute Engine — DuckDB Read-Side, delta-rs Sole Writer | Accepted |
 | FH-0004 | Governance, DQ, MDM, and Lineage — Scope and Seams | Proposed (catalog TBD) |
+| FH-0005 | SQL-on-FHIR v2 View Layer — Compile to DuckDB over Delta | Proposed |
 
-See `../../CLAUDE.md` for the working context and backlog.
+Research notes live in `../research/`. See `../../CLAUDE.md` for working context.

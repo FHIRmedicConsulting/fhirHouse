@@ -1,0 +1,45 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "patient_demographics",
+  "title": "Patient demographics (one row per patient)",
+  "status": "draft",
+  "resource": "Patient",
+  "constant": [
+    { "name": "mrn_system", "valueString": "http://hospital.example.org/mrn" }
+  ],
+  "select": [
+    {
+      "column": [
+        { "name": "patient_id", "path": "getResourceKey()", "type": "id" },
+        { "name": "active", "path": "active", "type": "boolean" },
+        { "name": "gender", "path": "gender", "type": "code" },
+        { "name": "birth_date", "path": "birthDate", "type": "date" },
+        { "name": "deceased_boolean", "path": "deceased.ofType(boolean)", "type": "boolean" },
+        { "name": "deceased_datetime", "path": "deceased.ofType(dateTime)", "type": "dateTime" }
+      ]
+    },
+    {
+      "forEachOrNull": "name.where(use = 'official').first()",
+      "column": [
+        { "name": "family_name", "path": "family", "type": "string" },
+        { "name": "given_names", "path": "given", "type": "string", "collection": true }
+      ]
+    },
+    {
+      "forEachOrNull": "address.where(use = 'home').first()",
+      "column": [
+        { "name": "postal_code", "path": "postalCode", "type": "string" },
+        { "name": "state", "path": "state", "type": "string" }
+      ]
+    },
+    {
+      "forEachOrNull": "identifier.where(system = %mrn_system).first()",
+      "column": [
+        { "name": "mrn", "path": "value", "type": "string" }
+      ]
+    }
+  ],
+  "where": [
+    { "path": "active = true or active.empty()", "description": "exclude explicitly inactive records" }
+  ]
+}
