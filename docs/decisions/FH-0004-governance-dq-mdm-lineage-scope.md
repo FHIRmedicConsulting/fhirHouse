@@ -1,7 +1,8 @@
 # FH-0004: Governance, DQ, MDM, and Lineage — Scope and Seams
 
-- Status: **Proposed** (catalog choice open; DQ/MDM/lineage scope accepted)
-- Date: 2026-07-05
+- Status: **Accepted** (2026-07-06 — catalog = **OpenMetadata**, resolved by spike
+  against the live 1,000-patient store; see §4)
+- Date: 2026-07-05 (catalog decision 2026-07-06)
 - Decider(s): Chad
 - Related: fhirEngine ADR-0012 (MPI), ADR-0015 (validation), ADR-0025 (catalog/governance binding seam), ADR-0026 (promotion), ADR-0027 (SoF-v2)
 
@@ -49,12 +50,34 @@ Two distinct things, both delivered:
   per ADR-0012 §5; extend the pattern to DQ/cleaning steps). Ties to fhirEngine's
   hash-chained audit (ADR-0016/0035).
 
-### 4. Governance / Catalog (`warehouse-gov/`)
+### 4. Governance / Catalog (`warehouse-gov/`) — **OpenMetadata** (decided)
 
 Integrate a mature OSS catalog rather than build one, bound via fhirEngine's
-catalog/governance seam (ADR-0025). **Candidate: OpenMetadata** (native profiler +
-DQ tests + glossary fit the DQ scope) vs **DataHub** (stronger discovery/lineage at
-scale). **Decision deferred pending a short spike.**
+catalog/governance seam (ADR-0025). **Decision: OpenMetadata**, chosen over DataHub
+on three fhirHouse-specific grounds, then validated by spike:
+
+1. **DQ is first-class**: fhirHouse's Kahn metrics map 1:1 onto OM test
+   definitions/cases/results — a designed slot, not an adapter (DataHub's
+   assertions are integration-oriented).
+2. **Local-first survives**: OM = server + Postgres + Elasticsearch; DataHub adds
+   Kafka + GMS — too heavy for fhirEngine's laptop-to-server deployment story.
+3. **Unity Catalog conceptual alignment** (per Chad, 2026-07-06): OM's hierarchy is
+   structurally 1:1 with UC. Convention codified in `fhirhouse_warehouse_gov`:
+   *service = deployment · database = UC catalog · schema = medallion tier ·
+   table = resource/governance table.* A Databricks deployment ingests via OM's
+   native UC connector, so hybrid customers see one catalog with one shape.
+   Unity Catalog OSS remains a candidate ADR-0025 *binding* underneath (metastore
+   protocol), complementary to OM (governance/discovery UX) — not a competitor.
+
+**Spike evidence** (2026-07-06, OM 1.13.1 quickstart vs the bulk_1k demo store):
+76 tables registered UC-style with pin-derived FHIR column metadata, 48 tier-lineage
+edges, 119 PHI columns classified (PII.Sensitive), and a real DQ run (155 Kahn
+metrics) pushed as test results with OM evaluating pass/fail against a 0.95
+threshold. Connector: `warehouse-gov/fhirhouse_warehouse_gov/openmetadata.py`
+(REST, stdlib-only; bot-JWT auth for production).
+
+DataHub stays possible at the ADR-0025 seam for customers who already run it —
+a services integration, not the shipped default.
 
 ## Consequences
 
@@ -65,5 +88,8 @@ scale). **Decision deferred pending a short spike.**
 
 ## Open questions
 
-- **OpenMetadata vs DataHub** — resolve with a spike.
-- DQ score schema + how scores gate promotion (block vs annotate).
+- ~~**OpenMetadata vs DataHub** — resolve with a spike.~~ Resolved: OpenMetadata (§4).
+- DQ score schema is pinned (contracts `dq_score`); whether scores gate promotion
+  (block vs annotate) remains open — currently annotate-only.
+- dbt/Dagster lineage ingestion into OM (manifest-driven) — connector follow-up;
+  tier lineage ships now via the REST binding.

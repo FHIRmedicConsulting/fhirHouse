@@ -33,6 +33,7 @@ packages = [
   "fhirhouse_dagster",
   "fhirhouse_lineage",
   "fhirhouse_views",
+  "fhirhouse_warehouse_gov",
 ]
 
 [tool.setuptools.package-dir]
@@ -42,9 +43,11 @@ fhirhouse_mdm = "mdm/fhirhouse_mdm"
 fhirhouse_dagster = "dagster/fhirhouse_dagster"
 fhirhouse_lineage = "lineage/fhirhouse_lineage"
 fhirhouse_views = "views/fhirhouse_views"
+fhirhouse_warehouse_gov = "warehouse-gov/fhirhouse_warehouse_gov"
 
 [tool.pytest.ini_options]
-testpaths = ["contracts/tests", "dq/tests", "mdm/tests", "dagster/tests", "lineage/tests", "views/tests"]
+testpaths = ["contracts/tests", "dq/tests", "mdm/tests", "dagster/tests", "lineage/tests",
+             "views/tests", "warehouse-gov/tests"]
 
 [tool.ruff]
 line-length = 120

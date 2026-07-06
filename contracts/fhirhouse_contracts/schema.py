@@ -60,6 +60,7 @@ def extract_flattener_schemas() -> dict[str, Any]:
         rt: [
             {k: c[k] for k in ("name", "list", "fhirType", "required", "binding") if k in c}
             | {"kind": c["type"]["kind"]}
+            | ({"arrow": c["type"]["arrow"]} if c["type"]["kind"] == "scalar" else {})
             for c in cols
         ]
         for rt, cols in schemas.items()

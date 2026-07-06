@@ -72,7 +72,7 @@ keeping `git merge upstream/main` conflict-free.
 | `mdm/` | Splink probabilistic + PPRL → existing MPI Gold tables | ADR-0012 (deferred lane) |
 | `dq/` | DQ scoring: Kahn dimensions + IG conformance via HL7 validator (the L5 gap fhirEngine names) | ADR-0015 validation |
 | `lineage/` | Technical lineage (dbt/Dagster asset graph) + FHIR Provenance bridge + catalog binding | ADR-0025 |
-| `warehouse-gov/` | Catalog/governance binding (OpenMetadata or DataHub — decide in FH-0004) | ADR-0025 |
+| `warehouse-gov/` | Catalog/governance binding — OpenMetadata, UC-aligned naming (FH-0004) | ADR-0025 |
 | `views/` | SQL-on-FHIR v2 ViewDefinitions + FHIRPath→DuckDB compiler (FH-0005; the published governed-view contract) | ADR-0027 |
 
 ## Backlog for Claude Code
@@ -94,9 +94,10 @@ Remaining:
    official shared suite, fully compiled; regenerate models with
    `python -m fhirhouse_views.dbt_gen`, conformance with
    `python -m fhirhouse_views.conformance`.
-3. `warehouse-gov/`: run the OpenMetadata-vs-DataHub spike (FH-0004), then wire dbt
-   + Dagster lineage ingestion (`lineage/` technical half is blocked on this).
-4. Close open decisions: FH-0001 (open-core a/b), FH-0004 (catalog choice).
+3. `warehouse-gov/`: DONE for v0 — FH-0004 resolved as OpenMetadata (UC-aligned
+   naming; spike-validated; `fhirhouse_warehouse_gov.openmetadata` CLI). Remaining:
+   dbt/Dagster manifest-driven lineage ingestion into OM; glossary seeding.
+4. Close open decisions: FH-0001 (open-core a/b) — the last one.
 
 ## fhirEngine ADRs to read (in `docs/decisions/` after bootstrap)
 
