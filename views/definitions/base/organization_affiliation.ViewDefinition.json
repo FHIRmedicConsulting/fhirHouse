@@ -1,0 +1,78 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "organization_affiliation",
+  "title": "OrganizationAffiliation \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for OrganizationAffiliation from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "OrganizationAffiliation",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "organization_affiliation_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "active",
+          "path": "active",
+          "type": "boolean"
+        },
+        {
+          "name": "organization_id",
+          "path": "organization.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "organization_reference",
+          "path": "organization.reference",
+          "type": "string"
+        },
+        {
+          "name": "participating_organization_id",
+          "path": "participatingOrganization.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "participating_organization_reference",
+          "path": "participatingOrganization.reference",
+          "type": "string"
+        },
+        {
+          "name": "network_ids",
+          "path": "network.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "location_ids",
+          "path": "location.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "healthcare_service_ids",
+          "path": "healthcareService.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "endpoint_ids",
+          "path": "endpoint.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

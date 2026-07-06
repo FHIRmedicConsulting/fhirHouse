@@ -1,0 +1,74 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medication",
+  "title": "Medication \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Medication from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Medication",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medication_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "manufacturer_id",
+          "path": "manufacturer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "manufacturer_reference",
+          "path": "manufacturer.reference",
+          "type": "string"
+        },
+        {
+          "name": "form_text",
+          "path": "form.text",
+          "type": "string"
+        },
+        {
+          "name": "form_code",
+          "path": "form.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "form_system",
+          "path": "form.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

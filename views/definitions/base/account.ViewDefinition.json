@@ -1,0 +1,85 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "account",
+  "title": "Account \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Account from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Account",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "account_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "subject_ids",
+          "path": "subject.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "owner_id",
+          "path": "owner.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "owner_reference",
+          "path": "owner.reference",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "string"
+        },
+        {
+          "name": "part_of_id",
+          "path": "partOf.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "part_of_reference",
+          "path": "partOf.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

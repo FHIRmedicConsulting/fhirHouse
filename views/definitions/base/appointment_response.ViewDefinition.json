@@ -1,0 +1,69 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "appointment_response",
+  "title": "AppointmentResponse \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for AppointmentResponse from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "AppointmentResponse",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "appointment_response_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "appointment_id",
+          "path": "appointment.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "appointment_reference",
+          "path": "appointment.reference",
+          "type": "string"
+        },
+        {
+          "name": "start",
+          "path": "start",
+          "type": "instant"
+        },
+        {
+          "name": "end",
+          "path": "end",
+          "type": "instant"
+        },
+        {
+          "name": "actor_id",
+          "path": "actor.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "actor_reference",
+          "path": "actor.reference",
+          "type": "string"
+        },
+        {
+          "name": "participant_status",
+          "path": "participantStatus",
+          "type": "code"
+        },
+        {
+          "name": "comment",
+          "path": "comment",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

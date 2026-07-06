@@ -1,0 +1,152 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "family_member_history",
+  "title": "FamilyMemberHistory \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for FamilyMemberHistory from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "FamilyMemberHistory",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "family_member_history_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "instantiates_canonical",
+          "path": "instantiatesCanonical",
+          "type": "canonical",
+          "collection": true
+        },
+        {
+          "name": "instantiates_uri",
+          "path": "instantiatesUri",
+          "type": "uri",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "data_absent_reason_text",
+          "path": "dataAbsentReason.text",
+          "type": "string"
+        },
+        {
+          "name": "data_absent_reason_code",
+          "path": "dataAbsentReason.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "data_absent_reason_system",
+          "path": "dataAbsentReason.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "patient_id",
+          "path": "patient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "patient_reference",
+          "path": "patient.reference",
+          "type": "string"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "relationship_text",
+          "path": "relationship.text",
+          "type": "string"
+        },
+        {
+          "name": "relationship_code",
+          "path": "relationship.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "relationship_system",
+          "path": "relationship.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "sex_text",
+          "path": "sex.text",
+          "type": "string"
+        },
+        {
+          "name": "sex_code",
+          "path": "sex.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "sex_system",
+          "path": "sex.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "born_date",
+          "path": "born.ofType(date)",
+          "type": "date"
+        },
+        {
+          "name": "born_string",
+          "path": "born.ofType(string)",
+          "type": "string"
+        },
+        {
+          "name": "age_string",
+          "path": "age.ofType(string)",
+          "type": "string"
+        },
+        {
+          "name": "estimated_age",
+          "path": "estimatedAge",
+          "type": "boolean"
+        },
+        {
+          "name": "deceased_boolean",
+          "path": "deceased.ofType(boolean)",
+          "type": "boolean"
+        },
+        {
+          "name": "deceased_date",
+          "path": "deceased.ofType(date)",
+          "type": "date"
+        },
+        {
+          "name": "deceased_string",
+          "path": "deceased.ofType(string)",
+          "type": "string"
+        },
+        {
+          "name": "reason_reference_ids",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

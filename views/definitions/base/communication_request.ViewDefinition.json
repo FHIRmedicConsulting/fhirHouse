@@ -1,0 +1,149 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "communication_request",
+  "title": "CommunicationRequest \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for CommunicationRequest from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "CommunicationRequest",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "communication_request_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "based_on_ids",
+          "path": "basedOn.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "replaces_ids",
+          "path": "replaces.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "group_identifier_value",
+          "path": "groupIdentifier.value",
+          "type": "string"
+        },
+        {
+          "name": "group_identifier_system",
+          "path": "groupIdentifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "status_reason_text",
+          "path": "statusReason.text",
+          "type": "string"
+        },
+        {
+          "name": "status_reason_code",
+          "path": "statusReason.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "status_reason_system",
+          "path": "statusReason.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "priority",
+          "path": "priority",
+          "type": "code"
+        },
+        {
+          "name": "do_not_perform",
+          "path": "doNotPerform",
+          "type": "boolean"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "about_ids",
+          "path": "about.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "occurrence_date_time",
+          "path": "occurrence.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "authored_on",
+          "path": "authoredOn",
+          "type": "dateTime"
+        },
+        {
+          "name": "requester_id",
+          "path": "requester.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "requester_reference",
+          "path": "requester.reference",
+          "type": "string"
+        },
+        {
+          "name": "recipient_ids",
+          "path": "recipient.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "sender_id",
+          "path": "sender.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "sender_reference",
+          "path": "sender.reference",
+          "type": "string"
+        },
+        {
+          "name": "reason_reference_ids",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

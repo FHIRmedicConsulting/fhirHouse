@@ -1,0 +1,196 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "measure",
+  "title": "Measure \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Measure from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Measure",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "measure_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "url",
+          "path": "url",
+          "type": "uri"
+        },
+        {
+          "name": "version",
+          "path": "version",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string"
+        },
+        {
+          "name": "subtitle",
+          "path": "subtitle",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "experimental",
+          "path": "experimental",
+          "type": "boolean"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "publisher",
+          "path": "publisher",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "markdown"
+        },
+        {
+          "name": "purpose",
+          "path": "purpose",
+          "type": "markdown"
+        },
+        {
+          "name": "usage",
+          "path": "usage",
+          "type": "string"
+        },
+        {
+          "name": "copyright",
+          "path": "copyright",
+          "type": "markdown"
+        },
+        {
+          "name": "approval_date",
+          "path": "approvalDate",
+          "type": "date"
+        },
+        {
+          "name": "last_review_date",
+          "path": "lastReviewDate",
+          "type": "date"
+        },
+        {
+          "name": "library",
+          "path": "library",
+          "type": "canonical",
+          "collection": true
+        },
+        {
+          "name": "disclaimer",
+          "path": "disclaimer",
+          "type": "markdown"
+        },
+        {
+          "name": "scoring_text",
+          "path": "scoring.text",
+          "type": "string"
+        },
+        {
+          "name": "scoring_code",
+          "path": "scoring.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "scoring_system",
+          "path": "scoring.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "composite_scoring_text",
+          "path": "compositeScoring.text",
+          "type": "string"
+        },
+        {
+          "name": "composite_scoring_code",
+          "path": "compositeScoring.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "composite_scoring_system",
+          "path": "compositeScoring.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "risk_adjustment",
+          "path": "riskAdjustment",
+          "type": "string"
+        },
+        {
+          "name": "rate_aggregation",
+          "path": "rateAggregation",
+          "type": "string"
+        },
+        {
+          "name": "rationale",
+          "path": "rationale",
+          "type": "markdown"
+        },
+        {
+          "name": "clinical_recommendation_statement",
+          "path": "clinicalRecommendationStatement",
+          "type": "markdown"
+        },
+        {
+          "name": "improvement_notation_text",
+          "path": "improvementNotation.text",
+          "type": "string"
+        },
+        {
+          "name": "improvement_notation_code",
+          "path": "improvementNotation.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "improvement_notation_system",
+          "path": "improvementNotation.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "definition",
+          "path": "definition",
+          "type": "markdown",
+          "collection": true
+        },
+        {
+          "name": "guidance",
+          "path": "guidance",
+          "type": "markdown"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medicinal_product_packaged",
+  "title": "MedicinalProductPackaged \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicinalProductPackaged from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicinalProductPackaged",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medicinal_product_packaged_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "subject_ids",
+          "path": "subject.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "string"
+        },
+        {
+          "name": "legal_status_of_supply_text",
+          "path": "legalStatusOfSupply.text",
+          "type": "string"
+        },
+        {
+          "name": "legal_status_of_supply_code",
+          "path": "legalStatusOfSupply.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "legal_status_of_supply_system",
+          "path": "legalStatusOfSupply.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "marketing_authorization_id",
+          "path": "marketingAuthorization.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "marketing_authorization_reference",
+          "path": "marketingAuthorization.reference",
+          "type": "string"
+        },
+        {
+          "name": "manufacturer_ids",
+          "path": "manufacturer.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

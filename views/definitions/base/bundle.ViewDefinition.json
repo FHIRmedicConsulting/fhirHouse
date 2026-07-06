@@ -1,0 +1,54 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "bundle",
+  "title": "Bundle \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Bundle from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Bundle",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "bundle_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "identifier_value",
+          "path": "identifier.value",
+          "type": "string"
+        },
+        {
+          "name": "identifier_system",
+          "path": "identifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "type",
+          "path": "type",
+          "type": "code"
+        },
+        {
+          "name": "timestamp",
+          "path": "timestamp",
+          "type": "instant"
+        },
+        {
+          "name": "total",
+          "path": "total",
+          "type": "unsignedInt"
+        }
+      ]
+    }
+  ]
+}

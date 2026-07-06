@@ -1,0 +1,184 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "claim",
+  "title": "Claim \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Claim from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Claim",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "claim_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "sub_type_text",
+          "path": "subType.text",
+          "type": "string"
+        },
+        {
+          "name": "sub_type_code",
+          "path": "subType.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "sub_type_system",
+          "path": "subType.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "use",
+          "path": "use",
+          "type": "code"
+        },
+        {
+          "name": "patient_id",
+          "path": "patient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "patient_reference",
+          "path": "patient.reference",
+          "type": "string"
+        },
+        {
+          "name": "created",
+          "path": "created",
+          "type": "dateTime"
+        },
+        {
+          "name": "enterer_id",
+          "path": "enterer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "enterer_reference",
+          "path": "enterer.reference",
+          "type": "string"
+        },
+        {
+          "name": "insurer_id",
+          "path": "insurer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "insurer_reference",
+          "path": "insurer.reference",
+          "type": "string"
+        },
+        {
+          "name": "provider_id",
+          "path": "provider.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "provider_reference",
+          "path": "provider.reference",
+          "type": "string"
+        },
+        {
+          "name": "priority_text",
+          "path": "priority.text",
+          "type": "string"
+        },
+        {
+          "name": "priority_code",
+          "path": "priority.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "priority_system",
+          "path": "priority.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "funds_reserve_text",
+          "path": "fundsReserve.text",
+          "type": "string"
+        },
+        {
+          "name": "funds_reserve_code",
+          "path": "fundsReserve.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "funds_reserve_system",
+          "path": "fundsReserve.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "prescription_id",
+          "path": "prescription.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "prescription_reference",
+          "path": "prescription.reference",
+          "type": "string"
+        },
+        {
+          "name": "original_prescription_id",
+          "path": "originalPrescription.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "original_prescription_reference",
+          "path": "originalPrescription.reference",
+          "type": "string"
+        },
+        {
+          "name": "referral_id",
+          "path": "referral.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "referral_reference",
+          "path": "referral.reference",
+          "type": "string"
+        },
+        {
+          "name": "facility_id",
+          "path": "facility.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "facility_reference",
+          "path": "facility.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

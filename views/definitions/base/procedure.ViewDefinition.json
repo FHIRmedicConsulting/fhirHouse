@@ -1,0 +1,202 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "procedure",
+  "title": "Procedure \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Procedure from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Procedure",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "procedure_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "instantiates_canonical",
+          "path": "instantiatesCanonical",
+          "type": "canonical",
+          "collection": true
+        },
+        {
+          "name": "instantiates_uri",
+          "path": "instantiatesUri",
+          "type": "uri",
+          "collection": true
+        },
+        {
+          "name": "based_on_ids",
+          "path": "basedOn.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "part_of_ids",
+          "path": "partOf.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "status_reason_text",
+          "path": "statusReason.text",
+          "type": "string"
+        },
+        {
+          "name": "status_reason_code",
+          "path": "statusReason.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "status_reason_system",
+          "path": "statusReason.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "category_text",
+          "path": "category.text",
+          "type": "string"
+        },
+        {
+          "name": "category_code",
+          "path": "category.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "category_system",
+          "path": "category.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "performed_date_time",
+          "path": "performed.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "performed_string",
+          "path": "performed.ofType(string)",
+          "type": "string"
+        },
+        {
+          "name": "recorder_id",
+          "path": "recorder.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "recorder_reference",
+          "path": "recorder.reference",
+          "type": "string"
+        },
+        {
+          "name": "asserter_id",
+          "path": "asserter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "asserter_reference",
+          "path": "asserter.reference",
+          "type": "string"
+        },
+        {
+          "name": "location_id",
+          "path": "location.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "location_reference",
+          "path": "location.reference",
+          "type": "string"
+        },
+        {
+          "name": "reason_reference_ids",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "outcome_text",
+          "path": "outcome.text",
+          "type": "string"
+        },
+        {
+          "name": "outcome_code",
+          "path": "outcome.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "outcome_system",
+          "path": "outcome.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "report_ids",
+          "path": "report.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "complication_detail_ids",
+          "path": "complicationDetail.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "used_reference_ids",
+          "path": "usedReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

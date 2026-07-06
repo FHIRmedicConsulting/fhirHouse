@@ -1,0 +1,116 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "location",
+  "title": "Location \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Location from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Location",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "location_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "operational_status_code",
+          "path": "operationalStatus.code",
+          "type": "code"
+        },
+        {
+          "name": "operational_status_system",
+          "path": "operationalStatus.system",
+          "type": "uri"
+        },
+        {
+          "name": "operational_status_display",
+          "path": "operationalStatus.display",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "alias",
+          "path": "alias",
+          "type": "string",
+          "collection": true
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "string"
+        },
+        {
+          "name": "mode",
+          "path": "mode",
+          "type": "code"
+        },
+        {
+          "name": "physical_type_text",
+          "path": "physicalType.text",
+          "type": "string"
+        },
+        {
+          "name": "physical_type_code",
+          "path": "physicalType.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "physical_type_system",
+          "path": "physicalType.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "managing_organization_id",
+          "path": "managingOrganization.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "managing_organization_reference",
+          "path": "managingOrganization.reference",
+          "type": "string"
+        },
+        {
+          "name": "part_of_id",
+          "path": "partOf.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "part_of_reference",
+          "path": "partOf.reference",
+          "type": "string"
+        },
+        {
+          "name": "availability_exceptions",
+          "path": "availabilityExceptions",
+          "type": "string"
+        },
+        {
+          "name": "endpoint_ids",
+          "path": "endpoint.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

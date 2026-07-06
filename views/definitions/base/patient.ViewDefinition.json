@@ -1,0 +1,95 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "patient",
+  "title": "Patient \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Patient from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Patient",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "patient_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "active",
+          "path": "active",
+          "type": "boolean"
+        },
+        {
+          "name": "gender",
+          "path": "gender",
+          "type": "code"
+        },
+        {
+          "name": "birth_date",
+          "path": "birthDate",
+          "type": "date"
+        },
+        {
+          "name": "deceased_boolean",
+          "path": "deceased.ofType(boolean)",
+          "type": "boolean"
+        },
+        {
+          "name": "deceased_date_time",
+          "path": "deceased.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "marital_status_text",
+          "path": "maritalStatus.text",
+          "type": "string"
+        },
+        {
+          "name": "marital_status_code",
+          "path": "maritalStatus.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "marital_status_system",
+          "path": "maritalStatus.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "multiple_birth_boolean",
+          "path": "multipleBirth.ofType(boolean)",
+          "type": "boolean"
+        },
+        {
+          "name": "multiple_birth_integer",
+          "path": "multipleBirth.ofType(integer)",
+          "type": "integer"
+        },
+        {
+          "name": "general_practitioner_ids",
+          "path": "generalPractitioner.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "managing_organization_id",
+          "path": "managingOrganization.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "managing_organization_reference",
+          "path": "managingOrganization.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

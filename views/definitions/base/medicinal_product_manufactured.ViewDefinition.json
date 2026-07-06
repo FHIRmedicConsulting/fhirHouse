@@ -1,0 +1,86 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medicinal_product_manufactured",
+  "title": "MedicinalProductManufactured \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicinalProductManufactured from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicinalProductManufactured",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medicinal_product_manufactured_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "manufactured_dose_form_text",
+          "path": "manufacturedDoseForm.text",
+          "type": "string"
+        },
+        {
+          "name": "manufactured_dose_form_code",
+          "path": "manufacturedDoseForm.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "manufactured_dose_form_system",
+          "path": "manufacturedDoseForm.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "unit_of_presentation_text",
+          "path": "unitOfPresentation.text",
+          "type": "string"
+        },
+        {
+          "name": "unit_of_presentation_code",
+          "path": "unitOfPresentation.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "unit_of_presentation_system",
+          "path": "unitOfPresentation.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "quantity_value",
+          "path": "quantity.value",
+          "type": "decimal"
+        },
+        {
+          "name": "quantity_unit",
+          "path": "quantity.unit",
+          "type": "string"
+        },
+        {
+          "name": "quantity_code",
+          "path": "quantity.code",
+          "type": "code"
+        },
+        {
+          "name": "manufacturer_ids",
+          "path": "manufacturer.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "ingredient_ids",
+          "path": "ingredient.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

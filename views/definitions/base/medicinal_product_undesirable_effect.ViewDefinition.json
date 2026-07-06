@@ -1,0 +1,80 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medicinal_product_undesirable_effect",
+  "title": "MedicinalProductUndesirableEffect \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicinalProductUndesirableEffect from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicinalProductUndesirableEffect",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medicinal_product_undesirable_effect_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "subject_ids",
+          "path": "subject.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "symptom_condition_effect_text",
+          "path": "symptomConditionEffect.text",
+          "type": "string"
+        },
+        {
+          "name": "symptom_condition_effect_code",
+          "path": "symptomConditionEffect.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "symptom_condition_effect_system",
+          "path": "symptomConditionEffect.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "classification_text",
+          "path": "classification.text",
+          "type": "string"
+        },
+        {
+          "name": "classification_code",
+          "path": "classification.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "classification_system",
+          "path": "classification.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "frequency_of_occurrence_text",
+          "path": "frequencyOfOccurrence.text",
+          "type": "string"
+        },
+        {
+          "name": "frequency_of_occurrence_code",
+          "path": "frequencyOfOccurrence.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "frequency_of_occurrence_system",
+          "path": "frequencyOfOccurrence.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

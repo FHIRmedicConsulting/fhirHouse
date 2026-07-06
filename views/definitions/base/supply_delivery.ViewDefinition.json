@@ -1,0 +1,102 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "supply_delivery",
+  "title": "SupplyDelivery \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for SupplyDelivery from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "SupplyDelivery",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "supply_delivery_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "based_on_ids",
+          "path": "basedOn.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "part_of_ids",
+          "path": "partOf.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "patient_id",
+          "path": "patient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "patient_reference",
+          "path": "patient.reference",
+          "type": "string"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "occurrence_date_time",
+          "path": "occurrence.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "supplier_id",
+          "path": "supplier.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "supplier_reference",
+          "path": "supplier.reference",
+          "type": "string"
+        },
+        {
+          "name": "destination_id",
+          "path": "destination.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "destination_reference",
+          "path": "destination.reference",
+          "type": "string"
+        },
+        {
+          "name": "receiver_ids",
+          "path": "receiver.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "substance_source_material",
+  "title": "SubstanceSourceMaterial \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for SubstanceSourceMaterial from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "SubstanceSourceMaterial",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "substance_source_material_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "source_material_class_text",
+          "path": "sourceMaterialClass.text",
+          "type": "string"
+        },
+        {
+          "name": "source_material_class_code",
+          "path": "sourceMaterialClass.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "source_material_class_system",
+          "path": "sourceMaterialClass.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "source_material_type_text",
+          "path": "sourceMaterialType.text",
+          "type": "string"
+        },
+        {
+          "name": "source_material_type_code",
+          "path": "sourceMaterialType.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "source_material_type_system",
+          "path": "sourceMaterialType.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "source_material_state_text",
+          "path": "sourceMaterialState.text",
+          "type": "string"
+        },
+        {
+          "name": "source_material_state_code",
+          "path": "sourceMaterialState.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "source_material_state_system",
+          "path": "sourceMaterialState.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "organism_id_value",
+          "path": "organismId.value",
+          "type": "string"
+        },
+        {
+          "name": "organism_id_system",
+          "path": "organismId.system",
+          "type": "uri"
+        },
+        {
+          "name": "organism_name",
+          "path": "organismName",
+          "type": "string"
+        },
+        {
+          "name": "parent_substance_name",
+          "path": "parentSubstanceName",
+          "type": "string",
+          "collection": true
+        },
+        {
+          "name": "geographical_location",
+          "path": "geographicalLocation",
+          "type": "string",
+          "collection": true
+        },
+        {
+          "name": "development_stage_text",
+          "path": "developmentStage.text",
+          "type": "string"
+        },
+        {
+          "name": "development_stage_code",
+          "path": "developmentStage.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "development_stage_system",
+          "path": "developmentStage.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

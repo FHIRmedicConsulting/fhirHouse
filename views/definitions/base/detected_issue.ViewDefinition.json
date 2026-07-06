@@ -1,0 +1,95 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "detected_issue",
+  "title": "DetectedIssue \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for DetectedIssue from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "DetectedIssue",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "detected_issue_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "severity",
+          "path": "severity",
+          "type": "code"
+        },
+        {
+          "name": "patient_id",
+          "path": "patient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "patient_reference",
+          "path": "patient.reference",
+          "type": "string"
+        },
+        {
+          "name": "identified_date_time",
+          "path": "identified.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "author_id",
+          "path": "author.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "author_reference",
+          "path": "author.reference",
+          "type": "string"
+        },
+        {
+          "name": "implicated_ids",
+          "path": "implicated.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "detail",
+          "path": "detail",
+          "type": "string"
+        },
+        {
+          "name": "reference",
+          "path": "reference",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

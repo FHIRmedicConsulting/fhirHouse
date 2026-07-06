@@ -1,0 +1,74 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "research_subject",
+  "title": "ResearchSubject \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for ResearchSubject from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "ResearchSubject",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "research_subject_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "study_id",
+          "path": "study.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "study_reference",
+          "path": "study.reference",
+          "type": "string"
+        },
+        {
+          "name": "individual_id",
+          "path": "individual.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "individual_reference",
+          "path": "individual.reference",
+          "type": "string"
+        },
+        {
+          "name": "assigned_arm",
+          "path": "assignedArm",
+          "type": "string"
+        },
+        {
+          "name": "actual_arm",
+          "path": "actualArm",
+          "type": "string"
+        },
+        {
+          "name": "consent_id",
+          "path": "consent.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "consent_reference",
+          "path": "consent.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

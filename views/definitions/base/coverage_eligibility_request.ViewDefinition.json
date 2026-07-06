@@ -1,0 +1,115 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "coverage_eligibility_request",
+  "title": "CoverageEligibilityRequest \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for CoverageEligibilityRequest from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "CoverageEligibilityRequest",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "coverage_eligibility_request_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "priority_text",
+          "path": "priority.text",
+          "type": "string"
+        },
+        {
+          "name": "priority_code",
+          "path": "priority.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "priority_system",
+          "path": "priority.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "purpose",
+          "path": "purpose",
+          "type": "code",
+          "collection": true
+        },
+        {
+          "name": "patient_id",
+          "path": "patient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "patient_reference",
+          "path": "patient.reference",
+          "type": "string"
+        },
+        {
+          "name": "serviced_date",
+          "path": "serviced.ofType(date)",
+          "type": "date"
+        },
+        {
+          "name": "created",
+          "path": "created",
+          "type": "dateTime"
+        },
+        {
+          "name": "enterer_id",
+          "path": "enterer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "enterer_reference",
+          "path": "enterer.reference",
+          "type": "string"
+        },
+        {
+          "name": "provider_id",
+          "path": "provider.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "provider_reference",
+          "path": "provider.reference",
+          "type": "string"
+        },
+        {
+          "name": "insurer_id",
+          "path": "insurer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "insurer_reference",
+          "path": "insurer.reference",
+          "type": "string"
+        },
+        {
+          "name": "facility_id",
+          "path": "facility.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "facility_reference",
+          "path": "facility.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

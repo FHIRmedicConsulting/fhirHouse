@@ -1,0 +1,100 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "message_header",
+  "title": "MessageHeader \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MessageHeader from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MessageHeader",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "message_header_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "event_uri",
+          "path": "event.ofType(uri)",
+          "type": "uri"
+        },
+        {
+          "name": "sender_id",
+          "path": "sender.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "sender_reference",
+          "path": "sender.reference",
+          "type": "string"
+        },
+        {
+          "name": "enterer_id",
+          "path": "enterer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "enterer_reference",
+          "path": "enterer.reference",
+          "type": "string"
+        },
+        {
+          "name": "author_id",
+          "path": "author.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "author_reference",
+          "path": "author.reference",
+          "type": "string"
+        },
+        {
+          "name": "responsible_id",
+          "path": "responsible.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "responsible_reference",
+          "path": "responsible.reference",
+          "type": "string"
+        },
+        {
+          "name": "reason_text",
+          "path": "reason.text",
+          "type": "string"
+        },
+        {
+          "name": "reason_code",
+          "path": "reason.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "reason_system",
+          "path": "reason.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "focus_ids",
+          "path": "focus.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "definition",
+          "path": "definition",
+          "type": "canonical"
+        }
+      ]
+    }
+  ]
+}

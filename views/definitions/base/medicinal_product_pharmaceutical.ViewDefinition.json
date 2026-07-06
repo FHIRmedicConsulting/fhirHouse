@@ -1,0 +1,71 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medicinal_product_pharmaceutical",
+  "title": "MedicinalProductPharmaceutical \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicinalProductPharmaceutical from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicinalProductPharmaceutical",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medicinal_product_pharmaceutical_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "administrable_dose_form_text",
+          "path": "administrableDoseForm.text",
+          "type": "string"
+        },
+        {
+          "name": "administrable_dose_form_code",
+          "path": "administrableDoseForm.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "administrable_dose_form_system",
+          "path": "administrableDoseForm.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "unit_of_presentation_text",
+          "path": "unitOfPresentation.text",
+          "type": "string"
+        },
+        {
+          "name": "unit_of_presentation_code",
+          "path": "unitOfPresentation.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "unit_of_presentation_system",
+          "path": "unitOfPresentation.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "ingredient_ids",
+          "path": "ingredient.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "device_ids",
+          "path": "device.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

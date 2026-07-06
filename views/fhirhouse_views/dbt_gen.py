@@ -34,22 +34,30 @@ def _source_sql(resource: str, jinja: bool) -> str:
 
 
 def generate() -> list[str]:
-    MODELS_OUT.mkdir(parents=True, exist_ok=True)
-    COMPILED_OUT.mkdir(parents=True, exist_ok=True)
+    """Curated views (definitions/*.json) → models/views/; the generated base pack
+    (definitions/base/*.json, from generate_base.py) → models/views/base/, which
+    dbt_project.yml gates behind FHIRHOUSE_BASE_VIEW_PACK."""
     written = []
-    for f in sorted(DEFINITIONS.glob("*.ViewDefinition.json")):
-        view = json.loads(f.read_text())
-        name = view["name"]
-        resource = view["resource"]
-        # dbt model (typed columns for BI; jinja source binding)
-        compiled = ViewCompiler(view, typed=True).compile(_source_sql(resource, jinja=True))
-        model = MODELS_OUT / f"{name}.sql"
-        model.write_text(HEADER.format(src=f.name) + "\n" + compiled.sql + "\n")
-        # plain-DuckDB compile target (illustration/ad hoc, no jinja)
-        plain = ViewCompiler(view, typed=True).compile(_source_sql(resource, jinja=False))
-        (COMPILED_OUT / f"{name}.duckdb.sql").write_text(
-            HEADER.format(src=f.name) + "\n" + plain.sql + ";\n")
-        written.append(str(model.relative_to(REPO)))
+    for sub in ("", "base"):
+        defs = DEFINITIONS / sub if sub else DEFINITIONS
+        models_out = (MODELS_OUT / sub if sub else MODELS_OUT)
+        compiled_out = (COMPILED_OUT / sub if sub else COMPILED_OUT)
+        models_out.mkdir(parents=True, exist_ok=True)
+        compiled_out.mkdir(parents=True, exist_ok=True)
+        for f in sorted(defs.glob("*.ViewDefinition.json")):
+            view = json.loads(f.read_text())
+            name = view["name"]
+            resource = view["resource"]
+            src_rel = f"{sub + '/' if sub else ''}{f.name}"
+            # dbt model (typed columns for BI; jinja source binding)
+            compiled = ViewCompiler(view, typed=True).compile(_source_sql(resource, jinja=True))
+            model = models_out / f"{name}.sql"
+            model.write_text(HEADER.format(src=src_rel) + "\n" + compiled.sql + "\n")
+            # plain-DuckDB compile target (illustration/ad hoc, no jinja)
+            plain = ViewCompiler(view, typed=True).compile(_source_sql(resource, jinja=False))
+            (compiled_out / f"{name}.duckdb.sql").write_text(
+                HEADER.format(src=src_rel) + "\n" + plain.sql + ";\n")
+            written.append(str(model.relative_to(REPO)))
     return written
 
 

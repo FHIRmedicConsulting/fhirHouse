@@ -1,0 +1,181 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "media",
+  "title": "Media \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Media from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Media",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "media_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "based_on_ids",
+          "path": "basedOn.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "part_of_ids",
+          "path": "partOf.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "modality_text",
+          "path": "modality.text",
+          "type": "string"
+        },
+        {
+          "name": "modality_code",
+          "path": "modality.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "modality_system",
+          "path": "modality.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "view_text",
+          "path": "view.text",
+          "type": "string"
+        },
+        {
+          "name": "view_code",
+          "path": "view.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "view_system",
+          "path": "view.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "created_date_time",
+          "path": "created.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "issued",
+          "path": "issued",
+          "type": "instant"
+        },
+        {
+          "name": "operator_id",
+          "path": "operator.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "operator_reference",
+          "path": "operator.reference",
+          "type": "string"
+        },
+        {
+          "name": "body_site_text",
+          "path": "bodySite.text",
+          "type": "string"
+        },
+        {
+          "name": "body_site_code",
+          "path": "bodySite.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "body_site_system",
+          "path": "bodySite.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "device_name",
+          "path": "deviceName",
+          "type": "string"
+        },
+        {
+          "name": "device_id",
+          "path": "device.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "device_reference",
+          "path": "device.reference",
+          "type": "string"
+        },
+        {
+          "name": "height",
+          "path": "height",
+          "type": "positiveInt"
+        },
+        {
+          "name": "width",
+          "path": "width",
+          "type": "positiveInt"
+        },
+        {
+          "name": "frames",
+          "path": "frames",
+          "type": "positiveInt"
+        },
+        {
+          "name": "duration",
+          "path": "duration",
+          "type": "decimal"
+        }
+      ]
+    }
+  ]
+}

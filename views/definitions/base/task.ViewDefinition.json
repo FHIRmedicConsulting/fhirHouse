@@ -1,0 +1,233 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "task",
+  "title": "Task \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Task from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Task",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "task_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "instantiates_canonical",
+          "path": "instantiatesCanonical",
+          "type": "canonical"
+        },
+        {
+          "name": "instantiates_uri",
+          "path": "instantiatesUri",
+          "type": "uri"
+        },
+        {
+          "name": "based_on_ids",
+          "path": "basedOn.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "group_identifier_value",
+          "path": "groupIdentifier.value",
+          "type": "string"
+        },
+        {
+          "name": "group_identifier_system",
+          "path": "groupIdentifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "part_of_ids",
+          "path": "partOf.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "status_reason_text",
+          "path": "statusReason.text",
+          "type": "string"
+        },
+        {
+          "name": "status_reason_code",
+          "path": "statusReason.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "status_reason_system",
+          "path": "statusReason.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "business_status_text",
+          "path": "businessStatus.text",
+          "type": "string"
+        },
+        {
+          "name": "business_status_code",
+          "path": "businessStatus.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "business_status_system",
+          "path": "businessStatus.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "intent",
+          "path": "intent",
+          "type": "code"
+        },
+        {
+          "name": "priority",
+          "path": "priority",
+          "type": "code"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "string"
+        },
+        {
+          "name": "focus_id",
+          "path": "focus.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "focus_reference",
+          "path": "focus.reference",
+          "type": "string"
+        },
+        {
+          "name": "for_id",
+          "path": "for.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "for_reference",
+          "path": "for.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "authored_on",
+          "path": "authoredOn",
+          "type": "dateTime"
+        },
+        {
+          "name": "last_modified",
+          "path": "lastModified",
+          "type": "dateTime"
+        },
+        {
+          "name": "requester_id",
+          "path": "requester.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "requester_reference",
+          "path": "requester.reference",
+          "type": "string"
+        },
+        {
+          "name": "owner_id",
+          "path": "owner.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "owner_reference",
+          "path": "owner.reference",
+          "type": "string"
+        },
+        {
+          "name": "location_id",
+          "path": "location.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "location_reference",
+          "path": "location.reference",
+          "type": "string"
+        },
+        {
+          "name": "reason_code_text",
+          "path": "reasonCode.text",
+          "type": "string"
+        },
+        {
+          "name": "reason_code_code",
+          "path": "reasonCode.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "reason_code_system",
+          "path": "reasonCode.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "reason_reference_id",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "reason_reference_reference",
+          "path": "reasonReference.reference",
+          "type": "string"
+        },
+        {
+          "name": "insurance_ids",
+          "path": "insurance.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "relevant_history_ids",
+          "path": "relevantHistory.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

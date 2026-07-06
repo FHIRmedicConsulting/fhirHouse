@@ -1,0 +1,96 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "consent",
+  "title": "Consent \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Consent from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Consent",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "consent_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "scope_text",
+          "path": "scope.text",
+          "type": "string"
+        },
+        {
+          "name": "scope_code",
+          "path": "scope.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "scope_system",
+          "path": "scope.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "patient_id",
+          "path": "patient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "patient_reference",
+          "path": "patient.reference",
+          "type": "string"
+        },
+        {
+          "name": "date_time",
+          "path": "dateTime",
+          "type": "dateTime"
+        },
+        {
+          "name": "performer_ids",
+          "path": "performer.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "organization_ids",
+          "path": "organization.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "source_id",
+          "path": "source.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "policy_rule_text",
+          "path": "policyRule.text",
+          "type": "string"
+        },
+        {
+          "name": "policy_rule_code",
+          "path": "policyRule.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "policy_rule_system",
+          "path": "policyRule.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

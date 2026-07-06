@@ -1,0 +1,109 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medicinal_product_authorization",
+  "title": "MedicinalProductAuthorization \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicinalProductAuthorization from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicinalProductAuthorization",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medicinal_product_authorization_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "status_text",
+          "path": "status.text",
+          "type": "string"
+        },
+        {
+          "name": "status_code",
+          "path": "status.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "status_system",
+          "path": "status.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "status_date",
+          "path": "statusDate",
+          "type": "dateTime"
+        },
+        {
+          "name": "restore_date",
+          "path": "restoreDate",
+          "type": "dateTime"
+        },
+        {
+          "name": "date_of_first_authorization",
+          "path": "dateOfFirstAuthorization",
+          "type": "dateTime"
+        },
+        {
+          "name": "international_birth_date",
+          "path": "internationalBirthDate",
+          "type": "dateTime"
+        },
+        {
+          "name": "legal_basis_text",
+          "path": "legalBasis.text",
+          "type": "string"
+        },
+        {
+          "name": "legal_basis_code",
+          "path": "legalBasis.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "legal_basis_system",
+          "path": "legalBasis.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "holder_id",
+          "path": "holder.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "holder_reference",
+          "path": "holder.reference",
+          "type": "string"
+        },
+        {
+          "name": "regulator_id",
+          "path": "regulator.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "regulator_reference",
+          "path": "regulator.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "biologically_derived_product",
+  "title": "BiologicallyDerivedProduct \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for BiologicallyDerivedProduct from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "BiologicallyDerivedProduct",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "biologically_derived_product_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "product_category",
+          "path": "productCategory",
+          "type": "code"
+        },
+        {
+          "name": "product_code_text",
+          "path": "productCode.text",
+          "type": "string"
+        },
+        {
+          "name": "product_code_code",
+          "path": "productCode.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "product_code_system",
+          "path": "productCode.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "request_ids",
+          "path": "request.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "quantity",
+          "path": "quantity",
+          "type": "integer"
+        },
+        {
+          "name": "parent_ids",
+          "path": "parent.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

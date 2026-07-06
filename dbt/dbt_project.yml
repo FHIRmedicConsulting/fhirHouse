@@ -19,3 +19,9 @@ models:
       # `python -m fhirhouse_views.dbt_gen`). Views by default: delta-rs owns
       # Gold materialization — dbt materializing tables would need its own store.
       +materialized: view
+      base:
+        # Generated all-R4 base pack (fhirhouse_views.generate_base). Off by
+        # default — delta_scan binds at CREATE VIEW, so a model errors when its
+        # Silver table doesn't exist. Enable + select the types you have:
+        #   FHIRHOUSE_BASE_VIEW_PACK=1 dbt run --select views.base.patient ...
+        +enabled: "{{ env_var('FHIRHOUSE_BASE_VIEW_PACK', '0') == '1' }}"

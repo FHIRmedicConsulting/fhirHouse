@@ -1,0 +1,125 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medication_administration",
+  "title": "MedicationAdministration \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicationAdministration from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicationAdministration",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medication_administration_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "instantiates",
+          "path": "instantiates",
+          "type": "uri",
+          "collection": true
+        },
+        {
+          "name": "part_of_ids",
+          "path": "partOf.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "category_text",
+          "path": "category.text",
+          "type": "string"
+        },
+        {
+          "name": "category_code",
+          "path": "category.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "category_system",
+          "path": "category.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "medication_id",
+          "path": "medication.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "context_id",
+          "path": "context.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "context_reference",
+          "path": "context.reference",
+          "type": "string"
+        },
+        {
+          "name": "supporting_information_ids",
+          "path": "supportingInformation.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "effective_date_time",
+          "path": "effective.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "reason_reference_ids",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "request_id",
+          "path": "request.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "request_reference",
+          "path": "request.reference",
+          "type": "string"
+        },
+        {
+          "name": "device_ids",
+          "path": "device.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "event_history_ids",
+          "path": "eventHistory.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

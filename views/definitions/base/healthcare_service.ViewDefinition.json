@@ -1,0 +1,87 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "healthcare_service",
+  "title": "HealthcareService \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for HealthcareService from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "HealthcareService",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "healthcare_service_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "active",
+          "path": "active",
+          "type": "boolean"
+        },
+        {
+          "name": "provided_by_id",
+          "path": "providedBy.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "provided_by_reference",
+          "path": "providedBy.reference",
+          "type": "string"
+        },
+        {
+          "name": "location_ids",
+          "path": "location.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "comment",
+          "path": "comment",
+          "type": "string"
+        },
+        {
+          "name": "extra_details",
+          "path": "extraDetails",
+          "type": "markdown"
+        },
+        {
+          "name": "coverage_area_ids",
+          "path": "coverageArea.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "appointment_required",
+          "path": "appointmentRequired",
+          "type": "boolean"
+        },
+        {
+          "name": "availability_exceptions",
+          "path": "availabilityExceptions",
+          "type": "string"
+        },
+        {
+          "name": "endpoint_ids",
+          "path": "endpoint.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

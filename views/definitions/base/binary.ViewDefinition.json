@@ -1,0 +1,49 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "binary",
+  "title": "Binary \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Binary from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Binary",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "binary_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "content_type",
+          "path": "contentType",
+          "type": "code"
+        },
+        {
+          "name": "security_context_id",
+          "path": "securityContext.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "security_context_reference",
+          "path": "securityContext.reference",
+          "type": "string"
+        },
+        {
+          "name": "data",
+          "path": "data",
+          "type": "base64Binary"
+        }
+      ]
+    }
+  ]
+}

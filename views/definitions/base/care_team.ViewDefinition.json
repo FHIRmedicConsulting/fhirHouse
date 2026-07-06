@@ -1,0 +1,71 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "care_team",
+  "title": "CareTeam \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for CareTeam from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "CareTeam",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "care_team_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "reason_reference_ids",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "managing_organization_ids",
+          "path": "managingOrganization.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

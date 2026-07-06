@@ -1,0 +1,79 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "enrollment_request",
+  "title": "EnrollmentRequest \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for EnrollmentRequest from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "EnrollmentRequest",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "enrollment_request_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "created",
+          "path": "created",
+          "type": "dateTime"
+        },
+        {
+          "name": "insurer_id",
+          "path": "insurer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "insurer_reference",
+          "path": "insurer.reference",
+          "type": "string"
+        },
+        {
+          "name": "provider_id",
+          "path": "provider.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "provider_reference",
+          "path": "provider.reference",
+          "type": "string"
+        },
+        {
+          "name": "candidate_id",
+          "path": "candidate.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "candidate_reference",
+          "path": "candidate.reference",
+          "type": "string"
+        },
+        {
+          "name": "coverage_id",
+          "path": "coverage.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "coverage_reference",
+          "path": "coverage.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

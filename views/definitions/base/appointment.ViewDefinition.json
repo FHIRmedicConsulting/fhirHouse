@@ -1,0 +1,128 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "appointment",
+  "title": "Appointment \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Appointment from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Appointment",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "appointment_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "cancelation_reason_text",
+          "path": "cancelationReason.text",
+          "type": "string"
+        },
+        {
+          "name": "cancelation_reason_code",
+          "path": "cancelationReason.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "cancelation_reason_system",
+          "path": "cancelationReason.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "appointment_type_text",
+          "path": "appointmentType.text",
+          "type": "string"
+        },
+        {
+          "name": "appointment_type_code",
+          "path": "appointmentType.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "appointment_type_system",
+          "path": "appointmentType.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "reason_reference_ids",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "priority",
+          "path": "priority",
+          "type": "unsignedInt"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "string"
+        },
+        {
+          "name": "supporting_information_ids",
+          "path": "supportingInformation.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "start",
+          "path": "start",
+          "type": "instant"
+        },
+        {
+          "name": "end",
+          "path": "end",
+          "type": "instant"
+        },
+        {
+          "name": "minutes_duration",
+          "path": "minutesDuration",
+          "type": "positiveInt"
+        },
+        {
+          "name": "slot_ids",
+          "path": "slot.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "created",
+          "path": "created",
+          "type": "dateTime"
+        },
+        {
+          "name": "comment",
+          "path": "comment",
+          "type": "string"
+        },
+        {
+          "name": "patient_instruction",
+          "path": "patientInstruction",
+          "type": "string"
+        },
+        {
+          "name": "based_on_ids",
+          "path": "basedOn.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

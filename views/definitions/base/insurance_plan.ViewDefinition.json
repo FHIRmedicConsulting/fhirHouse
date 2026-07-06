@@ -1,0 +1,83 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "insurance_plan",
+  "title": "InsurancePlan \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for InsurancePlan from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "InsurancePlan",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "insurance_plan_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "alias",
+          "path": "alias",
+          "type": "string",
+          "collection": true
+        },
+        {
+          "name": "owned_by_id",
+          "path": "ownedBy.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "owned_by_reference",
+          "path": "ownedBy.reference",
+          "type": "string"
+        },
+        {
+          "name": "administered_by_id",
+          "path": "administeredBy.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "administered_by_reference",
+          "path": "administeredBy.reference",
+          "type": "string"
+        },
+        {
+          "name": "coverage_area_ids",
+          "path": "coverageArea.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "endpoint_ids",
+          "path": "endpoint.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "network_ids",
+          "path": "network.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

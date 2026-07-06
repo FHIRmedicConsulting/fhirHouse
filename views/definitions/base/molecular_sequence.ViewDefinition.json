@@ -1,0 +1,110 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "molecular_sequence",
+  "title": "MolecularSequence \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MolecularSequence from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MolecularSequence",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "molecular_sequence_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "type",
+          "path": "type",
+          "type": "code"
+        },
+        {
+          "name": "coordinate_system",
+          "path": "coordinateSystem",
+          "type": "integer"
+        },
+        {
+          "name": "patient_id",
+          "path": "patient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "patient_reference",
+          "path": "patient.reference",
+          "type": "string"
+        },
+        {
+          "name": "specimen_id",
+          "path": "specimen.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "specimen_reference",
+          "path": "specimen.reference",
+          "type": "string"
+        },
+        {
+          "name": "device_id",
+          "path": "device.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "device_reference",
+          "path": "device.reference",
+          "type": "string"
+        },
+        {
+          "name": "performer_id",
+          "path": "performer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "performer_reference",
+          "path": "performer.reference",
+          "type": "string"
+        },
+        {
+          "name": "quantity_value",
+          "path": "quantity.value",
+          "type": "decimal"
+        },
+        {
+          "name": "quantity_unit",
+          "path": "quantity.unit",
+          "type": "string"
+        },
+        {
+          "name": "quantity_code",
+          "path": "quantity.code",
+          "type": "code"
+        },
+        {
+          "name": "observed_seq",
+          "path": "observedSeq",
+          "type": "string"
+        },
+        {
+          "name": "read_coverage",
+          "path": "readCoverage",
+          "type": "integer"
+        },
+        {
+          "name": "pointer_ids",
+          "path": "pointer.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

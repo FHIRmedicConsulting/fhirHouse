@@ -1,0 +1,54 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "immunization_recommendation",
+  "title": "ImmunizationRecommendation \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for ImmunizationRecommendation from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "ImmunizationRecommendation",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "immunization_recommendation_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "patient_id",
+          "path": "patient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "patient_reference",
+          "path": "patient.reference",
+          "type": "string"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "authority_id",
+          "path": "authority.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "authority_reference",
+          "path": "authority.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

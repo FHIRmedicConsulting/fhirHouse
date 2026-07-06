@@ -1,0 +1,77 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "practitioner_role",
+  "title": "PractitionerRole \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for PractitionerRole from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "PractitionerRole",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "practitioner_role_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "active",
+          "path": "active",
+          "type": "boolean"
+        },
+        {
+          "name": "practitioner_id",
+          "path": "practitioner.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "practitioner_reference",
+          "path": "practitioner.reference",
+          "type": "string"
+        },
+        {
+          "name": "organization_id",
+          "path": "organization.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "organization_reference",
+          "path": "organization.reference",
+          "type": "string"
+        },
+        {
+          "name": "location_ids",
+          "path": "location.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "healthcare_service_ids",
+          "path": "healthcareService.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "availability_exceptions",
+          "path": "availabilityExceptions",
+          "type": "string"
+        },
+        {
+          "name": "endpoint_ids",
+          "path": "endpoint.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

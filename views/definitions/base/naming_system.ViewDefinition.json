@@ -1,0 +1,84 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "naming_system",
+  "title": "NamingSystem \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for NamingSystem from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "NamingSystem",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "naming_system_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "kind",
+          "path": "kind",
+          "type": "code"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "publisher",
+          "path": "publisher",
+          "type": "string"
+        },
+        {
+          "name": "responsible",
+          "path": "responsible",
+          "type": "string"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "markdown"
+        },
+        {
+          "name": "usage",
+          "path": "usage",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

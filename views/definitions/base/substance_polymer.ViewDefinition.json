@@ -1,0 +1,65 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "substance_polymer",
+  "title": "SubstancePolymer \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for SubstancePolymer from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "SubstancePolymer",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "substance_polymer_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "class_text",
+          "path": "class.text",
+          "type": "string"
+        },
+        {
+          "name": "class_code",
+          "path": "class.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "class_system",
+          "path": "class.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "geometry_text",
+          "path": "geometry.text",
+          "type": "string"
+        },
+        {
+          "name": "geometry_code",
+          "path": "geometry.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "geometry_system",
+          "path": "geometry.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "modification",
+          "path": "modification",
+          "type": "string",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

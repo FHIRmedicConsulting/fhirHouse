@@ -1,0 +1,190 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medication_dispense",
+  "title": "MedicationDispense \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicationDispense from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicationDispense",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medication_dispense_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "part_of_ids",
+          "path": "partOf.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "status_reason_id",
+          "path": "statusReason.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "category_text",
+          "path": "category.text",
+          "type": "string"
+        },
+        {
+          "name": "category_code",
+          "path": "category.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "category_system",
+          "path": "category.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "medication_id",
+          "path": "medication.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "context_id",
+          "path": "context.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "context_reference",
+          "path": "context.reference",
+          "type": "string"
+        },
+        {
+          "name": "supporting_information_ids",
+          "path": "supportingInformation.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "location_id",
+          "path": "location.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "location_reference",
+          "path": "location.reference",
+          "type": "string"
+        },
+        {
+          "name": "authorizing_prescription_ids",
+          "path": "authorizingPrescription.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "quantity_value",
+          "path": "quantity.value",
+          "type": "decimal"
+        },
+        {
+          "name": "quantity_unit",
+          "path": "quantity.unit",
+          "type": "string"
+        },
+        {
+          "name": "quantity_code",
+          "path": "quantity.code",
+          "type": "code"
+        },
+        {
+          "name": "days_supply_value",
+          "path": "daysSupply.value",
+          "type": "decimal"
+        },
+        {
+          "name": "days_supply_unit",
+          "path": "daysSupply.unit",
+          "type": "string"
+        },
+        {
+          "name": "days_supply_code",
+          "path": "daysSupply.code",
+          "type": "code"
+        },
+        {
+          "name": "when_prepared",
+          "path": "whenPrepared",
+          "type": "dateTime"
+        },
+        {
+          "name": "when_handed_over",
+          "path": "whenHandedOver",
+          "type": "dateTime"
+        },
+        {
+          "name": "destination_id",
+          "path": "destination.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "destination_reference",
+          "path": "destination.reference",
+          "type": "string"
+        },
+        {
+          "name": "receiver_ids",
+          "path": "receiver.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "detected_issue_ids",
+          "path": "detectedIssue.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "event_history_ids",
+          "path": "eventHistory.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

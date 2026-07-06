@@ -1,0 +1,216 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "contract",
+  "title": "Contract \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Contract from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Contract",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "contract_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "url",
+          "path": "url",
+          "type": "uri"
+        },
+        {
+          "name": "version",
+          "path": "version",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "legal_state_text",
+          "path": "legalState.text",
+          "type": "string"
+        },
+        {
+          "name": "legal_state_code",
+          "path": "legalState.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "legal_state_system",
+          "path": "legalState.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "instantiates_canonical_id",
+          "path": "instantiatesCanonical.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "instantiates_canonical_reference",
+          "path": "instantiatesCanonical.reference",
+          "type": "string"
+        },
+        {
+          "name": "instantiates_uri",
+          "path": "instantiatesUri",
+          "type": "uri"
+        },
+        {
+          "name": "content_derivative_text",
+          "path": "contentDerivative.text",
+          "type": "string"
+        },
+        {
+          "name": "content_derivative_code",
+          "path": "contentDerivative.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "content_derivative_system",
+          "path": "contentDerivative.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "issued",
+          "path": "issued",
+          "type": "dateTime"
+        },
+        {
+          "name": "expiration_type_text",
+          "path": "expirationType.text",
+          "type": "string"
+        },
+        {
+          "name": "expiration_type_code",
+          "path": "expirationType.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "expiration_type_system",
+          "path": "expirationType.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_ids",
+          "path": "subject.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "authority_ids",
+          "path": "authority.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "domain_ids",
+          "path": "domain.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "site_ids",
+          "path": "site.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string"
+        },
+        {
+          "name": "subtitle",
+          "path": "subtitle",
+          "type": "string"
+        },
+        {
+          "name": "alias",
+          "path": "alias",
+          "type": "string",
+          "collection": true
+        },
+        {
+          "name": "author_id",
+          "path": "author.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "author_reference",
+          "path": "author.reference",
+          "type": "string"
+        },
+        {
+          "name": "scope_text",
+          "path": "scope.text",
+          "type": "string"
+        },
+        {
+          "name": "scope_code",
+          "path": "scope.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "scope_system",
+          "path": "scope.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "topic_id",
+          "path": "topic.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "supporting_info_ids",
+          "path": "supportingInfo.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "relevant_history_ids",
+          "path": "relevantHistory.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "legally_binding_id",
+          "path": "legallyBinding.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        }
+      ]
+    }
+  ]
+}

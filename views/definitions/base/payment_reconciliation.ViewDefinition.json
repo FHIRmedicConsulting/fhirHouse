@@ -1,0 +1,109 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "payment_reconciliation",
+  "title": "PaymentReconciliation \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for PaymentReconciliation from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "PaymentReconciliation",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "payment_reconciliation_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "created",
+          "path": "created",
+          "type": "dateTime"
+        },
+        {
+          "name": "payment_issuer_id",
+          "path": "paymentIssuer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "payment_issuer_reference",
+          "path": "paymentIssuer.reference",
+          "type": "string"
+        },
+        {
+          "name": "request_id",
+          "path": "request.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "request_reference",
+          "path": "request.reference",
+          "type": "string"
+        },
+        {
+          "name": "requestor_id",
+          "path": "requestor.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "requestor_reference",
+          "path": "requestor.reference",
+          "type": "string"
+        },
+        {
+          "name": "outcome",
+          "path": "outcome",
+          "type": "code"
+        },
+        {
+          "name": "disposition",
+          "path": "disposition",
+          "type": "string"
+        },
+        {
+          "name": "payment_date",
+          "path": "paymentDate",
+          "type": "date"
+        },
+        {
+          "name": "payment_identifier_value",
+          "path": "paymentIdentifier.value",
+          "type": "string"
+        },
+        {
+          "name": "payment_identifier_system",
+          "path": "paymentIdentifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "form_code_text",
+          "path": "formCode.text",
+          "type": "string"
+        },
+        {
+          "name": "form_code_code",
+          "path": "formCode.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "form_code_system",
+          "path": "formCode.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

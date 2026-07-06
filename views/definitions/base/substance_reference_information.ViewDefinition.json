@@ -1,0 +1,34 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "substance_reference_information",
+  "title": "SubstanceReferenceInformation \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for SubstanceReferenceInformation from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "SubstanceReferenceInformation",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "substance_reference_information_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "comment",
+          "path": "comment",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

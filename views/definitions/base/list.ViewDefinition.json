@@ -1,0 +1,124 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "list",
+  "title": "List \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for List from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "List",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "list_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "mode",
+          "path": "mode",
+          "type": "code"
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "source_id",
+          "path": "source.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "source_reference",
+          "path": "source.reference",
+          "type": "string"
+        },
+        {
+          "name": "ordered_by_text",
+          "path": "orderedBy.text",
+          "type": "string"
+        },
+        {
+          "name": "ordered_by_code",
+          "path": "orderedBy.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "ordered_by_system",
+          "path": "orderedBy.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "empty_reason_text",
+          "path": "emptyReason.text",
+          "type": "string"
+        },
+        {
+          "name": "empty_reason_code",
+          "path": "emptyReason.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "empty_reason_system",
+          "path": "emptyReason.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

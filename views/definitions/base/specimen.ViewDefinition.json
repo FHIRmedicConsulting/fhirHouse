@@ -1,0 +1,86 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "specimen",
+  "title": "Specimen \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Specimen from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Specimen",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "specimen_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "accession_identifier_value",
+          "path": "accessionIdentifier.value",
+          "type": "string"
+        },
+        {
+          "name": "accession_identifier_system",
+          "path": "accessionIdentifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "received_time",
+          "path": "receivedTime",
+          "type": "dateTime"
+        },
+        {
+          "name": "parent_ids",
+          "path": "parent.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "request_ids",
+          "path": "request.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

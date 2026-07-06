@@ -1,0 +1,150 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "substance_specification",
+  "title": "SubstanceSpecification \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for SubstanceSpecification from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "SubstanceSpecification",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "substance_specification_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "identifier_value",
+          "path": "identifier.value",
+          "type": "string"
+        },
+        {
+          "name": "identifier_system",
+          "path": "identifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "status_text",
+          "path": "status.text",
+          "type": "string"
+        },
+        {
+          "name": "status_code",
+          "path": "status.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "status_system",
+          "path": "status.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "domain_text",
+          "path": "domain.text",
+          "type": "string"
+        },
+        {
+          "name": "domain_code",
+          "path": "domain.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "domain_system",
+          "path": "domain.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "string"
+        },
+        {
+          "name": "source_ids",
+          "path": "source.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "comment",
+          "path": "comment",
+          "type": "string"
+        },
+        {
+          "name": "reference_information_id",
+          "path": "referenceInformation.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "reference_information_reference",
+          "path": "referenceInformation.reference",
+          "type": "string"
+        },
+        {
+          "name": "nucleic_acid_id",
+          "path": "nucleicAcid.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "nucleic_acid_reference",
+          "path": "nucleicAcid.reference",
+          "type": "string"
+        },
+        {
+          "name": "polymer_id",
+          "path": "polymer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "polymer_reference",
+          "path": "polymer.reference",
+          "type": "string"
+        },
+        {
+          "name": "protein_id",
+          "path": "protein.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "protein_reference",
+          "path": "protein.reference",
+          "type": "string"
+        },
+        {
+          "name": "source_material_id",
+          "path": "sourceMaterial.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "source_material_reference",
+          "path": "sourceMaterial.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

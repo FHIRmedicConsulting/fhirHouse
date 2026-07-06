@@ -1,0 +1,79 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "enrollment_response",
+  "title": "EnrollmentResponse \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for EnrollmentResponse from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "EnrollmentResponse",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "enrollment_response_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "request_id",
+          "path": "request.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "request_reference",
+          "path": "request.reference",
+          "type": "string"
+        },
+        {
+          "name": "outcome",
+          "path": "outcome",
+          "type": "code"
+        },
+        {
+          "name": "disposition",
+          "path": "disposition",
+          "type": "string"
+        },
+        {
+          "name": "created",
+          "path": "created",
+          "type": "dateTime"
+        },
+        {
+          "name": "organization_id",
+          "path": "organization.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "organization_reference",
+          "path": "organization.reference",
+          "type": "string"
+        },
+        {
+          "name": "request_provider_id",
+          "path": "requestProvider.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "request_provider_reference",
+          "path": "requestProvider.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

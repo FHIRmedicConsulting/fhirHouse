@@ -1,0 +1,110 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "composition",
+  "title": "Composition \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Composition from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Composition",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "composition_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "identifier_value",
+          "path": "identifier.value",
+          "type": "string"
+        },
+        {
+          "name": "identifier_system",
+          "path": "identifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "author_ids",
+          "path": "author.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string"
+        },
+        {
+          "name": "confidentiality",
+          "path": "confidentiality",
+          "type": "code"
+        },
+        {
+          "name": "custodian_id",
+          "path": "custodian.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "custodian_reference",
+          "path": "custodian.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

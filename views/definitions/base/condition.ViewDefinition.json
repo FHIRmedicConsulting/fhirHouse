@@ -1,0 +1,154 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "condition",
+  "title": "Condition \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Condition from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Condition",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "condition_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "clinical_status_text",
+          "path": "clinicalStatus.text",
+          "type": "string"
+        },
+        {
+          "name": "clinical_status_code",
+          "path": "clinicalStatus.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "clinical_status_system",
+          "path": "clinicalStatus.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "verification_status_text",
+          "path": "verificationStatus.text",
+          "type": "string"
+        },
+        {
+          "name": "verification_status_code",
+          "path": "verificationStatus.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "verification_status_system",
+          "path": "verificationStatus.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "severity_text",
+          "path": "severity.text",
+          "type": "string"
+        },
+        {
+          "name": "severity_code",
+          "path": "severity.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "severity_system",
+          "path": "severity.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "onset_date_time",
+          "path": "onset.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "onset_string",
+          "path": "onset.ofType(string)",
+          "type": "string"
+        },
+        {
+          "name": "abatement_date_time",
+          "path": "abatement.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "abatement_string",
+          "path": "abatement.ofType(string)",
+          "type": "string"
+        },
+        {
+          "name": "recorded_date",
+          "path": "recordedDate",
+          "type": "dateTime"
+        },
+        {
+          "name": "recorder_id",
+          "path": "recorder.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "recorder_reference",
+          "path": "recorder.reference",
+          "type": "string"
+        },
+        {
+          "name": "asserter_id",
+          "path": "asserter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "asserter_reference",
+          "path": "asserter.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

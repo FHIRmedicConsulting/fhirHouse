@@ -1,0 +1,107 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "device_use_statement",
+  "title": "DeviceUseStatement \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for DeviceUseStatement from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "DeviceUseStatement",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "device_use_statement_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "based_on_ids",
+          "path": "basedOn.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "derived_from_ids",
+          "path": "derivedFrom.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "timing_date_time",
+          "path": "timing.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "recorded_on",
+          "path": "recordedOn",
+          "type": "dateTime"
+        },
+        {
+          "name": "source_id",
+          "path": "source.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "source_reference",
+          "path": "source.reference",
+          "type": "string"
+        },
+        {
+          "name": "device_id",
+          "path": "device.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "device_reference",
+          "path": "device.reference",
+          "type": "string"
+        },
+        {
+          "name": "reason_reference_ids",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "body_site_text",
+          "path": "bodySite.text",
+          "type": "string"
+        },
+        {
+          "name": "body_site_code",
+          "path": "bodySite.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "body_site_system",
+          "path": "bodySite.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

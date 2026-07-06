@@ -1,0 +1,126 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "goal",
+  "title": "Goal \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Goal from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Goal",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "goal_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "lifecycle_status",
+          "path": "lifecycleStatus",
+          "type": "code"
+        },
+        {
+          "name": "achievement_status_text",
+          "path": "achievementStatus.text",
+          "type": "string"
+        },
+        {
+          "name": "achievement_status_code",
+          "path": "achievementStatus.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "achievement_status_system",
+          "path": "achievementStatus.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "priority_text",
+          "path": "priority.text",
+          "type": "string"
+        },
+        {
+          "name": "priority_code",
+          "path": "priority.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "priority_system",
+          "path": "priority.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "description_text",
+          "path": "description.text",
+          "type": "string"
+        },
+        {
+          "name": "description_code",
+          "path": "description.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "description_system",
+          "path": "description.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "start_date",
+          "path": "start.ofType(date)",
+          "type": "date"
+        },
+        {
+          "name": "status_date",
+          "path": "statusDate",
+          "type": "date"
+        },
+        {
+          "name": "status_reason",
+          "path": "statusReason",
+          "type": "string"
+        },
+        {
+          "name": "expressed_by_id",
+          "path": "expressedBy.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "expressed_by_reference",
+          "path": "expressedBy.reference",
+          "type": "string"
+        },
+        {
+          "name": "addresses_ids",
+          "path": "addresses.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "outcome_reference_ids",
+          "path": "outcomeReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

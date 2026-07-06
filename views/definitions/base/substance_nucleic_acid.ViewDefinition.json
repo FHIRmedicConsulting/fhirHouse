@@ -1,0 +1,69 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "substance_nucleic_acid",
+  "title": "SubstanceNucleicAcid \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for SubstanceNucleicAcid from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "SubstanceNucleicAcid",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "substance_nucleic_acid_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "sequence_type_text",
+          "path": "sequenceType.text",
+          "type": "string"
+        },
+        {
+          "name": "sequence_type_code",
+          "path": "sequenceType.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "sequence_type_system",
+          "path": "sequenceType.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "number_of_subunits",
+          "path": "numberOfSubunits",
+          "type": "integer"
+        },
+        {
+          "name": "area_of_hybridisation",
+          "path": "areaOfHybridisation",
+          "type": "string"
+        },
+        {
+          "name": "oligo_nucleotide_type_text",
+          "path": "oligoNucleotideType.text",
+          "type": "string"
+        },
+        {
+          "name": "oligo_nucleotide_type_code",
+          "path": "oligoNucleotideType.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "oligo_nucleotide_type_system",
+          "path": "oligoNucleotideType.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

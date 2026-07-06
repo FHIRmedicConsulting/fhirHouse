@@ -1,0 +1,100 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medicinal_product_interaction",
+  "title": "MedicinalProductInteraction \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicinalProductInteraction from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicinalProductInteraction",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medicinal_product_interaction_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "subject_ids",
+          "path": "subject.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "string"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "effect_text",
+          "path": "effect.text",
+          "type": "string"
+        },
+        {
+          "name": "effect_code",
+          "path": "effect.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "effect_system",
+          "path": "effect.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "incidence_text",
+          "path": "incidence.text",
+          "type": "string"
+        },
+        {
+          "name": "incidence_code",
+          "path": "incidence.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "incidence_system",
+          "path": "incidence.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "management_text",
+          "path": "management.text",
+          "type": "string"
+        },
+        {
+          "name": "management_code",
+          "path": "management.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "management_system",
+          "path": "management.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

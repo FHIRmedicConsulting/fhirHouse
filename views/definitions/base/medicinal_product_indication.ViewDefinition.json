@@ -1,0 +1,101 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medicinal_product_indication",
+  "title": "MedicinalProductIndication \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicinalProductIndication from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicinalProductIndication",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medicinal_product_indication_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "subject_ids",
+          "path": "subject.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "disease_symptom_procedure_text",
+          "path": "diseaseSymptomProcedure.text",
+          "type": "string"
+        },
+        {
+          "name": "disease_symptom_procedure_code",
+          "path": "diseaseSymptomProcedure.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "disease_symptom_procedure_system",
+          "path": "diseaseSymptomProcedure.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "disease_status_text",
+          "path": "diseaseStatus.text",
+          "type": "string"
+        },
+        {
+          "name": "disease_status_code",
+          "path": "diseaseStatus.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "disease_status_system",
+          "path": "diseaseStatus.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "intended_effect_text",
+          "path": "intendedEffect.text",
+          "type": "string"
+        },
+        {
+          "name": "intended_effect_code",
+          "path": "intendedEffect.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "intended_effect_system",
+          "path": "intendedEffect.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "duration_value",
+          "path": "duration.value",
+          "type": "decimal"
+        },
+        {
+          "name": "duration_unit",
+          "path": "duration.unit",
+          "type": "string"
+        },
+        {
+          "name": "duration_code",
+          "path": "duration.code",
+          "type": "code"
+        },
+        {
+          "name": "undesirable_effect_ids",
+          "path": "undesirableEffect.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

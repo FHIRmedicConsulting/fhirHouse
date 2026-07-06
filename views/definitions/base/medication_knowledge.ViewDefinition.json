@@ -1,0 +1,112 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medication_knowledge",
+  "title": "MedicationKnowledge \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicationKnowledge from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicationKnowledge",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medication_knowledge_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "manufacturer_id",
+          "path": "manufacturer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "manufacturer_reference",
+          "path": "manufacturer.reference",
+          "type": "string"
+        },
+        {
+          "name": "dose_form_text",
+          "path": "doseForm.text",
+          "type": "string"
+        },
+        {
+          "name": "dose_form_code",
+          "path": "doseForm.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "dose_form_system",
+          "path": "doseForm.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "amount_value",
+          "path": "amount.value",
+          "type": "decimal"
+        },
+        {
+          "name": "amount_unit",
+          "path": "amount.unit",
+          "type": "string"
+        },
+        {
+          "name": "amount_code",
+          "path": "amount.code",
+          "type": "code"
+        },
+        {
+          "name": "synonym",
+          "path": "synonym",
+          "type": "string",
+          "collection": true
+        },
+        {
+          "name": "associated_medication_ids",
+          "path": "associatedMedication.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "preparation_instruction",
+          "path": "preparationInstruction",
+          "type": "markdown"
+        },
+        {
+          "name": "contraindication_ids",
+          "path": "contraindication.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

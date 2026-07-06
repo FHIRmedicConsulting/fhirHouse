@@ -1,0 +1,110 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "document_reference",
+  "title": "DocumentReference \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for DocumentReference from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "DocumentReference",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "document_reference_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "master_identifier_value",
+          "path": "masterIdentifier.value",
+          "type": "string"
+        },
+        {
+          "name": "master_identifier_system",
+          "path": "masterIdentifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "doc_status",
+          "path": "docStatus",
+          "type": "code"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "instant"
+        },
+        {
+          "name": "author_ids",
+          "path": "author.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "authenticator_id",
+          "path": "authenticator.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "authenticator_reference",
+          "path": "authenticator.reference",
+          "type": "string"
+        },
+        {
+          "name": "custodian_id",
+          "path": "custodian.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "custodian_reference",
+          "path": "custodian.reference",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

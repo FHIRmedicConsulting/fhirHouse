@@ -1,0 +1,210 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "observation",
+  "title": "Observation \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Observation from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Observation",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "observation_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "based_on_ids",
+          "path": "basedOn.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "part_of_ids",
+          "path": "partOf.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "focus_ids",
+          "path": "focus.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "effective_date_time",
+          "path": "effective.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "effective_instant",
+          "path": "effective.ofType(instant)",
+          "type": "instant"
+        },
+        {
+          "name": "issued",
+          "path": "issued",
+          "type": "instant"
+        },
+        {
+          "name": "performer_ids",
+          "path": "performer.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "value_string",
+          "path": "value.ofType(string)",
+          "type": "string"
+        },
+        {
+          "name": "value_boolean",
+          "path": "value.ofType(boolean)",
+          "type": "boolean"
+        },
+        {
+          "name": "value_integer",
+          "path": "value.ofType(integer)",
+          "type": "integer"
+        },
+        {
+          "name": "value_time",
+          "path": "value.ofType(time)",
+          "type": "time"
+        },
+        {
+          "name": "value_date_time",
+          "path": "value.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "data_absent_reason_text",
+          "path": "dataAbsentReason.text",
+          "type": "string"
+        },
+        {
+          "name": "data_absent_reason_code",
+          "path": "dataAbsentReason.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "data_absent_reason_system",
+          "path": "dataAbsentReason.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "body_site_text",
+          "path": "bodySite.text",
+          "type": "string"
+        },
+        {
+          "name": "body_site_code",
+          "path": "bodySite.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "body_site_system",
+          "path": "bodySite.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "method_text",
+          "path": "method.text",
+          "type": "string"
+        },
+        {
+          "name": "method_code",
+          "path": "method.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "method_system",
+          "path": "method.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "specimen_id",
+          "path": "specimen.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "specimen_reference",
+          "path": "specimen.reference",
+          "type": "string"
+        },
+        {
+          "name": "device_id",
+          "path": "device.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "device_reference",
+          "path": "device.reference",
+          "type": "string"
+        },
+        {
+          "name": "has_member_ids",
+          "path": "hasMember.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "derived_from_ids",
+          "path": "derivedFrom.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

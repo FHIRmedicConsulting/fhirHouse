@@ -1,0 +1,123 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "charge_item_definition",
+  "title": "ChargeItemDefinition \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for ChargeItemDefinition from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "ChargeItemDefinition",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "charge_item_definition_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "url",
+          "path": "url",
+          "type": "uri"
+        },
+        {
+          "name": "version",
+          "path": "version",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string"
+        },
+        {
+          "name": "derived_from_uri",
+          "path": "derivedFromUri",
+          "type": "uri",
+          "collection": true
+        },
+        {
+          "name": "part_of",
+          "path": "partOf",
+          "type": "canonical",
+          "collection": true
+        },
+        {
+          "name": "replaces",
+          "path": "replaces",
+          "type": "canonical",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "experimental",
+          "path": "experimental",
+          "type": "boolean"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "publisher",
+          "path": "publisher",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "markdown"
+        },
+        {
+          "name": "copyright",
+          "path": "copyright",
+          "type": "markdown"
+        },
+        {
+          "name": "approval_date",
+          "path": "approvalDate",
+          "type": "date"
+        },
+        {
+          "name": "last_review_date",
+          "path": "lastReviewDate",
+          "type": "date"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "instance_ids",
+          "path": "instance.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

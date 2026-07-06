@@ -1,0 +1,144 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "care_plan",
+  "title": "CarePlan \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for CarePlan from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "CarePlan",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "care_plan_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "instantiates_canonical",
+          "path": "instantiatesCanonical",
+          "type": "canonical",
+          "collection": true
+        },
+        {
+          "name": "instantiates_uri",
+          "path": "instantiatesUri",
+          "type": "uri",
+          "collection": true
+        },
+        {
+          "name": "based_on_ids",
+          "path": "basedOn.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "replaces_ids",
+          "path": "replaces.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "part_of_ids",
+          "path": "partOf.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "intent",
+          "path": "intent",
+          "type": "code"
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "string"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "created",
+          "path": "created",
+          "type": "dateTime"
+        },
+        {
+          "name": "author_id",
+          "path": "author.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "author_reference",
+          "path": "author.reference",
+          "type": "string"
+        },
+        {
+          "name": "contributor_ids",
+          "path": "contributor.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "care_team_ids",
+          "path": "careTeam.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "addresses_ids",
+          "path": "addresses.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "supporting_info_ids",
+          "path": "supportingInfo.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "goal_ids",
+          "path": "goal.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

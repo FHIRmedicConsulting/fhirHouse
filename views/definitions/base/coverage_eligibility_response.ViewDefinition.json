@@ -1,0 +1,120 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "coverage_eligibility_response",
+  "title": "CoverageEligibilityResponse \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for CoverageEligibilityResponse from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "CoverageEligibilityResponse",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "coverage_eligibility_response_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "purpose",
+          "path": "purpose",
+          "type": "code",
+          "collection": true
+        },
+        {
+          "name": "patient_id",
+          "path": "patient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "patient_reference",
+          "path": "patient.reference",
+          "type": "string"
+        },
+        {
+          "name": "serviced_date",
+          "path": "serviced.ofType(date)",
+          "type": "date"
+        },
+        {
+          "name": "created",
+          "path": "created",
+          "type": "dateTime"
+        },
+        {
+          "name": "requestor_id",
+          "path": "requestor.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "requestor_reference",
+          "path": "requestor.reference",
+          "type": "string"
+        },
+        {
+          "name": "request_id",
+          "path": "request.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "request_reference",
+          "path": "request.reference",
+          "type": "string"
+        },
+        {
+          "name": "outcome",
+          "path": "outcome",
+          "type": "code"
+        },
+        {
+          "name": "disposition",
+          "path": "disposition",
+          "type": "string"
+        },
+        {
+          "name": "insurer_id",
+          "path": "insurer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "insurer_reference",
+          "path": "insurer.reference",
+          "type": "string"
+        },
+        {
+          "name": "pre_auth_ref",
+          "path": "preAuthRef",
+          "type": "string"
+        },
+        {
+          "name": "form_text",
+          "path": "form.text",
+          "type": "string"
+        },
+        {
+          "name": "form_code",
+          "path": "form.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "form_system",
+          "path": "form.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

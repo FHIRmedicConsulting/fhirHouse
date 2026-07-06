@@ -1,0 +1,131 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "coverage",
+  "title": "Coverage \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Coverage from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Coverage",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "coverage_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "policy_holder_id",
+          "path": "policyHolder.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "policy_holder_reference",
+          "path": "policyHolder.reference",
+          "type": "string"
+        },
+        {
+          "name": "subscriber_id",
+          "path": "subscriber.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subscriber_reference",
+          "path": "subscriber.reference",
+          "type": "string"
+        },
+        {
+          "name": "subscriber_id_2",
+          "path": "subscriberId",
+          "type": "string"
+        },
+        {
+          "name": "beneficiary_id",
+          "path": "beneficiary.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "beneficiary_reference",
+          "path": "beneficiary.reference",
+          "type": "string"
+        },
+        {
+          "name": "dependent",
+          "path": "dependent",
+          "type": "string"
+        },
+        {
+          "name": "relationship_text",
+          "path": "relationship.text",
+          "type": "string"
+        },
+        {
+          "name": "relationship_code",
+          "path": "relationship.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "relationship_system",
+          "path": "relationship.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "payor_ids",
+          "path": "payor.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "order",
+          "path": "order",
+          "type": "positiveInt"
+        },
+        {
+          "name": "network",
+          "path": "network",
+          "type": "string"
+        },
+        {
+          "name": "subrogation",
+          "path": "subrogation",
+          "type": "boolean"
+        },
+        {
+          "name": "contract_ids",
+          "path": "contract.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

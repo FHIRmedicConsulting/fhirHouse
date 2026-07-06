@@ -1,0 +1,106 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "verification_result",
+  "title": "VerificationResult \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for VerificationResult from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "VerificationResult",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "verification_result_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "target_ids",
+          "path": "target.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "target_location",
+          "path": "targetLocation",
+          "type": "string",
+          "collection": true
+        },
+        {
+          "name": "need_text",
+          "path": "need.text",
+          "type": "string"
+        },
+        {
+          "name": "need_code",
+          "path": "need.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "need_system",
+          "path": "need.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "status_date",
+          "path": "statusDate",
+          "type": "dateTime"
+        },
+        {
+          "name": "validation_type_text",
+          "path": "validationType.text",
+          "type": "string"
+        },
+        {
+          "name": "validation_type_code",
+          "path": "validationType.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "validation_type_system",
+          "path": "validationType.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "last_performed",
+          "path": "lastPerformed",
+          "type": "dateTime"
+        },
+        {
+          "name": "next_scheduled",
+          "path": "nextScheduled",
+          "type": "date"
+        },
+        {
+          "name": "failure_action_text",
+          "path": "failureAction.text",
+          "type": "string"
+        },
+        {
+          "name": "failure_action_code",
+          "path": "failureAction.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "failure_action_system",
+          "path": "failureAction.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

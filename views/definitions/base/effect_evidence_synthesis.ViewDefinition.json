@@ -1,0 +1,154 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "effect_evidence_synthesis",
+  "title": "EffectEvidenceSynthesis \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for EffectEvidenceSynthesis from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "EffectEvidenceSynthesis",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "effect_evidence_synthesis_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "url",
+          "path": "url",
+          "type": "uri"
+        },
+        {
+          "name": "version",
+          "path": "version",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "publisher",
+          "path": "publisher",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "markdown"
+        },
+        {
+          "name": "copyright",
+          "path": "copyright",
+          "type": "markdown"
+        },
+        {
+          "name": "approval_date",
+          "path": "approvalDate",
+          "type": "date"
+        },
+        {
+          "name": "last_review_date",
+          "path": "lastReviewDate",
+          "type": "date"
+        },
+        {
+          "name": "synthesis_type_text",
+          "path": "synthesisType.text",
+          "type": "string"
+        },
+        {
+          "name": "synthesis_type_code",
+          "path": "synthesisType.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "synthesis_type_system",
+          "path": "synthesisType.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "study_type_text",
+          "path": "studyType.text",
+          "type": "string"
+        },
+        {
+          "name": "study_type_code",
+          "path": "studyType.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "study_type_system",
+          "path": "studyType.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "population_id",
+          "path": "population.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "population_reference",
+          "path": "population.reference",
+          "type": "string"
+        },
+        {
+          "name": "exposure_id",
+          "path": "exposure.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "exposure_reference",
+          "path": "exposure.reference",
+          "type": "string"
+        },
+        {
+          "name": "exposure_alternative_id",
+          "path": "exposureAlternative.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "exposure_alternative_reference",
+          "path": "exposureAlternative.reference",
+          "type": "string"
+        },
+        {
+          "name": "outcome_id",
+          "path": "outcome.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "outcome_reference",
+          "path": "outcome.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

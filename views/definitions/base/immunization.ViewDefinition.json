@@ -1,0 +1,220 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "immunization",
+  "title": "Immunization \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Immunization from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Immunization",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "immunization_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "status_reason_text",
+          "path": "statusReason.text",
+          "type": "string"
+        },
+        {
+          "name": "status_reason_code",
+          "path": "statusReason.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "status_reason_system",
+          "path": "statusReason.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "vaccine_code_text",
+          "path": "vaccineCode.text",
+          "type": "string"
+        },
+        {
+          "name": "vaccine_code_code",
+          "path": "vaccineCode.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "vaccine_code_system",
+          "path": "vaccineCode.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "patient_id",
+          "path": "patient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "patient_reference",
+          "path": "patient.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "occurrence_date_time",
+          "path": "occurrence.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "occurrence_string",
+          "path": "occurrence.ofType(string)",
+          "type": "string"
+        },
+        {
+          "name": "recorded",
+          "path": "recorded",
+          "type": "dateTime"
+        },
+        {
+          "name": "primary_source",
+          "path": "primarySource",
+          "type": "boolean"
+        },
+        {
+          "name": "report_origin_text",
+          "path": "reportOrigin.text",
+          "type": "string"
+        },
+        {
+          "name": "report_origin_code",
+          "path": "reportOrigin.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "report_origin_system",
+          "path": "reportOrigin.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "location_id",
+          "path": "location.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "location_reference",
+          "path": "location.reference",
+          "type": "string"
+        },
+        {
+          "name": "manufacturer_id",
+          "path": "manufacturer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "manufacturer_reference",
+          "path": "manufacturer.reference",
+          "type": "string"
+        },
+        {
+          "name": "lot_number",
+          "path": "lotNumber",
+          "type": "string"
+        },
+        {
+          "name": "expiration_date",
+          "path": "expirationDate",
+          "type": "date"
+        },
+        {
+          "name": "site_text",
+          "path": "site.text",
+          "type": "string"
+        },
+        {
+          "name": "site_code",
+          "path": "site.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "site_system",
+          "path": "site.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "route_text",
+          "path": "route.text",
+          "type": "string"
+        },
+        {
+          "name": "route_code",
+          "path": "route.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "route_system",
+          "path": "route.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "dose_quantity_value",
+          "path": "doseQuantity.value",
+          "type": "decimal"
+        },
+        {
+          "name": "dose_quantity_unit",
+          "path": "doseQuantity.unit",
+          "type": "string"
+        },
+        {
+          "name": "dose_quantity_code",
+          "path": "doseQuantity.code",
+          "type": "code"
+        },
+        {
+          "name": "reason_reference_ids",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "is_subpotent",
+          "path": "isSubpotent",
+          "type": "boolean"
+        },
+        {
+          "name": "funding_source_text",
+          "path": "fundingSource.text",
+          "type": "string"
+        },
+        {
+          "name": "funding_source_code",
+          "path": "fundingSource.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "funding_source_system",
+          "path": "fundingSource.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "encounter",
+  "title": "Encounter \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Encounter from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Encounter",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "encounter_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "class_code",
+          "path": "class.code",
+          "type": "code"
+        },
+        {
+          "name": "class_system",
+          "path": "class.system",
+          "type": "uri"
+        },
+        {
+          "name": "class_display",
+          "path": "class.display",
+          "type": "string"
+        },
+        {
+          "name": "service_type_text",
+          "path": "serviceType.text",
+          "type": "string"
+        },
+        {
+          "name": "service_type_code",
+          "path": "serviceType.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "service_type_system",
+          "path": "serviceType.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "priority_text",
+          "path": "priority.text",
+          "type": "string"
+        },
+        {
+          "name": "priority_code",
+          "path": "priority.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "priority_system",
+          "path": "priority.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "episode_of_care_ids",
+          "path": "episodeOfCare.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "based_on_ids",
+          "path": "basedOn.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "appointment_ids",
+          "path": "appointment.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "reason_reference_ids",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "account_ids",
+          "path": "account.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "service_provider_id",
+          "path": "serviceProvider.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "service_provider_reference",
+          "path": "serviceProvider.reference",
+          "type": "string"
+        },
+        {
+          "name": "part_of_id",
+          "path": "partOf.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "part_of_reference",
+          "path": "partOf.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

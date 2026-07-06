@@ -1,0 +1,94 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "device_metric",
+  "title": "DeviceMetric \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for DeviceMetric from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "DeviceMetric",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "device_metric_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "unit_text",
+          "path": "unit.text",
+          "type": "string"
+        },
+        {
+          "name": "unit_code",
+          "path": "unit.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "unit_system",
+          "path": "unit.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "source_id",
+          "path": "source.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "source_reference",
+          "path": "source.reference",
+          "type": "string"
+        },
+        {
+          "name": "parent_id",
+          "path": "parent.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "parent_reference",
+          "path": "parent.reference",
+          "type": "string"
+        },
+        {
+          "name": "operational_status",
+          "path": "operationalStatus",
+          "type": "code"
+        },
+        {
+          "name": "color",
+          "path": "color",
+          "type": "code"
+        },
+        {
+          "name": "category",
+          "path": "category",
+          "type": "code"
+        }
+      ]
+    }
+  ]
+}

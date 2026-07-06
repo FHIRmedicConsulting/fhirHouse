@@ -1,0 +1,124 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "library",
+  "title": "Library \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Library from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Library",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "library_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "url",
+          "path": "url",
+          "type": "uri"
+        },
+        {
+          "name": "version",
+          "path": "version",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string"
+        },
+        {
+          "name": "subtitle",
+          "path": "subtitle",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "experimental",
+          "path": "experimental",
+          "type": "boolean"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "publisher",
+          "path": "publisher",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "markdown"
+        },
+        {
+          "name": "purpose",
+          "path": "purpose",
+          "type": "markdown"
+        },
+        {
+          "name": "usage",
+          "path": "usage",
+          "type": "string"
+        },
+        {
+          "name": "copyright",
+          "path": "copyright",
+          "type": "markdown"
+        },
+        {
+          "name": "approval_date",
+          "path": "approvalDate",
+          "type": "date"
+        },
+        {
+          "name": "last_review_date",
+          "path": "lastReviewDate",
+          "type": "date"
+        }
+      ]
+    }
+  ]
+}

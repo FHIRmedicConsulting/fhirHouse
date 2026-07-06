@@ -1,0 +1,126 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "supply_request",
+  "title": "SupplyRequest \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for SupplyRequest from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "SupplyRequest",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "supply_request_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "category_text",
+          "path": "category.text",
+          "type": "string"
+        },
+        {
+          "name": "category_code",
+          "path": "category.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "category_system",
+          "path": "category.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "priority",
+          "path": "priority",
+          "type": "code"
+        },
+        {
+          "name": "item_id",
+          "path": "item.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "quantity_value",
+          "path": "quantity.value",
+          "type": "decimal"
+        },
+        {
+          "name": "quantity_unit",
+          "path": "quantity.unit",
+          "type": "string"
+        },
+        {
+          "name": "quantity_code",
+          "path": "quantity.code",
+          "type": "code"
+        },
+        {
+          "name": "occurrence_date_time",
+          "path": "occurrence.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "authored_on",
+          "path": "authoredOn",
+          "type": "dateTime"
+        },
+        {
+          "name": "requester_id",
+          "path": "requester.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "requester_reference",
+          "path": "requester.reference",
+          "type": "string"
+        },
+        {
+          "name": "supplier_ids",
+          "path": "supplier.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "reason_reference_ids",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "deliver_from_id",
+          "path": "deliverFrom.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "deliver_from_reference",
+          "path": "deliverFrom.reference",
+          "type": "string"
+        },
+        {
+          "name": "deliver_to_id",
+          "path": "deliverTo.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "deliver_to_reference",
+          "path": "deliverTo.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "device_definition",
+  "title": "DeviceDefinition \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for DeviceDefinition from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "DeviceDefinition",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "device_definition_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "manufacturer_string",
+          "path": "manufacturer.ofType(string)",
+          "type": "string"
+        },
+        {
+          "name": "manufacturer_id",
+          "path": "manufacturer.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "model_number",
+          "path": "modelNumber",
+          "type": "string"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "version",
+          "path": "version",
+          "type": "string",
+          "collection": true
+        },
+        {
+          "name": "owner_id",
+          "path": "owner.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "owner_reference",
+          "path": "owner.reference",
+          "type": "string"
+        },
+        {
+          "name": "url",
+          "path": "url",
+          "type": "uri"
+        },
+        {
+          "name": "online_information",
+          "path": "onlineInformation",
+          "type": "uri"
+        },
+        {
+          "name": "quantity_value",
+          "path": "quantity.value",
+          "type": "decimal"
+        },
+        {
+          "name": "quantity_unit",
+          "path": "quantity.unit",
+          "type": "string"
+        },
+        {
+          "name": "quantity_code",
+          "path": "quantity.code",
+          "type": "code"
+        },
+        {
+          "name": "parent_device_id",
+          "path": "parentDevice.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "parent_device_reference",
+          "path": "parentDevice.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

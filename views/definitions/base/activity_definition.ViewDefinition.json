@@ -1,0 +1,213 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "activity_definition",
+  "title": "ActivityDefinition \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for ActivityDefinition from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "ActivityDefinition",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "activity_definition_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "url",
+          "path": "url",
+          "type": "uri"
+        },
+        {
+          "name": "version",
+          "path": "version",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string"
+        },
+        {
+          "name": "subtitle",
+          "path": "subtitle",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "experimental",
+          "path": "experimental",
+          "type": "boolean"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "publisher",
+          "path": "publisher",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "markdown"
+        },
+        {
+          "name": "purpose",
+          "path": "purpose",
+          "type": "markdown"
+        },
+        {
+          "name": "usage",
+          "path": "usage",
+          "type": "string"
+        },
+        {
+          "name": "copyright",
+          "path": "copyright",
+          "type": "markdown"
+        },
+        {
+          "name": "approval_date",
+          "path": "approvalDate",
+          "type": "date"
+        },
+        {
+          "name": "last_review_date",
+          "path": "lastReviewDate",
+          "type": "date"
+        },
+        {
+          "name": "library",
+          "path": "library",
+          "type": "canonical",
+          "collection": true
+        },
+        {
+          "name": "kind",
+          "path": "kind",
+          "type": "code"
+        },
+        {
+          "name": "profile",
+          "path": "profile",
+          "type": "canonical"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "intent",
+          "path": "intent",
+          "type": "code"
+        },
+        {
+          "name": "priority",
+          "path": "priority",
+          "type": "code"
+        },
+        {
+          "name": "do_not_perform",
+          "path": "doNotPerform",
+          "type": "boolean"
+        },
+        {
+          "name": "timing_date_time",
+          "path": "timing.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "location_id",
+          "path": "location.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "location_reference",
+          "path": "location.reference",
+          "type": "string"
+        },
+        {
+          "name": "product_id",
+          "path": "product.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "quantity_value",
+          "path": "quantity.value",
+          "type": "decimal"
+        },
+        {
+          "name": "quantity_unit",
+          "path": "quantity.unit",
+          "type": "string"
+        },
+        {
+          "name": "quantity_code",
+          "path": "quantity.code",
+          "type": "code"
+        },
+        {
+          "name": "specimen_requirement_ids",
+          "path": "specimenRequirement.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "observation_requirement_ids",
+          "path": "observationRequirement.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "observation_result_requirement_ids",
+          "path": "observationResultRequirement.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "transform",
+          "path": "transform",
+          "type": "canonical"
+        }
+      ]
+    }
+  ]
+}

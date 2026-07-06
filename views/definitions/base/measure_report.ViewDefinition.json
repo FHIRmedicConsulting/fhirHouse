@@ -1,0 +1,90 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "measure_report",
+  "title": "MeasureReport \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MeasureReport from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MeasureReport",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "measure_report_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "type",
+          "path": "type",
+          "type": "code"
+        },
+        {
+          "name": "measure",
+          "path": "measure",
+          "type": "canonical"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "reporter_id",
+          "path": "reporter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "reporter_reference",
+          "path": "reporter.reference",
+          "type": "string"
+        },
+        {
+          "name": "improvement_notation_text",
+          "path": "improvementNotation.text",
+          "type": "string"
+        },
+        {
+          "name": "improvement_notation_code",
+          "path": "improvementNotation.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "improvement_notation_system",
+          "path": "improvementNotation.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "evaluated_resource_ids",
+          "path": "evaluatedResource.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

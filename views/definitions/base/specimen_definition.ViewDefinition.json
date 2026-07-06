@@ -1,0 +1,59 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "specimen_definition",
+  "title": "SpecimenDefinition \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for SpecimenDefinition from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "SpecimenDefinition",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "specimen_definition_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "identifier_value",
+          "path": "identifier.value",
+          "type": "string"
+        },
+        {
+          "name": "identifier_system",
+          "path": "identifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "type_collected_text",
+          "path": "typeCollected.text",
+          "type": "string"
+        },
+        {
+          "name": "type_collected_code",
+          "path": "typeCollected.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_collected_system",
+          "path": "typeCollected.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "time_aspect",
+          "path": "timeAspect",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

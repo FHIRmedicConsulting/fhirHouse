@@ -1,0 +1,134 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "request_group",
+  "title": "RequestGroup \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for RequestGroup from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "RequestGroup",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "request_group_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "instantiates_canonical",
+          "path": "instantiatesCanonical",
+          "type": "canonical",
+          "collection": true
+        },
+        {
+          "name": "instantiates_uri",
+          "path": "instantiatesUri",
+          "type": "uri",
+          "collection": true
+        },
+        {
+          "name": "based_on_ids",
+          "path": "basedOn.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "replaces_ids",
+          "path": "replaces.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "group_identifier_value",
+          "path": "groupIdentifier.value",
+          "type": "string"
+        },
+        {
+          "name": "group_identifier_system",
+          "path": "groupIdentifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "intent",
+          "path": "intent",
+          "type": "code"
+        },
+        {
+          "name": "priority",
+          "path": "priority",
+          "type": "code"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "authored_on",
+          "path": "authoredOn",
+          "type": "dateTime"
+        },
+        {
+          "name": "author_id",
+          "path": "author.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "author_reference",
+          "path": "author.reference",
+          "type": "string"
+        },
+        {
+          "name": "reason_reference_ids",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

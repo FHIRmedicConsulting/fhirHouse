@@ -1,0 +1,146 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "risk_assessment",
+  "title": "RiskAssessment \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for RiskAssessment from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "RiskAssessment",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "risk_assessment_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "based_on_id",
+          "path": "basedOn.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "based_on_reference",
+          "path": "basedOn.reference",
+          "type": "string"
+        },
+        {
+          "name": "parent_id",
+          "path": "parent.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "parent_reference",
+          "path": "parent.reference",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "method_text",
+          "path": "method.text",
+          "type": "string"
+        },
+        {
+          "name": "method_code",
+          "path": "method.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "method_system",
+          "path": "method.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "occurrence_date_time",
+          "path": "occurrence.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "condition_id",
+          "path": "condition.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "condition_reference",
+          "path": "condition.reference",
+          "type": "string"
+        },
+        {
+          "name": "performer_id",
+          "path": "performer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "performer_reference",
+          "path": "performer.reference",
+          "type": "string"
+        },
+        {
+          "name": "reason_reference_ids",
+          "path": "reasonReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "basis_ids",
+          "path": "basis.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "mitigation",
+          "path": "mitigation",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

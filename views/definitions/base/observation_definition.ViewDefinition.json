@@ -1,0 +1,115 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "observation_definition",
+  "title": "ObservationDefinition \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for ObservationDefinition from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "ObservationDefinition",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "observation_definition_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "permitted_data_type",
+          "path": "permittedDataType",
+          "type": "code",
+          "collection": true
+        },
+        {
+          "name": "multiple_results_allowed",
+          "path": "multipleResultsAllowed",
+          "type": "boolean"
+        },
+        {
+          "name": "method_text",
+          "path": "method.text",
+          "type": "string"
+        },
+        {
+          "name": "method_code",
+          "path": "method.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "method_system",
+          "path": "method.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "preferred_report_name",
+          "path": "preferredReportName",
+          "type": "string"
+        },
+        {
+          "name": "valid_coded_value_set_id",
+          "path": "validCodedValueSet.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "valid_coded_value_set_reference",
+          "path": "validCodedValueSet.reference",
+          "type": "string"
+        },
+        {
+          "name": "normal_coded_value_set_id",
+          "path": "normalCodedValueSet.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "normal_coded_value_set_reference",
+          "path": "normalCodedValueSet.reference",
+          "type": "string"
+        },
+        {
+          "name": "abnormal_coded_value_set_id",
+          "path": "abnormalCodedValueSet.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "abnormal_coded_value_set_reference",
+          "path": "abnormalCodedValueSet.reference",
+          "type": "string"
+        },
+        {
+          "name": "critical_coded_value_set_id",
+          "path": "criticalCodedValueSet.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "critical_coded_value_set_reference",
+          "path": "criticalCodedValueSet.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

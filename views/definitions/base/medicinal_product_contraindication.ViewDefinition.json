@@ -1,0 +1,71 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medicinal_product_contraindication",
+  "title": "MedicinalProductContraindication \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicinalProductContraindication from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicinalProductContraindication",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medicinal_product_contraindication_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "subject_ids",
+          "path": "subject.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "disease_text",
+          "path": "disease.text",
+          "type": "string"
+        },
+        {
+          "name": "disease_code",
+          "path": "disease.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "disease_system",
+          "path": "disease.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "disease_status_text",
+          "path": "diseaseStatus.text",
+          "type": "string"
+        },
+        {
+          "name": "disease_status_code",
+          "path": "diseaseStatus.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "disease_status_system",
+          "path": "diseaseStatus.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "therapeutic_indication_ids",
+          "path": "therapeuticIndication.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

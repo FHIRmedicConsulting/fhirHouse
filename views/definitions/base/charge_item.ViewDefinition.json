@@ -1,0 +1,185 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "charge_item",
+  "title": "ChargeItem \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for ChargeItem from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "ChargeItem",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "charge_item_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "definition_uri",
+          "path": "definitionUri",
+          "type": "uri",
+          "collection": true
+        },
+        {
+          "name": "definition_canonical",
+          "path": "definitionCanonical",
+          "type": "canonical",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "part_of_ids",
+          "path": "partOf.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "context_id",
+          "path": "context.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "context_reference",
+          "path": "context.reference",
+          "type": "string"
+        },
+        {
+          "name": "occurrence_date_time",
+          "path": "occurrence.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "performing_organization_id",
+          "path": "performingOrganization.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "performing_organization_reference",
+          "path": "performingOrganization.reference",
+          "type": "string"
+        },
+        {
+          "name": "requesting_organization_id",
+          "path": "requestingOrganization.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "requesting_organization_reference",
+          "path": "requestingOrganization.reference",
+          "type": "string"
+        },
+        {
+          "name": "cost_center_id",
+          "path": "costCenter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "cost_center_reference",
+          "path": "costCenter.reference",
+          "type": "string"
+        },
+        {
+          "name": "quantity_value",
+          "path": "quantity.value",
+          "type": "decimal"
+        },
+        {
+          "name": "quantity_unit",
+          "path": "quantity.unit",
+          "type": "string"
+        },
+        {
+          "name": "quantity_code",
+          "path": "quantity.code",
+          "type": "code"
+        },
+        {
+          "name": "factor_override",
+          "path": "factorOverride",
+          "type": "decimal"
+        },
+        {
+          "name": "override_reason",
+          "path": "overrideReason",
+          "type": "string"
+        },
+        {
+          "name": "enterer_id",
+          "path": "enterer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "enterer_reference",
+          "path": "enterer.reference",
+          "type": "string"
+        },
+        {
+          "name": "entered_date",
+          "path": "enteredDate",
+          "type": "dateTime"
+        },
+        {
+          "name": "service_ids",
+          "path": "service.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "product_id",
+          "path": "product.ofType(Reference).getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "account_ids",
+          "path": "account.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "supporting_information_ids",
+          "path": "supportingInformation.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

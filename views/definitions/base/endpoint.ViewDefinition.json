@@ -1,0 +1,81 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "endpoint",
+  "title": "Endpoint \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Endpoint from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Endpoint",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "endpoint_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "connection_type_code",
+          "path": "connectionType.code",
+          "type": "code"
+        },
+        {
+          "name": "connection_type_system",
+          "path": "connectionType.system",
+          "type": "uri"
+        },
+        {
+          "name": "connection_type_display",
+          "path": "connectionType.display",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "managing_organization_id",
+          "path": "managingOrganization.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "managing_organization_reference",
+          "path": "managingOrganization.reference",
+          "type": "string"
+        },
+        {
+          "name": "payload_mime_type",
+          "path": "payloadMimeType",
+          "type": "code",
+          "collection": true
+        },
+        {
+          "name": "address",
+          "path": "address",
+          "type": "url"
+        },
+        {
+          "name": "header",
+          "path": "header",
+          "type": "string",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

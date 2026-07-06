@@ -1,0 +1,144 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "device",
+  "title": "Device \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Device from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Device",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "device_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "definition_id",
+          "path": "definition.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "definition_reference",
+          "path": "definition.reference",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "distinct_identifier",
+          "path": "distinctIdentifier",
+          "type": "string"
+        },
+        {
+          "name": "manufacturer",
+          "path": "manufacturer",
+          "type": "string"
+        },
+        {
+          "name": "manufacture_date",
+          "path": "manufactureDate",
+          "type": "dateTime"
+        },
+        {
+          "name": "expiration_date",
+          "path": "expirationDate",
+          "type": "dateTime"
+        },
+        {
+          "name": "lot_number",
+          "path": "lotNumber",
+          "type": "string"
+        },
+        {
+          "name": "serial_number",
+          "path": "serialNumber",
+          "type": "string"
+        },
+        {
+          "name": "model_number",
+          "path": "modelNumber",
+          "type": "string"
+        },
+        {
+          "name": "part_number",
+          "path": "partNumber",
+          "type": "string"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "patient_id",
+          "path": "patient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "patient_reference",
+          "path": "patient.reference",
+          "type": "string"
+        },
+        {
+          "name": "owner_id",
+          "path": "owner.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "owner_reference",
+          "path": "owner.reference",
+          "type": "string"
+        },
+        {
+          "name": "location_id",
+          "path": "location.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "location_reference",
+          "path": "location.reference",
+          "type": "string"
+        },
+        {
+          "name": "url",
+          "path": "url",
+          "type": "uri"
+        },
+        {
+          "name": "parent_id",
+          "path": "parent.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "parent_reference",
+          "path": "parent.reference",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

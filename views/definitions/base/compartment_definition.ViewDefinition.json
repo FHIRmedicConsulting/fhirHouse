@@ -1,0 +1,84 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "compartment_definition",
+  "title": "CompartmentDefinition \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for CompartmentDefinition from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "CompartmentDefinition",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "compartment_definition_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "url",
+          "path": "url",
+          "type": "uri"
+        },
+        {
+          "name": "version",
+          "path": "version",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "experimental",
+          "path": "experimental",
+          "type": "boolean"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "publisher",
+          "path": "publisher",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "markdown"
+        },
+        {
+          "name": "purpose",
+          "path": "purpose",
+          "type": "markdown"
+        },
+        {
+          "name": "code",
+          "path": "code",
+          "type": "code"
+        },
+        {
+          "name": "search",
+          "path": "search",
+          "type": "boolean"
+        }
+      ]
+    }
+  ]
+}

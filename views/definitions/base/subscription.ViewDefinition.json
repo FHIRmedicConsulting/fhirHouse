@@ -1,0 +1,54 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "subscription",
+  "title": "Subscription \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Subscription from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Subscription",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "subscription_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "end",
+          "path": "end",
+          "type": "instant"
+        },
+        {
+          "name": "reason",
+          "path": "reason",
+          "type": "string"
+        },
+        {
+          "name": "criteria",
+          "path": "criteria",
+          "type": "string"
+        },
+        {
+          "name": "error",
+          "path": "error",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "test_report",
+  "title": "TestReport \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for TestReport from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "TestReport",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "test_report_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "identifier_value",
+          "path": "identifier.value",
+          "type": "string"
+        },
+        {
+          "name": "identifier_system",
+          "path": "identifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "test_script_id",
+          "path": "testScript.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "test_script_reference",
+          "path": "testScript.reference",
+          "type": "string"
+        },
+        {
+          "name": "result",
+          "path": "result",
+          "type": "code"
+        },
+        {
+          "name": "score",
+          "path": "score",
+          "type": "decimal"
+        },
+        {
+          "name": "tester",
+          "path": "tester",
+          "type": "string"
+        },
+        {
+          "name": "issued",
+          "path": "issued",
+          "type": "dateTime"
+        }
+      ]
+    }
+  ]
+}

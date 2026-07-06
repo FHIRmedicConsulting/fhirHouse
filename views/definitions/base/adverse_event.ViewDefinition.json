@@ -1,0 +1,189 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "adverse_event",
+  "title": "AdverseEvent \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for AdverseEvent from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "AdverseEvent",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "adverse_event_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "identifier_value",
+          "path": "identifier.value",
+          "type": "string"
+        },
+        {
+          "name": "identifier_system",
+          "path": "identifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "actuality",
+          "path": "actuality",
+          "type": "code"
+        },
+        {
+          "name": "event_text",
+          "path": "event.text",
+          "type": "string"
+        },
+        {
+          "name": "event_code",
+          "path": "event.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "event_system",
+          "path": "event.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "detected",
+          "path": "detected",
+          "type": "dateTime"
+        },
+        {
+          "name": "recorded_date",
+          "path": "recordedDate",
+          "type": "dateTime"
+        },
+        {
+          "name": "resulting_condition_ids",
+          "path": "resultingCondition.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "location_id",
+          "path": "location.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "location_reference",
+          "path": "location.reference",
+          "type": "string"
+        },
+        {
+          "name": "seriousness_text",
+          "path": "seriousness.text",
+          "type": "string"
+        },
+        {
+          "name": "seriousness_code",
+          "path": "seriousness.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "seriousness_system",
+          "path": "seriousness.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "severity_text",
+          "path": "severity.text",
+          "type": "string"
+        },
+        {
+          "name": "severity_code",
+          "path": "severity.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "severity_system",
+          "path": "severity.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "outcome_text",
+          "path": "outcome.text",
+          "type": "string"
+        },
+        {
+          "name": "outcome_code",
+          "path": "outcome.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "outcome_system",
+          "path": "outcome.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "recorder_id",
+          "path": "recorder.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "recorder_reference",
+          "path": "recorder.reference",
+          "type": "string"
+        },
+        {
+          "name": "contributor_ids",
+          "path": "contributor.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "subject_medical_history_ids",
+          "path": "subjectMedicalHistory.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "reference_document_ids",
+          "path": "referenceDocument.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "study_ids",
+          "path": "study.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

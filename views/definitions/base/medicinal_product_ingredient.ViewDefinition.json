@@ -1,0 +1,65 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medicinal_product_ingredient",
+  "title": "MedicinalProductIngredient \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicinalProductIngredient from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicinalProductIngredient",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medicinal_product_ingredient_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "identifier_value",
+          "path": "identifier.value",
+          "type": "string"
+        },
+        {
+          "name": "identifier_system",
+          "path": "identifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "role_text",
+          "path": "role.text",
+          "type": "string"
+        },
+        {
+          "name": "role_code",
+          "path": "role.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "role_system",
+          "path": "role.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "allergenic_indicator",
+          "path": "allergenicIndicator",
+          "type": "boolean"
+        },
+        {
+          "name": "manufacturer_ids",
+          "path": "manufacturer.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

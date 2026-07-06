@@ -1,0 +1,119 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "payment_notice",
+  "title": "PaymentNotice \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for PaymentNotice from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "PaymentNotice",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "payment_notice_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "request_id",
+          "path": "request.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "request_reference",
+          "path": "request.reference",
+          "type": "string"
+        },
+        {
+          "name": "response_id",
+          "path": "response.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "response_reference",
+          "path": "response.reference",
+          "type": "string"
+        },
+        {
+          "name": "created",
+          "path": "created",
+          "type": "dateTime"
+        },
+        {
+          "name": "provider_id",
+          "path": "provider.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "provider_reference",
+          "path": "provider.reference",
+          "type": "string"
+        },
+        {
+          "name": "payment_id",
+          "path": "payment.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "payment_reference",
+          "path": "payment.reference",
+          "type": "string"
+        },
+        {
+          "name": "payment_date",
+          "path": "paymentDate",
+          "type": "date"
+        },
+        {
+          "name": "payee_id",
+          "path": "payee.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "payee_reference",
+          "path": "payee.reference",
+          "type": "string"
+        },
+        {
+          "name": "recipient_id",
+          "path": "recipient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "recipient_reference",
+          "path": "recipient.reference",
+          "type": "string"
+        },
+        {
+          "name": "payment_status_text",
+          "path": "paymentStatus.text",
+          "type": "string"
+        },
+        {
+          "name": "payment_status_code",
+          "path": "paymentStatus.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "payment_status_system",
+          "path": "paymentStatus.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

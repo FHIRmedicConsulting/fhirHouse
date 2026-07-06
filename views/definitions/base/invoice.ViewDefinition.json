@@ -1,0 +1,104 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "invoice",
+  "title": "Invoice \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Invoice from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Invoice",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "invoice_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "cancelled_reason",
+          "path": "cancelledReason",
+          "type": "string"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "recipient_id",
+          "path": "recipient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "recipient_reference",
+          "path": "recipient.reference",
+          "type": "string"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "issuer_id",
+          "path": "issuer.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "issuer_reference",
+          "path": "issuer.reference",
+          "type": "string"
+        },
+        {
+          "name": "account_id",
+          "path": "account.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "account_reference",
+          "path": "account.reference",
+          "type": "string"
+        },
+        {
+          "name": "payment_terms",
+          "path": "paymentTerms",
+          "type": "markdown"
+        }
+      ]
+    }
+  ]
+}

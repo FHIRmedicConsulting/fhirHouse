@@ -1,0 +1,129 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "immunization_evaluation",
+  "title": "ImmunizationEvaluation \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for ImmunizationEvaluation from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "ImmunizationEvaluation",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "immunization_evaluation_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "patient_id",
+          "path": "patient.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "patient_reference",
+          "path": "patient.reference",
+          "type": "string"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "authority_id",
+          "path": "authority.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "authority_reference",
+          "path": "authority.reference",
+          "type": "string"
+        },
+        {
+          "name": "target_disease_text",
+          "path": "targetDisease.text",
+          "type": "string"
+        },
+        {
+          "name": "target_disease_code",
+          "path": "targetDisease.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "target_disease_system",
+          "path": "targetDisease.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "immunization_event_id",
+          "path": "immunizationEvent.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "immunization_event_reference",
+          "path": "immunizationEvent.reference",
+          "type": "string"
+        },
+        {
+          "name": "dose_status_text",
+          "path": "doseStatus.text",
+          "type": "string"
+        },
+        {
+          "name": "dose_status_code",
+          "path": "doseStatus.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "dose_status_system",
+          "path": "doseStatus.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "string"
+        },
+        {
+          "name": "series",
+          "path": "series",
+          "type": "string"
+        },
+        {
+          "name": "dose_number_positive_int",
+          "path": "doseNumber.ofType(positiveInt)",
+          "type": "positiveInt"
+        },
+        {
+          "name": "dose_number_string",
+          "path": "doseNumber.ofType(string)",
+          "type": "string"
+        },
+        {
+          "name": "series_doses_positive_int",
+          "path": "seriesDoses.ofType(positiveInt)",
+          "type": "positiveInt"
+        },
+        {
+          "name": "series_doses_string",
+          "path": "seriesDoses.ofType(string)",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medicinal_product",
+  "title": "MedicinalProduct \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for MedicinalProduct from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "MedicinalProduct",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "medicinal_product_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "type_text",
+          "path": "type.text",
+          "type": "string"
+        },
+        {
+          "name": "type_code",
+          "path": "type.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "type_system",
+          "path": "type.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "domain_code",
+          "path": "domain.code",
+          "type": "code"
+        },
+        {
+          "name": "domain_system",
+          "path": "domain.system",
+          "type": "uri"
+        },
+        {
+          "name": "domain_display",
+          "path": "domain.display",
+          "type": "string"
+        },
+        {
+          "name": "combined_pharmaceutical_dose_form_text",
+          "path": "combinedPharmaceuticalDoseForm.text",
+          "type": "string"
+        },
+        {
+          "name": "combined_pharmaceutical_dose_form_code",
+          "path": "combinedPharmaceuticalDoseForm.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "combined_pharmaceutical_dose_form_system",
+          "path": "combinedPharmaceuticalDoseForm.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "legal_status_of_supply_text",
+          "path": "legalStatusOfSupply.text",
+          "type": "string"
+        },
+        {
+          "name": "legal_status_of_supply_code",
+          "path": "legalStatusOfSupply.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "legal_status_of_supply_system",
+          "path": "legalStatusOfSupply.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "additional_monitoring_indicator_text",
+          "path": "additionalMonitoringIndicator.text",
+          "type": "string"
+        },
+        {
+          "name": "additional_monitoring_indicator_code",
+          "path": "additionalMonitoringIndicator.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "additional_monitoring_indicator_system",
+          "path": "additionalMonitoringIndicator.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "special_measures",
+          "path": "specialMeasures",
+          "type": "string",
+          "collection": true
+        },
+        {
+          "name": "paediatric_use_indicator_text",
+          "path": "paediatricUseIndicator.text",
+          "type": "string"
+        },
+        {
+          "name": "paediatric_use_indicator_code",
+          "path": "paediatricUseIndicator.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "paediatric_use_indicator_system",
+          "path": "paediatricUseIndicator.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "pharmaceutical_product_ids",
+          "path": "pharmaceuticalProduct.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "packaged_medicinal_product_ids",
+          "path": "packagedMedicinalProduct.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "attached_document_ids",
+          "path": "attachedDocument.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "master_file_ids",
+          "path": "masterFile.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "contact_ids",
+          "path": "contact.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "clinical_trial_ids",
+          "path": "clinicalTrial.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

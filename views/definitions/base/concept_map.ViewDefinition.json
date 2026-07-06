@@ -1,0 +1,114 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "concept_map",
+  "title": "ConceptMap \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for ConceptMap from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "ConceptMap",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "concept_map_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "url",
+          "path": "url",
+          "type": "uri"
+        },
+        {
+          "name": "identifier_value",
+          "path": "identifier.value",
+          "type": "string"
+        },
+        {
+          "name": "identifier_system",
+          "path": "identifier.system",
+          "type": "uri"
+        },
+        {
+          "name": "version",
+          "path": "version",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "experimental",
+          "path": "experimental",
+          "type": "boolean"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "publisher",
+          "path": "publisher",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "markdown"
+        },
+        {
+          "name": "purpose",
+          "path": "purpose",
+          "type": "markdown"
+        },
+        {
+          "name": "copyright",
+          "path": "copyright",
+          "type": "markdown"
+        },
+        {
+          "name": "source_uri",
+          "path": "source.ofType(uri)",
+          "type": "uri"
+        },
+        {
+          "name": "source_canonical",
+          "path": "source.ofType(canonical)",
+          "type": "canonical"
+        },
+        {
+          "name": "target_uri",
+          "path": "target.ofType(uri)",
+          "type": "uri"
+        },
+        {
+          "name": "target_canonical",
+          "path": "target.ofType(canonical)",
+          "type": "canonical"
+        }
+      ]
+    }
+  ]
+}

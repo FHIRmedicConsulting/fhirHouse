@@ -1,0 +1,148 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "clinical_impression",
+  "title": "ClinicalImpression \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for ClinicalImpression from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "ClinicalImpression",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "clinical_impression_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "status_reason_text",
+          "path": "statusReason.text",
+          "type": "string"
+        },
+        {
+          "name": "status_reason_code",
+          "path": "statusReason.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "status_reason_system",
+          "path": "statusReason.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "code_text",
+          "path": "code.text",
+          "type": "string"
+        },
+        {
+          "name": "code_code",
+          "path": "code.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "code_system",
+          "path": "code.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "string"
+        },
+        {
+          "name": "subject_id",
+          "path": "subject.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "subject_reference",
+          "path": "subject.reference",
+          "type": "string"
+        },
+        {
+          "name": "encounter_id",
+          "path": "encounter.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "encounter_reference",
+          "path": "encounter.reference",
+          "type": "string"
+        },
+        {
+          "name": "effective_date_time",
+          "path": "effective.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "assessor_id",
+          "path": "assessor.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "assessor_reference",
+          "path": "assessor.reference",
+          "type": "string"
+        },
+        {
+          "name": "previous_id",
+          "path": "previous.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "previous_reference",
+          "path": "previous.reference",
+          "type": "string"
+        },
+        {
+          "name": "problem_ids",
+          "path": "problem.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "protocol",
+          "path": "protocol",
+          "type": "uri",
+          "collection": true
+        },
+        {
+          "name": "summary",
+          "path": "summary",
+          "type": "string"
+        },
+        {
+          "name": "prognosis_reference_ids",
+          "path": "prognosisReference.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "supporting_info_ids",
+          "path": "supportingInfo.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "provenance",
+  "title": "Provenance \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for Provenance from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "Provenance",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "provenance_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "target_ids",
+          "path": "target.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "occurred_date_time",
+          "path": "occurred.ofType(dateTime)",
+          "type": "dateTime"
+        },
+        {
+          "name": "recorded",
+          "path": "recorded",
+          "type": "instant"
+        },
+        {
+          "name": "policy",
+          "path": "policy",
+          "type": "uri",
+          "collection": true
+        },
+        {
+          "name": "location_id",
+          "path": "location.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "location_reference",
+          "path": "location.reference",
+          "type": "string"
+        },
+        {
+          "name": "activity_text",
+          "path": "activity.text",
+          "type": "string"
+        },
+        {
+          "name": "activity_code",
+          "path": "activity.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "activity_system",
+          "path": "activity.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}

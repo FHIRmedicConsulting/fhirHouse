@@ -1,0 +1,135 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "operation_definition",
+  "title": "OperationDefinition \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for OperationDefinition from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "OperationDefinition",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "operation_definition_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "url",
+          "path": "url",
+          "type": "uri"
+        },
+        {
+          "name": "version",
+          "path": "version",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "path": "name",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "kind",
+          "path": "kind",
+          "type": "code"
+        },
+        {
+          "name": "experimental",
+          "path": "experimental",
+          "type": "boolean"
+        },
+        {
+          "name": "date",
+          "path": "date",
+          "type": "dateTime"
+        },
+        {
+          "name": "publisher",
+          "path": "publisher",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "markdown"
+        },
+        {
+          "name": "purpose",
+          "path": "purpose",
+          "type": "markdown"
+        },
+        {
+          "name": "affects_state",
+          "path": "affectsState",
+          "type": "boolean"
+        },
+        {
+          "name": "code",
+          "path": "code",
+          "type": "code"
+        },
+        {
+          "name": "comment",
+          "path": "comment",
+          "type": "markdown"
+        },
+        {
+          "name": "base",
+          "path": "base",
+          "type": "canonical"
+        },
+        {
+          "name": "resource",
+          "path": "resource",
+          "type": "code",
+          "collection": true
+        },
+        {
+          "name": "system",
+          "path": "system",
+          "type": "boolean"
+        },
+        {
+          "name": "type",
+          "path": "type",
+          "type": "boolean"
+        },
+        {
+          "name": "instance",
+          "path": "instance",
+          "type": "boolean"
+        },
+        {
+          "name": "input_profile",
+          "path": "inputProfile",
+          "type": "canonical"
+        },
+        {
+          "name": "output_profile",
+          "path": "outputProfile",
+          "type": "canonical"
+        }
+      ]
+    }
+  ]
+}

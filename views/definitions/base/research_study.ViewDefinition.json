@@ -1,0 +1,133 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "research_study",
+  "title": "ResearchStudy \u2014 base flat view (generated)",
+  "status": "draft",
+  "description": "Auto-generated base flat view for ResearchStudy from hl7.fhir.r4.core-4.0.1. One row per resource; top-level scalar/primitive/choice/reference elements. Nested & complex-array elements are covered by curated *_flat views. Regenerate with `python -m fhirhouse_views.generate_base`.",
+  "resource": "ResearchStudy",
+  "select": [
+    {
+      "column": [
+        {
+          "name": "research_study_id",
+          "path": "getResourceKey()",
+          "type": "id"
+        },
+        {
+          "name": "implicit_rules",
+          "path": "implicitRules",
+          "type": "uri"
+        },
+        {
+          "name": "language",
+          "path": "language",
+          "type": "code"
+        },
+        {
+          "name": "title",
+          "path": "title",
+          "type": "string"
+        },
+        {
+          "name": "protocol_ids",
+          "path": "protocol.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "part_of_ids",
+          "path": "partOf.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "type": "code"
+        },
+        {
+          "name": "primary_purpose_type_text",
+          "path": "primaryPurposeType.text",
+          "type": "string"
+        },
+        {
+          "name": "primary_purpose_type_code",
+          "path": "primaryPurposeType.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "primary_purpose_type_system",
+          "path": "primaryPurposeType.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "phase_text",
+          "path": "phase.text",
+          "type": "string"
+        },
+        {
+          "name": "phase_code",
+          "path": "phase.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "phase_system",
+          "path": "phase.coding.first().system",
+          "type": "uri"
+        },
+        {
+          "name": "description",
+          "path": "description",
+          "type": "markdown"
+        },
+        {
+          "name": "enrollment_ids",
+          "path": "enrollment.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "sponsor_id",
+          "path": "sponsor.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "sponsor_reference",
+          "path": "sponsor.reference",
+          "type": "string"
+        },
+        {
+          "name": "principal_investigator_id",
+          "path": "principalInvestigator.getReferenceKey()",
+          "type": "id"
+        },
+        {
+          "name": "principal_investigator_reference",
+          "path": "principalInvestigator.reference",
+          "type": "string"
+        },
+        {
+          "name": "site_ids",
+          "path": "site.getReferenceKey()",
+          "type": "id",
+          "collection": true
+        },
+        {
+          "name": "reason_stopped_text",
+          "path": "reasonStopped.text",
+          "type": "string"
+        },
+        {
+          "name": "reason_stopped_code",
+          "path": "reasonStopped.coding.first().code",
+          "type": "code"
+        },
+        {
+          "name": "reason_stopped_system",
+          "path": "reasonStopped.coding.first().system",
+          "type": "uri"
+        }
+      ]
+    }
+  ]
+}
