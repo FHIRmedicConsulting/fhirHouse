@@ -28,16 +28,22 @@
 2. **The reference promoter's hard limit is V8's ~512 MB string cap**, hit twice:
    reading Bronze (`/query` returns one giant JSON body — Observation 771k rows ≈
    1.1 GB fails, EOB ≈ 650 MB fails) and writing Silver (one `/write` request —
-   Claim/DiagnosticReport/DocumentReference got Gold but not Silver). The fix is
-   the already-planned CDF-windowed incremental promotion; fhirHouse's `dagster/`
-   should implement a **chunked external promoter** rather than wrapping the
-   full-rebuild CLI for large types.
+   Claim/DiagnosticReport/DocumentReference got Gold but not Silver).
+   **FIXED same day** by fhirHouse's chunked external promoter
+   (`dagster/fhirhouse_dagster/chunked_promote.py` — ADR-0026's external-promoter
+   lane): Bronze read READ-SIDE in record batches, Gold MERGE + Silver flatten in
+   bounded sidecar chunks. Observation: 771,510 rows → Gold+Silver in **97 s**;
+   all 24 types now fully promoted (Silver = 1,828,315 rows, Bronze parity).
 3. **Silver's inferred Arrow schema breaks DuckDB's delta reader**: all-null
    nested fields become `void` columns; delta-kernel rejects the table
    (`Unsupported Delta table type: 'void'`) while Python delta-rs reads it fine.
-   Upstream already notes "explicit-schema is the follow-up" in promote.ts — this
-   makes it load-bearing for FH-0003's read-side story. Workaround used: SoF views
-   compiled against **Gold** (fixed Bronze-shaped schema) instead of Silver.
+   Upstream already notes "explicit-schema is the follow-up" in promote.ts.
+   **Addressed** by the chunked promoter's Silver encoding (native scalar columns
+   + JSON-text complex columns, schema-anchored first chunk): after rebuilding all
+   24 Silver tables with it, **every Silver table is DuckDB-readable** and the SoF
+   views (incl. `observation_flat`, 774,146 rows) run over Silver as designed.
+   Deliberate divergence from upstream's nested-struct Silver — revisit when
+   upstream ships explicit Silver schemas.
 4. **Guardrails proved themselves on real data**: the only probabilistic candidate
    pair in 634k comparisons was killed by the SSN hard-deny floor — exactly the
    ADR-0012 §3.4 behavior, with the m/u evidence in `gold.mpi_decision_log`.
