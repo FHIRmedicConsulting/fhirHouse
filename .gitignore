@@ -31,3 +31,17 @@ sidecar/.venv/
 **/__pycache__/
 
 coverage/
+
+# --- fhirHouse additions (keep as one block; upstream owns the sections above) ---
+# DuckDB database files (built views over PHI-bearing Delta stores; *.duckdb.sql
+# compiled-SQL text files in views/compiled/ remain tracked)
+*.duckdb
+*.duckdb.wal*
+# local demo/bench Delta stores if placed in-repo (primary stores live outside)
+fhirhouse-demo/
+bench-delta*/
+# Python env + packaging litter
+.venv/
+*.egg-info/
+# Splink model artifacts (trained on operator data — never redistribute)
+splink_model*.json
