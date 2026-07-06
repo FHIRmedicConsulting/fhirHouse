@@ -46,23 +46,41 @@ def _delta_base() -> str:
     return os.environ.get("FHIRENGINE_DELTA_BASE", "./delta")
 
 
-@asset(group_name="promotion", description="Bronze→Silver+Gold via fhirEngine's reference promoter "
-       "(full-rebuild backstop, ADR-0026 §4; deterministic MPI enforced inside).")
+@asset(group_name="promotion", description="Bronze→Silver+Gold. Patient goes through "
+       "fhirEngine's reference promoter (deterministic MPI runs there, ADR-0012); every "
+       "other Bronze type through fhirHouse's chunked external promoter (no V8 size cap).")
 def gold_promoted(context: AssetExecutionContext) -> None:
-    cmd = os.environ.get("FHIRHOUSE_PROMOTE_CMD", DEFAULT_PROMOTE_CMD)
-    context.log.info(f"wrapping promoter: {cmd}")
+    from fhirhouse_contracts.schema import load_pin
+
+    from .chunked_promote import promote_type
+
+    base = _delta_base()
+    # 1. Patient via the reference CLI — MPI (dedup/links/review queue) lives upstream.
+    cmd = os.environ.get("FHIRHOUSE_PROMOTE_CMD", DEFAULT_PROMOTE_CMD.replace("--all", "Patient"))
+    context.log.info(f"reference promoter (Patient/MPI): {cmd}")
     proc = subprocess.run(shlex.split(cmd), capture_output=True, text=True, timeout=3600)
-    context.log.info(proc.stderr[-4000:])
+    context.log.info(proc.stderr[-2000:])
     if proc.returncode != 0:
-        raise RuntimeError(f"fhirengine-promote failed ({proc.returncode}): {proc.stderr[-1000:]}")
-    try:
-        summary = json.loads(proc.stdout)
-        context.add_output_metadata({
-            "promoted_types": summary.get("promoted", 0),
-            "results": MetadataValue.json(summary.get("results", [])),
-        })
-    except json.JSONDecodeError:
-        context.add_output_metadata({"stdout": proc.stdout[-2000:]})
+        raise RuntimeError(f"fhirengine-promote Patient failed ({proc.returncode}): {proc.stderr[-1000:]}")
+
+    # 2. Every other Bronze table via the chunked promoter (survivor map applied).
+    canonical = {t.lower(): t for t in load_pin()["resource_types"]}
+    bronze_dir = os.path.join(base, "bronze")
+    types = sorted(
+        canonical[t] for t in (os.listdir(bronze_dir) if os.path.isdir(bronze_dir) else [])
+        if t in canonical and t != "patient"
+        and os.path.isdir(os.path.join(bronze_dir, t, "_delta_log")))
+    results = []
+    for t in types:
+        stats = promote_type(t, base=base)
+        context.log.info(f"chunked-promoted {t}: {stats}")
+        results.append(stats)
+    context.add_output_metadata({
+        "promoted_types": len(results) + 1,
+        "gold_rows": sum(r["gold"] for r in results),
+        "silver_rows": sum(r["silver"] for r in results),
+        "results": MetadataValue.json(results),
+    })
 
 
 @asset(deps=[gold_promoted], group_name="governance",
