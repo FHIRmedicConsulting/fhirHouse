@@ -32,6 +32,7 @@ packages = [
   "fhirhouse_mdm",
   "fhirhouse_dagster",
   "fhirhouse_lineage",
+  "fhirhouse_views",
 ]
 
 [tool.setuptools.package-dir]
@@ -40,14 +41,15 @@ fhirhouse_dq = "dq/fhirhouse_dq"
 fhirhouse_mdm = "mdm/fhirhouse_mdm"
 fhirhouse_dagster = "dagster/fhirhouse_dagster"
 fhirhouse_lineage = "lineage/fhirhouse_lineage"
+fhirhouse_views = "views/fhirhouse_views"
 
 [tool.pytest.ini_options]
-testpaths = ["contracts/tests", "dq/tests", "mdm/tests", "dagster/tests", "lineage/tests"]
+testpaths = ["contracts/tests", "dq/tests", "mdm/tests", "dagster/tests", "lineage/tests", "views/tests"]
 
 [tool.ruff]
 line-length = 120
 # fhirHouse dirs only — upstream fhirEngine code is not ours to lint (additive-only invariant).
 include = [
   "contracts/**/*.py", "dq/**/*.py", "mdm/**/*.py",
-  "dagster/**/*.py", "lineage/**/*.py", "warehouse-gov/**/*.py",
+  "dagster/**/*.py", "lineage/**/*.py", "warehouse-gov/**/*.py", "views/**/*.py",
 ]

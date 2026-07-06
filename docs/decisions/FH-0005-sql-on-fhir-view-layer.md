@@ -1,6 +1,8 @@
 # FH-0005: SQL-on-FHIR v2 View Layer — Compile to DuckDB over Delta
 
-- Status: **Proposed** (2026-07-06)
+- Status: **Accepted** (2026-07-06 — Chad; implemented same day: `views/fhirhouse_views/`
+  compiler passes **144/144** of the official shared test suite, fully compiled, zero
+  interpreter fallbacks; see `views/conformance/REPORT.md`)
 - Date: 2026-07-06
 - Decider(s): Chad
 - Extends/refines: fhirEngine **ADR-0027** (governed views — execution model changed from interpret to compile)
@@ -82,7 +84,10 @@ on the SoF implementations page. Coverage target: 100% of the shared suite; comp
 
 ## Open questions
 
-- Compile-coverage vs engine-fallback boundary (measure on the suite).
+- ~~Compile-coverage vs engine-fallback boundary (measure on the suite).~~ Measured:
+  100% of the shared suite compiles — the fallback boundary starts beyond it
+  (e.g. `memberOf()` terminology filters, `resolve()`), which still `CompileError`
+  loudly per §2.
 - Materialized vs virtual per view pack.
 - Governance metadata location: ViewDefinition `tag` vs catalog (FH-0004).
 - SoF v2 version pinning + re-conformance on spec bumps.

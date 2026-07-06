@@ -25,17 +25,30 @@ Compile ViewDefinition → one DuckDB `SELECT`:
 delta-rs materializes results to Gold (DuckDB computes, delta-rs writes — FH-0003);
 CDF version-windowed refresh (ADR-0026). Single-store: read-only engine views only.
 
-## Robustness bar
+## Robustness bar — met
 
-Correctness is defined by the HL7 **`sql-on-fhir.js` shared JSON test suite** — run it
-in CI, publish the report, register on the implementations page. Coverage target: 100%
-of the suite; compile (not fallback) at least the full US Core base view set.
+Correctness is defined by the official **shared JSON test suite**, vendored under
+`conformance/suite/` and run in CI (`views/tests/test_conformance.py`). Current
+status: **144/144 pass, fully compiled, zero interpreter fallbacks** — see
+`conformance/REPORT.md`. `conformance/expected_pass.json` is the regression gate;
+regenerate both with `python -m fhirhouse_views.conformance`.
 
-## TODO (Claude Code)
-1. Implement the FHIRPath→DuckDB compiler (start with the taxonomy in the research
-   note §6: choice types, forEach/forEachOrNull, collections, getResourceKey/
-   getReferenceKey, extensions, unionAll, terminology filters).
-2. Wire the `sql-on-fhir.js` test suite into CI.
-3. Author the US Core base view pack (`condition`, `encounter`, `coverage`,
-   `medication_request`, `procedure`, ...); the two here are seeds.
-4. dbt macro that emits a dbt-duckdb model from a ViewDefinition.
+## Implementation (`fhirhouse_views/`)
+
+- `fhirpath.py` — restricted FHIRPath parser (the SoF subset; anything else fails loud).
+- `compiler.py` — ViewDefinition → one DuckDB SELECT. Collections are `JSON[]` with
+  FHIRPath flattening (`sof_*` macros); `forEach`/`forEachOrNull` → LATERAL unnest
+  with iteration ordinals (`%rowIndex`); `unionAll` → LATERAL union; `repeat` →
+  depth-first bounded unroll; boundary functions dispatch on the FHIR model type
+  from `contracts/gold_schema.snapshot.json`. Fidelity mode (JSON-exact, for the
+  suite) and typed mode (native casts, for dbt/BI).
+- `runner.py` — execute over in-memory resources or a Delta tier (read-side DuckDB).
+- `conformance.py` — suite runner + report + CI manifest.
+- `dbt_gen.py` — regenerates `dbt/models/views/*.sql` and `compiled/*.duckdb.sql`
+  from `definitions/`; the SoF macros install via dbt's on-run-start hook.
+
+## Remaining
+
+- Grow the base pack (coverage, procedure, immunization, allergy_intolerance, ...).
+- `memberOf()` terminology filters via fhirEngine's terminology service (ADR-0017).
+- Register on the SoF implementations page once the repo is public.

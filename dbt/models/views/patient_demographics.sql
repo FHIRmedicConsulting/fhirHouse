@@ -4,7 +4,7 @@
 
 WITH sof_src AS (
 SELECT CAST(body_json AS JSON) AS resource, fhir_id AS resource_key
-FROM delta_scan('${DELTA_BASE}/silver/patient')
+FROM {{ delta_table('silver', 'patient') }}
 WHERE NOT coalesce(deleted, FALSE)
 )
 SELECT
@@ -23,4 +23,4 @@ FROM sof_src
 LEFT JOIN LATERAL (SELECT unnest(list_filter(sof_get(sof_wrap(sof_src.resource), '$."name"'), sof_w1 -> sof_where(sof_wrap(to_json(sof_text(sof_get(sof_wrap(sof_w1), '$."use"')) = sof_text(sof_wrap(to_json('official')))))))[1:1]) AS v, unnest(range(len(list_filter(sof_get(sof_wrap(sof_src.resource), '$."name"'), sof_w1 -> sof_where(sof_wrap(to_json(sof_text(sof_get(sof_wrap(sof_w1), '$."use"')) = sof_text(sof_wrap(to_json('official')))))))[1:1]))) AS ord) AS sof_fe2 ON TRUE
 LEFT JOIN LATERAL (SELECT unnest(list_filter(sof_get(sof_wrap(sof_src.resource), '$."address"'), sof_w3 -> sof_where(sof_wrap(to_json(sof_text(sof_get(sof_wrap(sof_w3), '$."use"')) = sof_text(sof_wrap(to_json('home')))))))[1:1]) AS v, unnest(range(len(list_filter(sof_get(sof_wrap(sof_src.resource), '$."address"'), sof_w3 -> sof_where(sof_wrap(to_json(sof_text(sof_get(sof_wrap(sof_w3), '$."use"')) = sof_text(sof_wrap(to_json('home')))))))[1:1]))) AS ord) AS sof_fe4 ON TRUE
 LEFT JOIN LATERAL (SELECT unnest(list_filter(sof_get(sof_wrap(sof_src.resource), '$."identifier"'), sof_w5 -> sof_where(sof_wrap(to_json(sof_text(sof_get(sof_wrap(sof_w5), '$."system"')) = sof_text(sof_wrap(to_json('http://hospital.example.org/mrn')))))))[1:1]) AS v, unnest(range(len(list_filter(sof_get(sof_wrap(sof_src.resource), '$."identifier"'), sof_w5 -> sof_where(sof_wrap(to_json(sof_text(sof_get(sof_wrap(sof_w5), '$."system"')) = sof_text(sof_wrap(to_json('http://hospital.example.org/mrn')))))))[1:1]))) AS ord) AS sof_fe6 ON TRUE
-WHERE sof_where(sof_wrap(to_json(sof_bool(sof_wrap(to_json(sof_text(sof_get(sof_wrap(sof_src.resource), '$."active"')) = sof_text(sof_wrap(to_json(TRUE)))))) OR sof_bool(sof_wrap(to_json(len(sof_get(sof_wrap(sof_src.resource), '$."active"')) = 0))))));
+WHERE sof_where(sof_wrap(to_json(sof_bool(sof_wrap(to_json(sof_text(sof_get(sof_wrap(sof_src.resource), '$."active"')) = sof_text(sof_wrap(to_json(TRUE)))))) OR sof_bool(sof_wrap(to_json(len(sof_get(sof_wrap(sof_src.resource), '$."active"')) = 0))))))

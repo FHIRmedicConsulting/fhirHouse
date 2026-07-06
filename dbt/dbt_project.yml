@@ -3,11 +3,19 @@ version: "0.1.0"
 config-version: 2
 profile: fhirhouse
 model-paths: ["models"]
+macro-paths: ["macros"]
 target-path: "target"
 clean-targets: ["target", "dbt_packages"]
+on-run-start:
+  - "{{ create_sof_macros() }}"
 models:
   fhirhouse:
     staging:
       +materialized: view
     marts:
       +materialized: table
+    views:
+      # SoF ViewDefinition-generated models (FH-0005; regenerate via
+      # `python -m fhirhouse_views.dbt_gen`). Views by default: delta-rs owns
+      # Gold materialization — dbt materializing tables would need its own store.
+      +materialized: view

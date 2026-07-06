@@ -1,0 +1,28 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "medication_request_flat",
+  "title": "MedicationRequests, one row per request with primary medication coding",
+  "status": "draft",
+  "resource": "MedicationRequest",
+  "select": [
+    {
+      "column": [
+        { "name": "medication_request_id", "path": "getResourceKey()", "type": "id" },
+        { "name": "patient_id", "path": "subject.getReferenceKey(Patient)", "type": "id" },
+        { "name": "encounter_id", "path": "encounter.getReferenceKey(Encounter)", "type": "id" },
+        { "name": "status", "path": "status", "type": "code" },
+        { "name": "intent", "path": "intent", "type": "code" },
+        { "name": "authored_on", "path": "authoredOn", "type": "dateTime" },
+        { "name": "medication_reference_id", "path": "medication.ofType(Reference).getReferenceKey(Medication)", "type": "id" }
+      ]
+    },
+    {
+      "forEachOrNull": "medication.ofType(CodeableConcept).coding.first()",
+      "column": [
+        { "name": "medication_system", "path": "system", "type": "uri" },
+        { "name": "medication_code", "path": "code", "type": "code" },
+        { "name": "medication_display", "path": "display", "type": "string" }
+      ]
+    }
+  ]
+}

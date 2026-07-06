@@ -1,0 +1,27 @@
+{
+  "resourceType": "ViewDefinition",
+  "name": "encounter_flat",
+  "title": "Encounters, one row per encounter",
+  "status": "draft",
+  "resource": "Encounter",
+  "select": [
+    {
+      "column": [
+        { "name": "encounter_id", "path": "getResourceKey()", "type": "id" },
+        { "name": "patient_id", "path": "subject.getReferenceKey(Patient)", "type": "id" },
+        { "name": "status", "path": "status", "type": "code" },
+        { "name": "class_code", "path": "class.code", "type": "code" },
+        { "name": "period_start", "path": "period.start", "type": "dateTime" },
+        { "name": "period_end", "path": "period.end", "type": "dateTime" },
+        { "name": "service_provider_id", "path": "serviceProvider.getReferenceKey(Organization)", "type": "id" }
+      ]
+    },
+    {
+      "forEachOrNull": "type.first().coding.first()",
+      "column": [
+        { "name": "type_system", "path": "system", "type": "uri" },
+        { "name": "type_code", "path": "code", "type": "code" }
+      ]
+    }
+  ]
+}

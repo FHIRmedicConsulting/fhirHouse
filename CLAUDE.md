@@ -88,15 +88,15 @@ Remaining:
 
 1. Add an `origin` remote and push (`gh repo create <you>/fhirHouse --private
    --source=. --remote=origin --push`).
-2. `views/`: implement the FHIRPath→DuckDB ViewDefinition compiler (FH-0005;
-   robustness taxonomy in `docs/research/2026-07-06-sql-on-fhir-view-layer.md` §6),
-   wire the `sql-on-fhir.js` shared test suite into CI, author the US Core base view
-   pack, and add the dbt macro that emits a model per ViewDefinition. The compiler's
-   fast path reads flattened-column names from `contracts/gold_schema.snapshot.json`.
+2. `views/`: grow the base view pack (coverage, procedure, immunization, ...) and
+   add `memberOf()` terminology filters via fhirEngine's terminology service
+   (ADR-0017). The compiler itself is DONE (FH-0005 Accepted): 144/144 on the
+   official shared suite, fully compiled; regenerate models with
+   `python -m fhirhouse_views.dbt_gen`, conformance with
+   `python -m fhirhouse_views.conformance`.
 3. `warehouse-gov/`: run the OpenMetadata-vs-DataHub spike (FH-0004), then wire dbt
    + Dagster lineage ingestion (`lineage/` technical half is blocked on this).
-4. Close open decisions: FH-0001 (open-core a/b), FH-0004 (catalog choice),
-   FH-0005 (accept the compile-to-DuckDB view layer).
+4. Close open decisions: FH-0001 (open-core a/b), FH-0004 (catalog choice).
 
 ## fhirEngine ADRs to read (in `docs/decisions/` after bootstrap)
 
