@@ -40,7 +40,12 @@ Pre-scaffold. Foundational ADRs and module skeletons are in place; see
 `CLAUDE.md` → "Backlog for Claude Code" for the build order. Run
 `./bootstrap-fork.sh` on the host to establish the git fork.
 
-## License
+## License & open-core boundary
 
-Apache-2.0 (inherited from fhirEngine). Licensed terminologies (SNOMED CT / LOINC /
-RxNorm) remain operator-supplied and are never redistributed.
+Apache-2.0 (inherited from fhirEngine) — and this repo stays purely Apache-2.0
+(FH-0001): every engine, table contract, CLI, and the base view pack is and remains
+OSS, with a no-crippleware guarantee (full governance is always possible OSS-only).
+Commercial surfaces (stewardship workbench, governance console, curated view packs,
+managed hosting) live in a separate repo and integrate through the published
+contracts. Licensed terminologies (SNOMED CT / LOINC / RxNorm) remain
+operator-supplied and are never redistributed.

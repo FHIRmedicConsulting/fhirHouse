@@ -25,12 +25,14 @@ keeping `git merge upstream/main` conflict-free.
    Single-store deployments get an **observability-only** subset — read-only DQ
    profiling, conformance reporting, lineage/catalog — because there is no
    promotion tier to govern. Full governance ⇒ medallion. See `FH-0002`.
-2. **Open-core stance (b): OSS substrate, commercial UX on top.** fhirHouse
-   open-sources the *engines* — DQ scoring, lineage plumbing, profiling, MDM
-   pipeline. Curated view-packs, governance UI, and stewardship UX stay
-   commercial. This is the *reversible* default (fhirEngine ADR-0023/0027 had
-   earmarked Governance+DQ as the paid modules). Revisit in `FH-0001` if the
-   strategy flips to fully-OSS. **Chad to confirm (a) vs (b).**
+2. **Open-core stance (b): OSS substrate, commercial UX on top — CONFIRMED
+   (FH-0001, 2026-07-06).** The boundary rule: *computes/persists governed data →
+   OSS; renders/workflow-ifies/curates for a paying role → commercial.* Engines,
+   contracts, CLIs, base view pack, OM binding = Apache-2.0 in this repo (never
+   any other license in-tree; DCO not CLA). Stewardship workbench, governance
+   console, curated view packs (HEDIS/eCQM/registry/de-id), enterprise glue =
+   separate private repo, integrating via the contracts pin. No-crippleware
+   guarantee: full governance must always be possible OSS-only.
 3. **Compute engine: DuckDB read-side only; delta-rs is the sole writer.** DuckDB +
    dbt run SQL/DQ/transform logic over Delta; results are persisted by fhirEngine's
    existing **delta-rs** writer (honors ADR-0026 §5 — one writer per table). This
@@ -97,7 +99,10 @@ Remaining:
 3. `warehouse-gov/`: DONE for v0 — FH-0004 resolved as OpenMetadata (UC-aligned
    naming; spike-validated; `fhirhouse_warehouse_gov.openmetadata` CLI). Remaining:
    dbt/Dagster manifest-driven lineage ingestion into OM; glossary seeding.
-4. Close open decisions: FH-0001 (open-core a/b) — the last one.
+4. ~~Close open decisions~~ — all five FH ADRs are now Accepted. Next horizons:
+   dbt/Dagster lineage ingestion into OM, `memberOf()` terminology filters,
+   $import-style loader productization, and the first commercial-side artifact
+   (stewardship workbench, in its own private repo per FH-0001).
 
 ## fhirEngine ADRs to read (in `docs/decisions/` after bootstrap)
 
