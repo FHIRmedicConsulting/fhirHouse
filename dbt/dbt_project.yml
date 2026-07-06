@@ -1,0 +1,13 @@
+name: fhirhouse
+version: "0.1.0"
+config-version: 2
+profile: fhirhouse
+model-paths: ["models"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+models:
+  fhirhouse:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

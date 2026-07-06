@@ -1,0 +1,21 @@
+[project]
+name = "fhirhouse"
+version = "0.1.0"
+description = "Governance, data-quality, profiling, lineage, and probabilistic/PPRL MDM over fhirEngine's medallion lakehouse."
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+dependencies = [
+  "duckdb>=1.1",
+  "dbt-duckdb>=1.8",
+  "dagster>=1.8",
+  "dagster-webserver>=1.8",
+  "deltalake>=0.21",   # read-side; delta-rs writer lives in fhirEngine
+  "pyarrow>=17",
+  "splink>=4",         # probabilistic MDM (deferred lane, ADR-0012)
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[tool.ruff]
+line-length = 100

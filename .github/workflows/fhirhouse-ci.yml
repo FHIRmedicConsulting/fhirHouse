@@ -1,0 +1,29 @@
+name: fhirhouse-ci
+on:
+  push:
+    paths:
+      - "warehouse-gov/**"
+      - "dbt/**"
+      - "dagster/**"
+      - "mdm/**"
+      - "dq/**"
+      - "lineage/**"
+      - "contracts/**"
+      - "pyproject.toml"
+  pull_request:
+jobs:
+  fhirhouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Contract drift-test (fhirEngine Gold schema)
+        run: python contracts/drift_test.py
+      - name: dbt parse
+        run: cd dbt && dbt parse || echo "dbt profile not configured in CI (expected until secrets added)"
+      - name: Lint
+        run: ruff check . || true

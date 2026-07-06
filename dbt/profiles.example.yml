@@ -1,0 +1,10 @@
+# Copy to ~/.dbt/profiles.yml and adjust. DuckDB reads Delta via the delta extension.
+fhirhouse:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ":memory:"
+      extensions: ["delta", "json"]
+      # settings/external paths to fhirEngine's Delta root go here, e.g.
+      # s3://bucket/delta or a local ./delta base.
