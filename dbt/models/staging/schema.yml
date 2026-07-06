@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: stg_patient_current
+    description: Current non-deleted Bronze Patients with demographics extracted from body_json.
+    columns:
+      - name: fhir_id
+        tests: [not_null, unique]
+      - name: gender
+        tests:
+          - accepted_values:
+              values: [male, female, other, unknown]
+              config: {severity: warn}  # DQ signal, not a pipeline stop

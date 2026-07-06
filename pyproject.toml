@@ -12,10 +12,42 @@ dependencies = [
   "deltalake>=0.21",   # read-side; delta-rs writer lives in fhirEngine
   "pyarrow>=17",
   "splink>=4",         # probabilistic MDM (deferred lane, ADR-0012)
+  "pandas>=2",         # splink frame interchange
+  "pyyaml>=6",         # mdm deployment config
 ]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6"]
 
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+# fhirHouse packages live inside the additive module directories (CLAUDE.md invariant:
+# never a top-level src/ that could collide with upstream fhirEngine).
+[tool.setuptools]
+packages = [
+  "fhirhouse_contracts",
+  "fhirhouse_dq",
+  "fhirhouse_mdm",
+  "fhirhouse_dagster",
+  "fhirhouse_lineage",
+]
+
+[tool.setuptools.package-dir]
+fhirhouse_contracts = "contracts/fhirhouse_contracts"
+fhirhouse_dq = "dq/fhirhouse_dq"
+fhirhouse_mdm = "mdm/fhirhouse_mdm"
+fhirhouse_dagster = "dagster/fhirhouse_dagster"
+fhirhouse_lineage = "lineage/fhirhouse_lineage"
+
+[tool.pytest.ini_options]
+testpaths = ["contracts/tests", "dq/tests", "mdm/tests", "dagster/tests", "lineage/tests"]
+
 [tool.ruff]
-line-length = 100
+line-length = 120
+# fhirHouse dirs only — upstream fhirEngine code is not ours to lint (additive-only invariant).
+include = [
+  "contracts/**/*.py", "dq/**/*.py", "mdm/**/*.py",
+  "dagster/**/*.py", "lineage/**/*.py", "warehouse-gov/**/*.py",
+]

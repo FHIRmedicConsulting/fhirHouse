@@ -1,11 +1,159 @@
-"""fhirHouse Dagster definitions (skeleton).
+"""fhirHouse Dagster definitions — orchestration that WRAPS fhirEngine, never replaces it
+(fhirEngine ADR-0026 §6: the delta-rs promoter stays authoritative; FH decision #6).
 
-Assets wrap fhirEngine's delta-rs promotion loop and add governance/DQ/MDM stages.
-delta-rs remains the sole writer (FH-0003); assets compute with DuckDB and hand
-results to fhirEngine's writer.
+Assets:
+  gold_promoted   — wraps the reference promoter CLI (`fhirengine-promote --all`);
+                    fhirEngine performs promotion + deterministic MPI, we get lineage.
+  dq_scores       — Kahn + L5 scoring → gold/dq_score (annotates, does not block —
+                    FH-0004 open question; flip by gating downstream assets on it).
+  splink_matches  — probabilistic Stage B → review queue + decision log + Provenance.
+  pprl_tokens     — PPRL tokenization → gold/pprl_tokens.
+
+Sensor:
+  hitl_review_sensor — watches gold.patient_match_review for new PENDING rows (both
+  deterministic multi-match from fhirEngine and our probabilistic bands) and launches
+  `notify_stewards_job` per batch. Steward decisions are new review rows (ADR-0012 §5);
+  fhirEngine's promoter applies approved merges on its next run.
+
+Environment: FHIRENGINE_DELTA_BASE, FHIRENGINE_DELTA_SIDECAR_URL,
+FHIRHOUSE_PROMOTE_CMD, FHIRHOUSE_DQ_TYPES, FHIRHOUSE_MDM_CONFIG.
 """
-from dagster import Definitions
+import json
+import os
+import shlex
+import subprocess
 
-# TODO: define assets (dq_scores, splink_matches, pprl_tokens, silver_governed,
-# gold_promoted) and a HITL sensor over gold.patient_match_review.
-defs = Definitions(assets=[])
+from dagster import (
+    AssetExecutionContext,
+    Definitions,
+    Field,
+    MetadataValue,
+    OpExecutionContext,
+    RunRequest,
+    SensorEvaluationContext,
+    SkipReason,
+    asset,
+    job,
+    op,
+    sensor,
+)
+
+DEFAULT_PROMOTE_CMD = "npx tsx packages/server/scripts/fhirengine-promote.ts --all"
+DEFAULT_DQ_TYPES = "Patient,Observation,Condition,Encounter"
+
+
+def _delta_base() -> str:
+    return os.environ.get("FHIRENGINE_DELTA_BASE", "./delta")
+
+
+@asset(group_name="promotion", description="Bronze→Silver+Gold via fhirEngine's reference promoter "
+       "(full-rebuild backstop, ADR-0026 §4; deterministic MPI enforced inside).")
+def gold_promoted(context: AssetExecutionContext) -> None:
+    cmd = os.environ.get("FHIRHOUSE_PROMOTE_CMD", DEFAULT_PROMOTE_CMD)
+    context.log.info(f"wrapping promoter: {cmd}")
+    proc = subprocess.run(shlex.split(cmd), capture_output=True, text=True, timeout=3600)
+    context.log.info(proc.stderr[-4000:])
+    if proc.returncode != 0:
+        raise RuntimeError(f"fhirengine-promote failed ({proc.returncode}): {proc.stderr[-1000:]}")
+    try:
+        summary = json.loads(proc.stdout)
+        context.add_output_metadata({
+            "promoted_types": summary.get("promoted", 0),
+            "results": MetadataValue.json(summary.get("results", [])),
+        })
+    except json.JSONDecodeError:
+        context.add_output_metadata({"stdout": proc.stdout[-2000:]})
+
+
+@asset(deps=[gold_promoted], group_name="governance",
+       description="Kahn-dimension DQ scoring (+ optional L5 IG conformance) → gold/dq_score.")
+def dq_scores(context: AssetExecutionContext) -> None:
+    from fhirhouse_dq import run_dq
+
+    types = [t.strip() for t in os.environ.get("FHIRHOUSE_DQ_TYPES", DEFAULT_DQ_TYPES).split(",") if t.strip()]
+    result = run_dq(types, base=_delta_base(), l5=bool(os.environ.get("FHIRHOUSE_VALIDATOR_JAR")))
+    scores = {f"{r['resource_type']}:{r['metric']}": r["score"]
+              for r in result["rows"] if r["dimension"] != "completeness" and r["score"] is not None}
+    context.add_output_metadata({
+        "run_id": result["run_id"],
+        "metric_rows": len(result["rows"]),
+        "skipped": MetadataValue.json(result["skipped"]),
+        "scores": MetadataValue.json(scores),
+    })
+
+
+@asset(deps=[gold_promoted], group_name="governance",
+       description="Splink probabilistic Stage B (ADR-0012 §4, twelve guardrails) → "
+                   "patient_match_review + mpi_decision_log + Provenance.")
+def splink_matches(context: AssetExecutionContext) -> None:
+    from fhirhouse_mdm.runner import run_probabilistic
+
+    result = run_probabilistic(base=_delta_base())
+    context.add_output_metadata({k: MetadataValue.json(v) if isinstance(v, (dict, list)) else v
+                                 for k, v in result.items()})
+
+
+@asset(deps=[gold_promoted], group_name="governance",
+       description="PPRL tokenization (ADR-0012 §6) → gold/pprl_tokens.")
+def pprl_tokens(context: AssetExecutionContext) -> None:
+    from fhirhouse_mdm.runner import run_pprl
+
+    result = run_pprl(base=_delta_base())
+    context.add_output_metadata({k: MetadataValue.json(v) if isinstance(v, (dict, list)) else v
+                                 for k, v in result.items()})
+
+
+@op(config_schema={"reviews_json": Field(str, default_value="[]")})
+def notify_stewards(context: OpExecutionContext) -> None:
+    """Surface pending HITL reviews. v1 = log + optional webhook (FHIRHOUSE_HITL_WEBHOOK);
+    the stewardship UI itself is commercial scope (FH-0001 stance b)."""
+    reviews = json.loads(context.op_config["reviews_json"])
+    context.log.warning(f"{len(reviews)} pending patient_match_review item(s) need stewardship")
+    for r in reviews:
+        context.log.info(f"  review {r.get('review_id')}: {r.get('reason')} candidates={r.get('candidate_ids')}")
+    hook = os.environ.get("FHIRHOUSE_HITL_WEBHOOK")
+    if hook and reviews:
+        import urllib.request
+
+        req = urllib.request.Request(hook, data=json.dumps({"pending_reviews": reviews}).encode(),
+                                     headers={"Content-Type": "application/json"})
+        urllib.request.urlopen(req, timeout=10).read()
+
+
+@job
+def notify_stewards_job():
+    notify_stewards()
+
+
+@sensor(job=notify_stewards_job, minimum_interval_seconds=60,
+        description="HITL: new pending rows in gold.patient_match_review → notify_stewards_job.")
+def hitl_review_sensor(context: SensorEvaluationContext):
+    from deltalake import DeltaTable  # read-side only
+
+    path = f"{_delta_base()}/gold/patient_match_review"
+    try:
+        rows = DeltaTable(path).to_pyarrow_table().to_pylist()
+    except Exception:
+        return SkipReason(f"no review table yet at {path}")
+    cursor = context.cursor or ""
+    pending = sorted(
+        (r for r in rows if r.get("status") == "pending" and (r.get("created_at") or "") > cursor),
+        key=lambda r: r.get("created_at") or "",
+    )
+    if not pending:
+        return SkipReason("no new pending reviews")
+    newest = pending[-1]["created_at"]
+    context.update_cursor(newest)
+    payload = [{k: r.get(k) for k in ("review_id", "reason", "candidate_ids", "suggested_action", "created_at")}
+               for r in pending]
+    return RunRequest(
+        run_key=f"hitl-{newest}-{len(pending)}",
+        run_config={"ops": {"notify_stewards": {"config": {"reviews_json": json.dumps(payload)}}}},
+    )
+
+
+defs = Definitions(
+    assets=[gold_promoted, dq_scores, splink_matches, pprl_tokens],
+    jobs=[notify_stewards_job],
+    sensors=[hitl_review_sensor],
+)

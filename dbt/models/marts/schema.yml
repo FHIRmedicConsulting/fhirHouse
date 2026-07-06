@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: dq_score_latest
+    description: Latest DQ run per (resource_type, tier) from gold/dq_score.
+  - name: mpi_review_queue_open
+    description: Reviews whose latest status row is still pending (HITL workload).
+    columns:
+      - name: review_id
+        tests: [not_null]

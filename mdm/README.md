@@ -12,7 +12,20 @@ Writes into the **existing** Gold MPI tables — do not redefine them:
 `gold.pprl_tokens`, `gold.mpi_decision_log`. Every decision writes Provenance
 (ADR-0012 §5). HITL review is surfaced via Dagster.
 
-## TODO (Claude Code)
-- Splink model + blocking rules; persist m/u contributions to `gold.mpi_decision_log`.
-- PPRL pipeline (Datavant/OpenHIE token systems, config-driven).
-- All persistence via fhirEngine's delta-rs writer.
+## Implementation (`fhirhouse_mdm/`)
+
+- `guardrails.py` — Python port of upstream's §3.4 hard-deny floors (parity-tested).
+- `config.py` — deployment YAML (see `config.example.yml`) with the guardrail floors
+  enforced at load (auto ≥0.90 absolute; <0.95 needs acknowledgment; cross-authority
+  ≥ auto).
+- `splink_model.py` — Splink 4 on DuckDB (FH-0003; no Spark). Offline EM training to
+  a staged artifact; production pins the artifact in config (guardrails #6/#7);
+  pre-run blocking-pair sanity check (#5).
+- `decide.py` — three-band classification (#2/#3/#12, safety-override #4) →
+  `patient_match_review` (pending; operator-ack default posture — fhirEngine's
+  promoter applies approved merges), `mpi_decision_log` m/u contributions (#9),
+  Provenance per decision (#8).
+- `pprl.py` — HMAC + CLK token systems, customer-controlled keys from env, rotation
+  via pipeline_version → `gold.pprl_tokens`.
+- `runner.py` — entrypoints wired to the Dagster assets; enforces
+  deterministic-first (#1) by dropping shared-identifier pairs.

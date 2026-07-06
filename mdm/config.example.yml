@@ -1,0 +1,36 @@
+# fhirHouse MDM deployment config (fhirEngine ADR-0012 §4 shape).
+# Copy to mdm/config.yml (or point FHIRHOUSE_MDM_CONFIG at it) and adjust.
+# Threshold floors are enforced at load: auto >= 0.90 always; 0.90–0.95 needs
+# acknowledge_loosened_auto_threshold: true; cross-authority >= auto.
+
+splink:
+  enabled: true
+  model_artifact: mdm/models/splink_model.json   # guardrail #6: versioned artifact, pinned here
+  model_version: "2026-07-06.1"
+  auto_match_threshold: 0.95
+  review_threshold: 0.70
+  cross_assigning_authority_threshold: 0.97
+  blocking_rules:
+    - "l.birth_date = r.birth_date"
+    - "l.family_name = r.family_name AND substr(l.given_name,1,1) = substr(r.given_name,1,1)"
+    - "l.postal_code = r.postal_code AND l.family_name = r.family_name"
+  max_estimated_pairs: 25000000
+  deceased_window_days: 14
+
+pprl:
+  token_systems:
+    # Opaque HMAC identifier tokens (Datavant-compatible pattern: fhirEngine treats
+    # the token as an opaque identifier value; keys are customer-controlled).
+    - name: "hmac-sha256:v1"
+      kind: hmac
+      key_env: FHIRHOUSE_PPRL_HMAC_KEY
+      pipeline_version: "1"
+      fields: [family_name, given_name, birth_date, gender]
+    # Bloom-filter CLK (OpenHIE-style) for error-tolerant cross-org linkage.
+    - name: "clk:openhie"
+      kind: clk
+      key_env: FHIRHOUSE_PPRL_CLK_KEY
+      pipeline_version: "1"
+      fields: [family_name, given_name, birth_date]
+      clk_bits: 1024
+      clk_hashes: 20

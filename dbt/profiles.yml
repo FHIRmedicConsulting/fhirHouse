@@ -1,0 +1,10 @@
+# In-repo profile (no secrets — DuckDB in-memory + delta/json extensions).
+# CI and local runs: `DBT_PROFILES_DIR=dbt dbt parse --project-dir dbt`.
+# For a real deployment copy profiles.example.yml to ~/.dbt/ and point at your store.
+fhirhouse:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ":memory:"
+      extensions: ["delta", "json"]
