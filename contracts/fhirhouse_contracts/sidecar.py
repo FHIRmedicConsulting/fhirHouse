@@ -62,6 +62,14 @@ class SidecarClient:
     def query(self, sql: str, tables: dict[str, str]) -> list[dict]:
         return self._post("/query", {"sql": sql, "tables": tables})["rows"]
 
+    def write_version(self, table_path: str, row: dict, prev_version_id: int | None = None) -> dict:
+        """Atomic current-version write (Bronze shape): inserts the new version and
+        demotes the prior one in a single Delta commit."""
+        payload: dict[str, Any] = {"table_path": table_path, "row": row}
+        if prev_version_id is not None:
+            payload["prev_version_id"] = prev_version_id
+        return self._post("/write-version", payload)
+
     def delete(self, table_path: str, predicate: str | None = None) -> dict:
         payload: dict[str, Any] = {"table_path": table_path}
         if predicate:

@@ -46,7 +46,22 @@ def _delta_base() -> str:
     return os.environ.get("FHIRENGINE_DELTA_BASE", "./delta")
 
 
-@asset(group_name="promotion", description="Bronze→Silver+Gold. Patient goes through "
+@asset(group_name="promotion", description="Apply steward-APPROVED merge decisions from "
+       "gold.patient_match_review before promotion: merge_history ledger + new Bronze "
+       "versions + MERGE Provenance (fhirhouse_mdm.apply_decisions). Idempotent.")
+def review_decisions_applied(context: AssetExecutionContext) -> None:
+    from fhirhouse_mdm.apply_decisions import apply_decisions
+
+    result = apply_decisions(base=_delta_base())
+    if result["errors"]:
+        raise RuntimeError(f"decision application errors: {result['errors']}")
+    context.add_output_metadata({
+        "applied": MetadataValue.json(result["applied"]),
+        "skipped_already_merged": len(result["skipped_already_merged"])})
+
+
+@asset(deps=[review_decisions_applied], group_name="promotion",
+       description="Bronze→Silver+Gold. Patient goes through "
        "fhirEngine's reference promoter (deterministic MPI runs there, ADR-0012); every "
        "other Bronze type through fhirHouse's chunked external promoter (no V8 size cap).")
 def gold_promoted(context: AssetExecutionContext) -> None:
@@ -171,7 +186,7 @@ def hitl_review_sensor(context: SensorEvaluationContext):
 
 
 defs = Definitions(
-    assets=[gold_promoted, dq_scores, splink_matches, pprl_tokens],
+    assets=[review_decisions_applied, gold_promoted, dq_scores, splink_matches, pprl_tokens],
     jobs=[notify_stewards_job],
     sensors=[hitl_review_sensor],
 )
