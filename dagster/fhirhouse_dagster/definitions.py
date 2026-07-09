@@ -30,6 +30,7 @@ from dagster import (
     MetadataValue,
     OpExecutionContext,
     RunRequest,
+    ScheduleDefinition,
     SensorEvaluationContext,
     SkipReason,
     asset,
@@ -158,6 +159,26 @@ def notify_stewards_job():
     notify_stewards()
 
 
+@op
+def age_review_queue(context: OpExecutionContext) -> None:
+    """Apply the ADR-0012 §5 TTL policy (pending>7d → escalated; escalated>14d →
+    aged out)."""
+    from fhirhouse_mdm.review_queue import age_reviews
+
+    result = age_reviews(base=_delta_base())
+    context.log.info(f"aged review queue: {result}")
+
+
+@job
+def age_review_queue_job():
+    age_review_queue()
+
+
+age_review_queue_schedule = ScheduleDefinition(
+    job=age_review_queue_job, cron_schedule="0 6 * * *",
+    description="Daily review-queue TTL aging (ADR-0012 §5).")
+
+
 @sensor(job=notify_stewards_job, minimum_interval_seconds=60,
         description="HITL: new pending rows in gold.patient_match_review → notify_stewards_job.")
 def hitl_review_sensor(context: SensorEvaluationContext):
@@ -187,6 +208,7 @@ def hitl_review_sensor(context: SensorEvaluationContext):
 
 defs = Definitions(
     assets=[review_decisions_applied, gold_promoted, dq_scores, splink_matches, pprl_tokens],
-    jobs=[notify_stewards_job],
+    jobs=[notify_stewards_job, age_review_queue_job],
+    schedules=[age_review_queue_schedule],
     sensors=[hitl_review_sensor],
 )
